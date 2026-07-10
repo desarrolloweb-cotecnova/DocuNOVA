@@ -1,0 +1,48 @@
+# Configuración de la CLI de Supabase para DocuNOVA.
+#
+# Este archivo aplica al entorno LOCAL (supabase start / db reset). La
+# configuración del proyecto en la nube (URLs de redirección, credenciales de
+# Google, MFA) se administra desde el panel de Supabase.
+#
+# Sustituye "docunova" por el "Reference ID" de tu proyecto si quieres enlazar
+# la CLI con el proyecto en la nube (supabase link).
+project_id = "docunova"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+enabled = true
+# En local, la app corre en http://localhost:3000
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/auth/callback"]
+jwt_expiry = 3600
+enable_signup = true
+
+# Segundo factor (TOTP) obligatorio en la aplicación.
+[auth.mfa]
+max_enrolled_factors = 5
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
+# Proveedor Google (las credenciales reales van por variables de entorno,
+# nunca en este archivo).
+[auth.external.google]
+enabled = true
+client_id = "env(SUPABASE_AUTH_GOOGLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_GOOGLE_SECRET)"
+skip_nonce_check = false

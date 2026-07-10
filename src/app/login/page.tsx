@@ -1,0 +1,58 @@
+import type { Metadata } from "next";
+import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ALLOWED_EMAIL_DOMAIN, APP_NAME } from "@/lib/config";
+
+export const metadata: Metadata = {
+  title: `Ingresar — ${APP_NAME}`,
+};
+
+const ERROR_MESSAGES: Record<string, string> = {
+  domain: `Solo se permite el acceso con cuentas @${ALLOWED_EMAIL_DOMAIN}. Cerramos tu sesión por seguridad.`,
+  auth: "No pudimos completar el inicio de sesión. Inténtalo de nuevo.",
+};
+
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const { error } = await searchParams;
+  const errorMessage = error ? ERROR_MESSAGES[error] : undefined;
+
+  return (
+    <main className="flex flex-1 items-center justify-center bg-muted/40 p-6">
+      <Card className="w-full max-w-sm">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl">{APP_NAME}</CardTitle>
+          <CardDescription>
+            Sistema de Gestión Documental de Cotecnova.
+            <br />
+            Ingresa con tu cuenta institucional.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
+          {errorMessage ? (
+            <p
+              className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
+              role="alert"
+            >
+              {errorMessage}
+            </p>
+          ) : null}
+          <GoogleSignInButton />
+          <p className="text-center text-xs text-muted-foreground">
+            El acceso está restringido a correos @{ALLOWED_EMAIL_DOMAIN} y
+            requiere verificación en dos pasos.
+          </p>
+        </CardContent>
+      </Card>
+    </main>
+  );
+}

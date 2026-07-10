@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+# Variables de marcador de posición: permiten compilar y probar sin secretos
+# reales. La anon key pública real se configura en Vercel/entorno, no aquí.
+env:
+  NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+
+jobs:
+  quality:
+    name: Lint · Typecheck · Test · Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Formato (Prettier)
+        run: npm run format:check
+
+      - name: Linter (ESLint)
+        run: npm run lint
+
+      - name: Verificación de tipos (TypeScript)
+        run: npm run typecheck
+
+      - name: Pruebas unitarias (Vitest)
+        run: npm run test
+
+      - name: Compilación (next build)
+        run: npm run build
+
+  e2e:
+    name: Pruebas de humo (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Instalar navegador de Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Ejecutar pruebas e2e
+        run: npm run test:e2e
