@@ -1,0 +1,321 @@
+Proceso,Seccion,Cod_Seccion,Oficina_Productora,Cod_Oficina,Cod_Serie,Serie,Subserie_TipoDocumental,Soporte_Fisico,Soporte_Electronico,Retencion_ArchivoGestion,Retencion_ArchivoCentral,Disp_ConservacionTotal,Disp_Eliminacion,Disp_Seleccion,Disp_MedioDigital,Procedimiento
+N/A - Consejo Directivo (entidad independiente),Consejo Directivo,1001,Consejo Directivo,1001,1001,ACTAS,Actas comité de presupuesto,X,,5 años,10 años,X,,,X,Cumplido el tiempo de retención se conserva la serie totalmente por poseer valores secundarios para la Institución.
+N/A - Consejo Directivo (entidad independiente),Consejo Directivo,1001,Consejo Directivo,1001,1001,ACTAS,Actas de asamblea general,X,,5 años,10 años,X,,,X,
+N/A - Consejo Directivo (entidad independiente),Consejo Directivo,1001,Consejo Directivo,1001,1001,ACTAS,Actas de consejo directivo,X,,5 años,10 años,X,,,X,
+N/A - Consejo Directivo (entidad independiente),Consejo Directivo,1001,Consejo Directivo,1001,1001,ACTOS ADMINISTRATIVOS,Acuerdos consejo directivo,X,,5 años,10 años,X,,,X,Cumplido el tiempo de retención se conserva la serie totalmente por poseer valores secundarios para la Institución.
+N/A - Consejo Directivo (entidad independiente),Consejo Directivo,1001,Consejo Directivo,1001,1001,COMUNICACIONES,Comunicaciones internas,X,,1 año,1 año,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+N/A - Consejo Directivo (entidad independiente),Consejo Directivo,1001,Consejo Directivo,1001,1001,COMUNICACIONES,Comunicaciones externas,X,,1 año,1 año,,,X,,
+N/A - Consejo Directivo (entidad independiente),Consejo Directivo,1001,Consejo Directivo,1001,1001,INFORMES,Informe de actividades,X,,1 año,5 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Gestión Jurídica,Rectoría,1100,Gestion Juridica - Secretaría General,1110,1110,ACTAS,Actas comité de presupuesto,X,,5 años,10 años,X,,,X,Cumplido el tiempo de retención se conserva la serie totalmente por poseer valores secundarios para la Institución.
+Gestión Jurídica,Rectoría,1100,Gestion Juridica - Secretaría General,1110,1110,ACTAS,Actas de asamblea general,X,,5 años,10 años,X,,,X,
+Gestión Jurídica,Rectoría,1100,Gestion Juridica - Secretaría General,1110,1110,ACTAS,Actas de consejo directivo,X,,5 años,10 años,X,,,X,
+Gestión Jurídica,Rectoría,1100,Gestion Juridica - Secretaría General,1110,1110,ACTOS ADMINISTRATIVOS,Acuerdos consejo directivo,X,,5 años,10 años,X,,,X,Cumplido el tiempo de retención se conserva la serie totalmente por poseer valores secundarios para la Institución.
+Gestión Jurídica,Rectoría,1100,Gestion Juridica - Secretaría General,1110,1110,COMUNICACIONES,Comunicaciones internas,X,,1 año,2 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Gestión Jurídica,Rectoría,1100,Gestion Juridica - Secretaría General,1110,1110,COMUNICACIONES,Comunicaciones externas,X,,1 año,2 años,,,X,,
+Gestión Jurídica,Rectoría,1100,Gestion Juridica - Secretaría General,1110,1001,INFORMES,Informe de actividades,X,,1 año,5 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Gestión Jurídica,Rectoría,1100,Gestion Juridica - Secretaría General,1110,1110,REGISTROS,Registro de diplomas,X,,50 años,25 años,X,,,X,Cumplido el tiempo de retención se conserva la serie totalmente por poseer valores secundarios para la Institución.
+Gestión Institucional,Rectoría,1100,Gestion Institucional - Secretaria Rectoria,1100,1100,ACTAS,Actas de reuniones,X,,2 años,5 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Gestión Institucional,Rectoría,1100,Gestion Institucional - Secretaria Rectoria,1100,1100,ACTOS ADMINISTRATIVOS,Resoluciones,X,X,3 años,10 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Gestión Institucional,Rectoría,1100,Gestion Institucional - Secretaria Rectoria,1100,1100,COMUNICACIONES,Comunicaciones internas,X,,1 año,2 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Gestión Institucional,Rectoría,1100,Gestion Institucional - Secretaria Rectoria,1100,1100,COMUNICACIONES,Comunicaciones externas,X,,1 año,2 años,,,X,,
+Gestión Institucional,Rectoría,1100,Gestion Institucional - Secretaria Rectoria,1100,1100,CONVENIOS,Convenio específico,X,,5 años,5 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Gestión Institucional,Rectoría,1100,Gestion Institucional - Secretaria Rectoria,1100,1100,CONVENIOS,Convenio marco,X,,5 años,5 años,,X,,,
+Gestión Institucional,Rectoría,1100,Gestion Institucional - Secretaria Rectoria,1100,1100,INFORMES,Informes de comisión,X,,1 año,2 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Gestión Institucional,Rectoría,1100,Gestion Institucional - Secretaria Rectoria,1100,1100,INFORMES,Informes de gestión,X,X,1 año,20 años,,X,,,
+Gestión Institucional,Rectoría,1100,Gestion Institucional - Secretaria Rectoria,1100,1100,LINEAMIENTOS,Lineamientos institucionales,,X,15 años,5 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Gestión Institucional,Rectoría,1100,Gestion Institucional - Secretaria Rectoria,1100,1100,PLANES,Plan de inversión,X,,10 años,2 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Gestión Institucional,Rectoría,1100,Gestion Institucional - Secretaria Rectoria,1100,1100,PLANES,Planes de acción,X,,10 años,2 años,,X,,,
+Gestión Institucional,Rectoría,1100,Gestion Institucional - Secretaria Rectoria,1100,1100,PLANES,Planes operativos,X,,10 años,1 año,,X,,,
+Gestión Institucional,Rectoría,1100,Gestion Institucional - Secretaria Rectoria,1100,1100,PROYECTOS,Proyectos institucionales,X,,1 año,5 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Gestión Institucional,Rectoría,1100,Recepción,1120,1120,COMUNICACIONES,Comunicaciones internas,X,,,,,,,,
+Gestión Institucional,Rectoría,1100,Recepción,1120,1120,COMUNICACIONES,Comunicaciones externas,X,,,,,,,,
+Gestión Institucional,Rectoría,1100,Recepción,1120,1120,REGISTROS,Registro controles de correspondencia,X,,,,,,,,
+Gestión de Calidad,Vicerrectoría Administrativa,1200,Gestión de Calidad,1210,1210,ACTAS,Actas comité de calidad institucional,X,X,2 años,3 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Gestión de Calidad,Vicerrectoría Administrativa,1200,Gestión de Calidad,1210,1210,ACTAS,Actas de gestión del riesgo,X,X,1 año,3 años,,X,,,
+Gestión de Calidad,Vicerrectoría Administrativa,1200,Gestión de Calidad,1210,1210,ACTAS,Actas de evaluación y reevaluación de proveedores,X,X,2 años,3 años,,X,,,
+Gestión de Calidad,Vicerrectoría Administrativa,1200,Gestión de Calidad,1210,1210,AUDITORÍAS,"Auditoría interna
+*Plan de auditoría interna
+*Programa de auditoría interna
+*Informes de auditoría interna",X,X,1 año,3 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Gestión de Calidad,Vicerrectoría Administrativa,1200,Gestión de Calidad,1210,1210,COMUNICACIONES,Comunicaciones internas,X,X,1 año,2 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Gestión de Calidad,Vicerrectoría Administrativa,1200,Gestión de Calidad,1210,1210,COMUNICACIONES,Comunicaciones externas,X,X,1 año,2 años,,,X,,
+Gestión de Calidad,Vicerrectoría Administrativa,1200,Gestión de Calidad,1210,1210,INFORMES,Informes de gestión,,X,1 año,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Gestión de Calidad,Vicerrectoría Administrativa,1200,Gestión de Calidad,1210,1210,REGISTROS,Brigada de calidad,X,X,1 año,3 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Gestión de Calidad,Vicerrectoría Administrativa,1200,Gestión de Calidad,1210,1210,REGISTROS,"Registro revisión de buzones de sugerencia
+*Formulario de ""Registro SQR""",X,,1 año,3 años,,X,,,
+Gestión de Calidad,Vicerrectoría Administrativa,1200,Gestión de Calidad,1210,1210,REGISTROS,Registro revisión por la dirección,X,,2 años,3 años,,X,,,
+Gestión de Calidad,Vicerrectoría Administrativa,1200,Gestión de Calidad,1210,1210,REGISTROS,Registro SQR,X,,1 año,3 años,,X,,,
+Gestión de Mercadeo,Vicerrectoría Administrativa,1200,Gestión de Mercadeo,1220,1220,ACTAS,Actas de reuniones,X,,1 año,3 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Gestión de Mercadeo,Vicerrectoría Administrativa,1200,Gestión de Mercadeo,1220,1220,AUTORIZACIONES,Autorización uso de imagen,X,,5 años,15 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Gestión de Mercadeo,Vicerrectoría Administrativa,1200,Gestión de Mercadeo,1220,1220,BASES DE DATOS,Bases de datos de aspirantes o de interesados en programas académicos,,X,2 años,1 año,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Gestión de Mercadeo,Vicerrectoría Administrativa,1200,Gestión de Mercadeo,1220,1220,COMUNICACIONES,Circular informativa,X,,1 año,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Gestión de Mercadeo,Vicerrectoría Administrativa,1200,Gestión de Mercadeo,1220,1220,COMUNICACIONES,Comunicaciones internas,X,,1 año,2 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Gestión de Mercadeo,Vicerrectoría Administrativa,1200,Gestión de Mercadeo,1220,1220,COMUNICACIONES,Comunicaciones externas,X,,1 año,2 años,,,X,,
+Gestión de Mercadeo,Vicerrectoría Administrativa,1200,Gestión de Mercadeo,1220,1220,INFORMES,Informes de gestión,,X,1 año,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Gestión de Mercadeo,Vicerrectoría Administrativa,1200,Gestión de Mercadeo,1220,1220,INFORMES,Informe de investigación de mercados,X,,3 años,7 años,,X,,,
+Gestión de Mercadeo,Vicerrectoría Administrativa,1200,Gestión de Mercadeo,1220,1220,REGISTROS,Asistencia a eventos,X,,1 año,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Gestión de Mercadeo,Vicerrectoría Administrativa,1200,Gestión de Mercadeo,1220,1220,REGISTROS,Lista de chequeo para aprobación de medios y elementos publicitarios,X,,1 año,1 año,,X,,,
+Gestión de Mercadeo,Vicerrectoría Administrativa,1200,Gestión de Mercadeo,1220,1220,REGISTROS,Solicitud de servicio,X,,1 año,1 año,,X,,,
+Infraestructura Física,Vicerrectoría Administrativa,1200,Infraestructura física,1230,1230,ACTAS,Actas de reuniones,X,,1 año,3 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Infraestructura Física,Vicerrectoría Administrativa,1200,Infraestructura física,1230,1230,COMUNICACIONES,Comunicaciones internas,X,,1 año,2 años,,,X,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Infraestructura Física,Vicerrectoría Administrativa,1200,Infraestructura física,1230,1230,COMUNICACIONES,Comunicaciones externas,X,,1 año,2 años,,,X,,
+Infraestructura Física,Vicerrectoría Administrativa,1200,Infraestructura física,1230,1230,INFORMES,Informes de gestión,,X,1 año,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Infraestructura Física,Vicerrectoría Administrativa,1200,Infraestructura física,1230,1230,PLANES,"Plan de mantenimiento, reparación y construcción",,X,7 años,1 año,,,X,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Infraestructura Física,Vicerrectoría Administrativa,1200,Infraestructura física,1230,1230,REGISTROS,Acta entrega de inventario,X,,1 año,3 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Infraestructura Física,Vicerrectoría Administrativa,1200,Infraestructura física,1230,1230,REGISTROS,Acta retiro de inventario,X,,1 año,3 años,,X,,,
+Infraestructura Física,Vicerrectoría Administrativa,1200,Infraestructura física,1230,1230,REGISTROS,Baja de equipos y partes,X,,1 año,3 años,,X,,,
+Infraestructura Física,Vicerrectoría Administrativa,1200,Infraestructura física,1230,1230,REGISTROS,Ficha de Inscripción de Proveedores,X,,1 año,3 años,,X,,,
+Infraestructura Física,Vicerrectoría Administrativa,1200,Infraestructura física,1230,1230,REGISTROS,Sostenimiento planta física y mobiliario verificación condiciones físicas,X,,1 año,1 año,,X,,,
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,ACTAS,Actas de comité de convivencia laboral,X,,5 años,5 años,X,,,X,Cumplido el tiempo de retención se conserva la serie totalmente por poseer valores secundarios para la Institución.
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,ACTAS,Actas de comité paritario de seguridad y salud en el trabajo,X,,5 años,5 años,X,,,X,
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,ACTAS,Actas de reuniones,X,,2 años,3 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,COMUNICACIONES,Comunicaciones internas,X,,1 año,2 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,COMUNICACIONES,Comunicaciones externas,X,,1 año,2 años,,,X,,
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,EVALUACIÓN DE DESEMPEÑO,,X,X,2 años,78 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,HISTORIAS,Historias de aprendíz SENA,X,X,2 años,78 años,,,X,,"Cumplido el tiempo de retención en el archivo de gestión, se seleccionan las historias laborales que ya no se encuentran activas y se realiza transferencia al archivo central para su conservación en el tiempo establecido. 
+Nota: Durante la etapa de archivo de gestión los documentos son digitalizados. "
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,HISTORIAS,Historias laborales personal docente,X,X,2 años,78 años,,,X,,
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,HISTORIAS,Historias laborales personal de planta,X,X,2 años,78 años,,,X,,
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,HISTORIAS,Historia ocupacional,X,X,2 años,78 años,,,X,,
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,INFORMES,Informes a entes de control,,X,2 años,8 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,INFORMES,Informes de gestión,,X,2 años,8 años,,,X,,
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,INFORMES,Informes de medición de riesgo psicosocial,X,X,6 años,4 años,,X,,,
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,PLANES,Plan de beneficios y/o incentivos,X,X,2 años,4 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,PLANES,Plan de capacitación y/o formación,,X,5 años,5 años,,X,,,
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,PLANES,Plan de emergencias,X,X,3 años,1 año,,X,,,
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,PLANES,Plan estratégico de seguridad vial (PESV),X,X,2 años,8 años,X,,X,,"Cumplido el tiempo de retención se selecciona la tipologia matriz de riesgos, politicas, procesos y procedimientos para su conservación total . 
+Estos documentos deben de reposar publicados en el SGC"
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,PROCESOS,Procesos de inducción al personal,X,X,2 años,18 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,PROCESOS,Procesos de selección de personal administrativo / docente,,X,1 año,3 años,,X,,,
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,REGISTROS,Acta de entrega de dotación,X,,2 años,78 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,REGISTROS,Acta de entrega individual de elementos de protección personal (EPP),X,,2 años,18 años,,,X,,
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,REPORTES,Reporte de accidente de trabajo,X,X,2 años,18 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,SISTEMAS DE GESTIÓN,Capacitación en SST,X,X,2 años,18 años,,,X,,"Cumplido el tiempo de retención se selecciona la tipologia matriz de riesgos, politicas, procesos y procedimientos para su conservación total . 
+Estos documentos deben de reposar publicados en el SGC"
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,SISTEMAS DE GESTIÓN,Condiciones de salud evaluaciones médicas,X,X,1 año,19 años,,,X,,
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,SISTEMAS DE GESTIÓN,"Programas de SST
+*Incluye los requisitos mínimos de aplicación para la organización",X,,2 años,18 años,,,X,,
+Talento Humano,Vicerrectoría Administrativa,1200,Talento Humano,1240,1240,SISTEMAS DE GESTIÓN,Sistemas de Gestión de Seguridad y Salud en el Trabajo,X,,2 años,8 años,X,,X,,
+Financiera,Vicerrectoría Administrativa,1200,Contabilidad,1251,1250,ACTAS,Actas de reuniones,X,,1 año,5 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Financiera,Vicerrectoría Administrativa,1200,Crédito y Cartera,1253,1250,CARTERA MOROSA Y CASTIGADA,,X,,5 años,5 años,,,X,,"Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Nota: Historias financieras de estudiantes en mora se conservarán hasta la cancelación de la deuda."
+Financiera,Vicerrectoría Administrativa,1200,Tesorería,1252,1250,COMPROBANTES DE PAGO,,X,,1 año,4 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Financiera,Vicerrectoría Administrativa,1200,Contabilidad,1251,1250,COMUNICACIONES,Comunicaciones internas,X,,1 año,2 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Financiera,Vicerrectoría Administrativa,1200,Contabilidad,1251,1250,COMUNICACIONES,Comunicaciones externas,X,,1 año,2 años,,,X,,
+Financiera,Vicerrectoría Administrativa,1200,Tesorería,1252,1250,CONCILIACIÓN  BANCARIA,,X,,1 año,9 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Financiera,Vicerrectoría Administrativa,1200,Contabilidad,1251,1250,ESTADOS FINANCIEROS,,X,,5 años,15 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Financiera,Vicerrectoría Administrativa,1200,Contabilidad,1251,1250,"IMPUESTOS
+*Industria y comercio
+*Predial
+*Retención en la fuente
+*Declaración de renta",,X,,5 años,15 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Financiera,Vicerrectoría Administrativa,1200,Contabilidad,1251,1250,INFORMES,Informes de gestión,,X,1 año,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Financiera,Vicerrectoría Administrativa,1200,Contabilidad,1251,1250,"LIBROS OFICIALES
+*Libro diario
+*Libro de mayor y balances
+*Libro de inventarios",,X,,2 años,18 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Financiera,Vicerrectoría Administrativa,1200,Contabilidad,1251,1250,"MEDIOS MAGNÉTICOS
+*Información exógena, tributaria e industria y comercio",,,X,2 años,3 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Financiera,Vicerrectoría Administrativa,1200,Contabilidad,1251,1250,"MOVIMIENTO CONTABLE
+*Ajustes contables
+*Comprobantes de egreso
+*Notas contables
+*Documento soporte
+*Facturas de compra
+*Recibos de caja menor",,X,,1 año,19 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Financiera,Vicerrectoría Administrativa,1200,Contabilidad,1251,1250,NÓMINA,,X,,2 años,58 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Financiera,Vicerrectoría Administrativa,1200,Contabilidad,1251,1250,PRESUPUESTO GENERAL,,X,,5 años,7 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Financiera,Vicerrectoría Administrativa,1200,Tesorería,1252,1250,RECIBOS DE CAJA,,X,,1 año,4 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Financiera,Vicerrectoría Administrativa,1200,Crédito y Cartera,1253,1250,REGISTROS,Registro cuadre de cartera,X,,1 año,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Financiera,Vicerrectoría Administrativa,1200,Contabilidad,1251,1250,SEGURIDAD SOCIAL,,X,,2 años,58 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Gestión de TIC,Vicerrectoría Administrativa,1200,Gestión de TIC,1260,1260,ACTAS,Actas de reuniones,X,,1 año,3 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Gestión de TIC,Vicerrectoría Administrativa,1200,Gestión de TIC,1260,1260,COMUNICACIONES,Comunicaciones internas,X,,1 año,2 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Gestión de TIC,Vicerrectoría Administrativa,1200,Gestión de TIC,1260,1260,COMUNICACIONES,Comunicaciones externas,X,,1 año,2 años,,,X,,
+Gestión de TIC,Vicerrectoría Administrativa,1200,Gestión de TIC,1260,1260,INFORMES,Informes de gestión,,X,1 año,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Gestión de TIC,Vicerrectoría Administrativa,1200,Gestión de TIC,1260,1260,INFORMES,Informes técnicos,X,,1 año,3 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Gestión de TIC,Vicerrectoría Administrativa,1200,Gestión de TIC,1260,1260,PROYECTOS,Software,X,,1 año,3 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Gestión de TIC,Vicerrectoría Administrativa,1200,Gestión de TIC,1260,1260,PROYECTOS,Intraestructura de T.I,X,,1 año,3 años,,,X,,
+Gestión de TIC,Vicerrectoría Administrativa,1200,Gestión de TIC,1260,1260,REGISTROS,Registro derechos de autor,X,X,5 años,15 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Gestión de TIC,Vicerrectoría Administrativa,1200,Gestión de TIC,1260,1260,REGISTROS,Registro desarrollo y/o mejoramiento de software,X,,5 años,1 año,,,X,,
+Gestión de TIC,Vicerrectoría Administrativa,1200,Gestión de TIC,1260,1260,REGISTROS,Registro manteniniento de T.I,X,,1 año,1 año,,,X,,
+Gestión de TIC,Vicerrectoría Administrativa,1200,Gestión de TIC,1260,1260,REGISTROS,Registro soporte de T.I,X,,1 año,1 año,,,X,,
+Gestión de TIC,Vicerrectoría Administrativa,1200,Gestión de TIC,1260,1260,REGISTROS,Registro soporte del software desarrollado,X,,1 año,1 año,,,X,,
+Gestión Documental,Vicerrectoría Administrativa,1200,Gestión documental,1270,1270,ACTAS,Actas de reuniones,X,,1 año,3 años,,X,,,Cumplido el tiempo de retención se conserva la serie totalmente por poseer valores secundarios para la Institución.
+Gestión Documental,Vicerrectoría Administrativa,1200,Gestión documental,1270,1270,ACTAS,Actas de eliminación de documentos,X,,1 año,5 años,X,,,X,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Gestión Documental,Vicerrectoría Administrativa,1200,Gestión documental,1270,1270,COMUNICACIONES,Comunicaciones internas,X,,1 año,2 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Gestión Documental,Vicerrectoría Administrativa,1200,Gestión documental,1270,1270,COMUNICACIONES,Comunicaciones externas,X,,1 año,2 años,,X,,,
+Gestión Documental,Vicerrectoría Administrativa,1200,Gestión documental,1270,1270,INFORMES,Informes de gestión,,X,1 año,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Gestión Documental,Vicerrectoría Administrativa,1200,Gestión documental,1270,1270,REGISTROS,Registro controles de correspondencia,X,,1 año,2 años,,X,,,"La gestión de este registro, se realiza desde la dependencia de mercadeo. "
+Gestión Documental,Vicerrectoría Administrativa,1200,Gestión documental,1270,1270,REGISTROS,Inventario único documental,X,X,1 año,2 años,,X,,,
+Gestión Documental,Vicerrectoría Administrativa,1200,Gestión documental,1270,1270,REGISTROS,Registro de temperatura y humedad relativa en archivos,X,,1 año,2 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Gestión Documental,Vicerrectoría Administrativa,1200,Gestión documental,1270,1270,REGISTROS,Préstamo y Devolución Documental en Archivos Centrales e Histórico,X,,1 año,2 años,,X,,,
+Formación,Vicerrectoría Académica,1300,Formacion - Vicerrectoría Académica,1300,1300,ACTAS,Actas de consejo académico,X,,3 años,5 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Formación,Vicerrectoría Académica,1300,Formacion - Vicerrectoría Académica,1300,1300,ACTAS,Actas de reuniones,X,,1 año,3 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Formación,Vicerrectoría Académica,1300,Formacion - Vicerrectoría Académica,1300,1300,ACTOS ADMINISTRATIVOS,Acuerdos consejo académico,X,,3 años,10 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Formación,Vicerrectoría Académica,1300,Formacion - Vicerrectoría Académica,1300,1300,COMUNICACIONES,Comunicaciones internas,X,,1 año,2 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Formación,Vicerrectoría Académica,1300,Formacion - Vicerrectoría Académica,1300,1300,COMUNICACIONES,Comunicaciones externas,X,,1 año,2 años,,,X,,
+Formación,Vicerrectoría Académica,1300,Formacion - Vicerrectoría Académica,1300,1300,INFORMES,Informes de gestión,,X,1 año,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Formación,Vicerrectoría Académica,1300,Formacion - Vicerrectoría Académica,1300,1300,REGISTROS,Registro acuerdos pedagógicos,X,,1 año,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Formación,Vicerrectoría Académica,1300,Formacion - Vicerrectoría Académica,1300,1300,REGISTROS,Registro de asistencia,X,,2 años,2 años,,X,,,
+Formación,Vicerrectoría Académica,1300,"Formacion - Direcciones de Unidad:
+-Agronomía, Veterinaria y Afines
+-Económicas, Administrativas y Contables
+-Ingenierías, Arquitectura, Urbanismo y Afines",1311,1311,ACTAS,Actas de reuniones,X,,2 años,3 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Formación,Vicerrectoría Académica,1300,"Formacion - Direcciones de Unidad:
+-Agronomía, Veterinaria y Afines
+-Económicas, Administrativas y Contables
+-Ingenierías, Arquitectura, Urbanismo y Afines",1311,1311,INFORMES,Informes de autoevaluación,,X,10 años,10 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Formación,Vicerrectoría Académica,1300,"Formacion - Direcciones de Unidad:
+-Agronomía, Veterinaria y Afines
+-Económicas, Administrativas y Contables
+-Ingenierías, Arquitectura, Urbanismo y Afines",1311,1311,MODALIDADES DE GRADO,Mejoramiento empresarial,X,,2 años,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Formación,Vicerrectoría Académica,1300,"Formacion - Direcciones de Unidad:
+-Agronomía, Veterinaria y Afines
+-Económicas, Administrativas y Contables
+-Ingenierías, Arquitectura, Urbanismo y Afines",1311,1311,MODALIDADES DE GRADO,Pasantía,X,,2 años,1 año,,X,,,
+Formación,Vicerrectoría Académica,1300,"Formacion - Direcciones de Unidad:
+-Agronomía, Veterinaria y Afines
+-Económicas, Administrativas y Contables
+-Ingenierías, Arquitectura, Urbanismo y Afines",1311,1311,MODALIDADES DE GRADO,Plan de negocios,X,,2 años,1 año,,X,,,
+Formación,Vicerrectoría Académica,1300,"Formacion - Direcciones de Unidad:
+-Agronomía, Veterinaria y Afines
+-Económicas, Administrativas y Contables
+-Ingenierías, Arquitectura, Urbanismo y Afines",1311,1311,MODALIDADES DE GRADO,Trabajo de investigación,X,,2 años,1 año,,X,,,
+Formación,Vicerrectoría Académica,1300,"Formacion - Direcciones de Unidad:
+-Agronomía, Veterinaria y Afines
+-Económicas, Administrativas y Contables
+-Ingenierías, Arquitectura, Urbanismo y Afines",1311,1311,MODALIDADES DE GRADO,Proyecto integrador,X,,2 años,1 año,,X,,,
+Formación,Vicerrectoría Académica,1300,"Formacion - Direcciones de Unidad:
+-Agronomía, Veterinaria y Afines
+-Económicas, Administrativas y Contables
+-Ingenierías, Arquitectura, Urbanismo y Afines",1311,1311,MODALIDADES DE GRADO,Recepción opciones de grado,X,,2 años,1 año,,X,,,
+Formación,Vicerrectoría Académica,1300,"Formacion - Direcciones de Unidad:
+-Agronomía, Veterinaria y Afines
+-Económicas, Administrativas y Contables
+-Ingenierías, Arquitectura, Urbanismo y Afines",1311,1311,MODALIDADES DE GRADO,Seminario de grado,X,,2 años,1 año,,X,,,
+Formación,Vicerrectoría Académica,1300,"Dirección Unidad Económicas, Administrativas y Contables",1313,1313,ACTAS,Actas de reuniones,X,,1 año,3 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Formación,Vicerrectoría Académica,1300,"Dirección Unidad Económicas, Administrativas y Contables",1313,1313,MODALIDADES DE GRADO,Mejoramiento empresarial,X,,2 años,3 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Formación,Vicerrectoría Académica,1300,"Dirección Unidad Económicas, Administrativas y Contables",1313,1313,MODALIDADES DE GRADO,Pasantía,X,,2 años,3 años,,X,,,
+Formación,Vicerrectoría Académica,1300,"Dirección Unidad Económicas, Administrativas y Contables",1313,1313,MODALIDADES DE GRADO,Plan de negocios,X,,2 años,3 años,,X,,,
+Formación,Vicerrectoría Académica,1300,"Dirección Unidad Económicas, Administrativas y Contables",1313,1313,MODALIDADES DE GRADO,Proyecto de investigación,X,,2 años,3 años,,X,,,
+Formación,Vicerrectoría Académica,1300,"Dirección Unidad Económicas, Administrativas y Contables",1313,1313,MODALIDADES DE GRADO,Recepción opciones de grado,X,,2 años,3 años,,X,,,
+Formación,Vicerrectoría Académica,1300,"Dirección Unidad Económicas, Administrativas y Contables",1313,1313,MODALIDADES DE GRADO,Seminario de grado,X,,2 años,3 años,,X,,,
+Formación,Vicerrectoría Académica,1300,"Dirección Unidad de Ingenierías, Arquitectura, Urbanismo y Afines",1316,1316,ACTAS,Actas de reuniones,X,,1 año,3 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Formación,Vicerrectoría Académica,1300,"Dirección Unidad de Ingenierías, Arquitectura, Urbanismo y Afines",1316,1316,MODALIDADES DE GRADO,Mejoramiento empresarial,X,,2 años,3 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Formación,Vicerrectoría Académica,1300,"Dirección Unidad de Ingenierías, Arquitectura, Urbanismo y Afines",1316,1316,MODALIDADES DE GRADO,Pasantía,X,,2 años,3 años,,X,,,
+Formación,Vicerrectoría Académica,1300,"Dirección Unidad de Ingenierías, Arquitectura, Urbanismo y Afines",1316,1316,MODALIDADES DE GRADO,Plan de negocios,X,,2 años,3 años,,X,,,
+Formación,Vicerrectoría Académica,1300,"Dirección Unidad de Ingenierías, Arquitectura, Urbanismo y Afines",1316,1316,MODALIDADES DE GRADO,Proyecto integrador,X,,2 años,3 años,,X,,,
+Formación,Vicerrectoría Académica,1300,"Dirección Unidad de Ingenierías, Arquitectura, Urbanismo y Afines",1316,1316,MODALIDADES DE GRADO,Proyecto de investigación,X,,2 años,3 años,,X,,,
+Formación,Vicerrectoría Académica,1300,"Dirección Unidad de Ingenierías, Arquitectura, Urbanismo y Afines",1316,1316,MODALIDADES DE GRADO,Recepción opciones de grado,X,,2 años,3 años,,X,,,
+Formación,Vicerrectoría Académica,1300,"Dirección Unidad de Ingenierías, Arquitectura, Urbanismo y Afines",1316,1316,MODALIDADES DE GRADO,Seminario de grado,X,,2 años,3 años,,X,,,
+Formación,Vicerrectoría Académica,1300,Formacion - CEAD,1314,1314,ACTAS,Actas de reuniones,X,,2 años,3 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Formación,Vicerrectoría Académica,1300,Formacion - CEAD,1314,1314,CONVENIOS,Convenios con IES,X,,10 años,5 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Formación,Vicerrectoría Académica,1300,Formacion - CEAD,1314,1314,MODALIDADES DE GRADO,Proyecto de grado,X,,2 años,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Formación,Vicerrectoría Académica,1300,Formacion - CEAD,1314,1314,MODALIDADES DE GRADO,Recepción opciones de grado,X,,2 años,1 año,,X,,,
+Formación,Vicerrectoría Académica,1300,Formacion - CEAD,1314,1314,MODALIDADES DE GRADO,Seminario de grado,X,,2 años,1 año,,X,,,
+Formación,Vicerrectoría Académica,1300,Formacion - CETDH,1317,1317,CALIFICACIONES,,X,,1 año,5 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Formación,Vicerrectoría Académica,1300,Formacion - CETDH,1317,1317,HISTORIAS,"Historias Académicas CETDH
+*Formulario de Inscripción
+*Fotocopia del documento de identidad
+*Acta de grado de bachiller, copia de diploma de bachiller o Acta de certificado de Educación Básica Secundaria
+*Acta práctica etapa productiva
+*Matrículas
+*Pensum académico
+*Tabulados de nota",X,,5 años,80 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Investigación,Vicerrectoría Académica,1300,Investigación,1320,1320,ACTAS,Actas comité de investigaciones,X,,5 años,3 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Investigación,Vicerrectoría Académica,1300,Investigación,1320,1320,ACTAS,Actas de núcleo de investigación,X,,2 años,3 años,,,X,,
+Investigación,Vicerrectoría Académica,1300,Investigación,1320,1320,ACTAS,Actas de reuniones,X,,2 años,3 años,,,X,,
+Investigación,Vicerrectoría Académica,1300,Investigación,1320,1320,"CAPACITACIONES
+*Informe capacitaciones
+*Asistencia",,X,,2 años,7 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Investigación,Vicerrectoría Académica,1300,Investigación,1320,1320,COMUNICACIONES,Comunicaciones internas,X,,1 año,2 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Investigación,Vicerrectoría Académica,1300,Investigación,1320,1320,COMUNICACIONES,Comunicaciones externas,X,,1 año,2 años,,,X,,
+Investigación,Vicerrectoría Académica,1300,Investigación,1320,1320,"EVENTOS
+*Informe
+*Asistencia",,X,,1 año,7 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Investigación,Vicerrectoría Académica,1300,Investigación,1320,1320,"GRUPOS DE INVESTIGACIÓN
+*Inscripción grupo de investigación
+*Inscripción integrantes grupo de investigación
+*Actas",,X,,7 años,7 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Investigación,Vicerrectoría Académica,1300,Investigación,1320,1320,INFORMES,Informes de gestión,,X,1 año,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Investigación,Vicerrectoría Académica,1300,Investigación,1320,1320,"PROGRAMAS Y PROYECTOS
+*Plan de trabajo
+*Actas de reunión
+*Comunicaciones",,X,,7 años,7 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Investigación,Vicerrectoría Académica,1300,Investigación,1320,1320,"REDES DE APOYO
+*Informes",,X,,2 años,7 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Investigación,Vicerrectoría Académica,1300,Investigación,1320,1320,"SEMILLEROS DE INVESTIGACIÓN
+*Asistencia convocatoria
+*Inscripción semillero
+*Inscripción integrante
+*Actas
+*Certificados participación encuentros",,X,,7 años,7 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Investigación,Vicerrectoría Académica,1300,Investigación,1320,1320,"UNIDAD DE INNOVACIÓN Y DESARROLLO
+*Actas de inicio y finalización
+*Lista de verificación
+*Actas de reunión y asesorías
+*Planes",,X,,7 años,7 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Bienestar Institucional,Vicerrectoría Académica,1300,Bienestar institucional,1330,1330,ACTAS,Actas comité de becas,X,,7 años,3 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Bienestar Institucional,Vicerrectoría Académica,1300,Bienestar institucional,1330,1330,ACTAS,Actas de reuniones,X,,7 años,3 años,,,X,,
+Bienestar Institucional,Vicerrectoría Académica,1300,Bienestar institucional,1330,1330,COMUNICACIONES,Comunicaciones internas,X,,1 año,2 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Bienestar Institucional,Vicerrectoría Académica,1300,Bienestar institucional,1330,1330,COMUNICACIONES,Comunicaciones externas,X,,1 año,2 años,,,X,,
+Bienestar Institucional,Vicerrectoría Académica,1300,Bienestar institucional,1330,1330,CONVENIOS,Convenio específico,X,,5 años,1 año,,,X,,"Cumplido el tiempo de retención en el archivo de gestión, se seleccionan los convenios que ya no se encuentran activos y se realiza transferencia al archivo central para su conservación en el tiempo establecido."
+Bienestar Institucional,Vicerrectoría Académica,1300,Bienestar institucional,1330,1330,ESTADÍSTICAS,Consolidado de estadísticas servicios de bienestar Institucional,,X,7 años,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Bienestar Institucional,Vicerrectoría Académica,1300,Bienestar institucional,1330,1330,HISTORIAS,Historias de servicios asistenciales,X,,5 años,15 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Bienestar Institucional,Vicerrectoría Académica,1300,Bienestar institucional,1330,1330,INFORMES,Informe de actividades,X,X,7 años,1 año,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Bienestar Institucional,Vicerrectoría Académica,1300,Bienestar institucional,1330,1330,INFORMES,Informe de permanencia estudiantil,X,,7 años,1 año,,,X,,
+Bienestar Institucional,Vicerrectoría Académica,1300,Bienestar institucional,1330,1330,INFORMES,Informe estudios de egresados,,X,7 años,1 año,,,X,,
+Bienestar Institucional,Vicerrectoría Académica,1300,Bienestar institucional,1330,1330,INFORMES,Informe seguimiento a egresados,,X,7 años,1 año,,,X,,
+Bienestar Institucional,Vicerrectoría Académica,1300,Bienestar institucional,1330,1330,INFORMES,Informes de gestión,,X,1 año,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Relación con el Sector Externo,Vicerrectoría Académica,1300,Relación con el sector externo,1340,1340,ACTAS,Actas de reuniones Extensión,X,,7 años,3 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Relación con el Sector Externo,Vicerrectoría Académica,1300,Relación con el sector externo,1340,1340,ACTAS,Actas de reuniones Internacionalización,X,,7 años,3 años,,X,,,
+Relación con el Sector Externo,Vicerrectoría Académica,1300,Relación con el sector externo,1340,1340,ACTAS,Actas de reuniones Proyección Social,X,,7 años,3 años,,X,,,
+Relación con el Sector Externo,Vicerrectoría Académica,1300,Relación con el sector externo,1340,1340,COMUNICACIONES,Comunicaciones internas,X,,1 año,2 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que serán eliminados
+Relación con el Sector Externo,Vicerrectoría Académica,1300,Relación con el sector externo,1340,1340,COMUNICACIONES,Comunicaciones externas,X,,1 año,2 años,,,X,,
+Relación con el Sector Externo,Vicerrectoría Académica,1300,Relación con el sector externo,1340,1340,CONVENIOS,Convenio específico,X,,5 años,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Relación con el Sector Externo,Vicerrectoría Académica,1300,Relación con el sector externo,1340,1340,CONVENIOS,Convenio marco,X,,5 años,1 año,,X,,,
+Relación con el Sector Externo,Vicerrectoría Académica,1300,Relación con el sector externo,1340,1340,INFORMES,Informe de comisión,,X,7 años,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Relación con el Sector Externo,Vicerrectoría Académica,1300,Relación con el sector externo,1340,1340,INFORMES,Informes de gestión,,X,1 año,1 año,,X,,,
+Relación con el Sector Externo,Vicerrectoría Académica,1300,Relación con el sector externo,1340,1340,PROYECTOS,Proyectos de extensión universitaria y educación continuada,,X,7 años,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Relación con el Sector Externo,Vicerrectoría Académica,1300,Relación con el sector externo,1340,1340,PROYECTOS,Proyectos de internacionalización,,X,7 años,1 año,,X,,,
+Relación con el Sector Externo,Vicerrectoría Académica,1300,Relación con el sector externo,1340,1340,PROYECTOS,Proyectos de proyección social y responsabilidad social universitaria,,X,7 años,1 año,,X,,,
+Relación con el Sector Externo,Vicerrectoría Académica,1300,Relación con el sector externo,1340,1340,REGISTROS,Registro de certificaciones,,X,7 años,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Formación,Vicerrectoría Académica,1300,Formacion - Registro y control académico,1350,1350,ACTAS,Actas de entrega de diplomas,X,,20 años,20 años,X,,,X,Cumplido el tiempo de retención se conserva la serie totalmente por poseer valores secundarios para la Institución.
+Formación,Vicerrectoría Académica,1300,Formacion - Registro y control académico,1350,1350,ACTAS,Actas de grado,X,,20 años,20 años,X,,,X,
+Formación,Vicerrectoría Académica,1300,Formacion - Registro y control académico,1350,1350,Estado de estudiantes por periodo académico.,,,X,20 años,80 años,X,,,X,Cumplido el tiempo de retención se conserva la serie totalmente por poseer valores secundarios para la Institución.
+Formación,Vicerrectoría Académica,1300,Formacion - Registro y control académico,1350,1350,Exámenes opcionales,,,X,5 años,5 años,X,,,X,
+Formación,Vicerrectoría Académica,1300,Formacion - Registro y control académico,1350,1350,Habilitaciones,,,X,5 años,5 años,X,,,X,
+Formación,Vicerrectoría Académica,1300,Formacion - Registro y control académico,1350,1350,Inscripciones,,,X,20 años,20 años,X,,,X,
+Formación,Vicerrectoría Académica,1300,Formacion - Registro y control académico,1350,1350,Seguimiento trámites académicos,,,X,5 años,5 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que  serán eliminados
+Formación,Vicerrectoría Académica,1300,Formacion - Registro y control académico,1350,1350,CORRECCIONES DE NOTAS,,X,,1 año,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Formación,Vicerrectoría Académica,1300,Formacion - Registro y control académico,1350,1350,FICHAS DE DESERCIÓN,,,X,5 años,5 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que  serán eliminados
+Formación,Vicerrectoría Académica,1300,Formacion - Registro y control académico,1350,1350,HISTORIAS,"Historias académicas
+*Formulario de inscripción
+*Fotocopia del documento de identidad
+*Prueba de Estado Saber 11
+*Acta de grado de bachiller o copia de diploma de bachiller o Acta de certificado de Educación Básica Secundaria para programas Técnicos profesionales
+*Matrículas
+*Acta de sustentación trabajo de grado
+*Pruebas saber Pro - Pruebas Saber TyT
+*Acta de grado de Título de Educación Superior (solo para graduados)
+*Plan de Estudios
+*Tabulados de notas
+*Sanciones",X,,7 años,80 años,,,X,X,"
+En caso que el estudiante no renueve su matricula se convierte en desertor y se traslada historia académica al archivo central con la totalidad de los documentos que conforman su historia académica conservandolos según el tiempo establecido en la TRD. 
+Para graduados se realiza selección de documentos, eliminanado examen médico general, contenidos programáticos (en caso de homologaciones), soportes de pruebas académicas y comunicaciones."
+Formación,Vicerrectoría Académica,1300,Formacion - Registro y control académico,1350,1350,REGISTROS,Registro de notas,,X,5 años,5 años,X,,,X,Cumplido el tiempo de retención se conserva la serie totalmente por poseer valores secundarios para la Institución.
+Medios Educativos,Vicerrectoría Académica,1300,Medios Educativos - Biblioteca,1360,1360,ACTAS,Actas de baja de material bibliográfico,X,,1 año,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Medios Educativos,Vicerrectoría Académica,1300,Medios Educativos - Biblioteca,1360,1360,ESTADÍSTICAS,Consolidado de estadísticas servicios de la biblioteca,,X,7 años,3 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Medios Educativos,Vicerrectoría Académica,1300,Medios Educativos - Biblioteca,1360,1360,INFORMES,Informes de gestión,,X,1 año,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Medios Educativos,Vicerrectoría Académica,1300,Medios Educativos - Biblioteca,1360,1360,REGISTROS,Planilla de registro inventario y catalogación de material bibliográfico,,X,1 año,1 año,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que  serán eliminados
+Medios Educativos,Vicerrectoría Académica,1300,Medios Educativos - Biblioteca,1360,1360,REGISTROS,Planilla de registro préstamo material bibliográfico,X,,1 año,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Medios Educativos,Vicerrectoría Académica,1300,Medios Educativos - Biblioteca,1360,1360,REGISTROS,Planilla de registro uso de biblioteca virtual,X,,1 año,1 año,,X,,,
+Medios Educativos,Vicerrectoría Académica,1300,Medios Educativos - Biblioteca,1360,1360,REGISTROS,Planilla de Registro uso Servicios de Biblioteca,X,,1 año,1 año,,X,,,
+Medios Educativos,Vicerrectoría Académica,1300,Medios Educativos - Biblioteca,1360,1360,REGISTROS,Recomendación bibliográfica,,X,1 año,1 año,,X,,,
+Medios Educativos,Vicerrectoría Académica,1300,Medios Educativos - Laboratorios,1370,1370,ACTAS,Actas de reuniones,X,,1 año,3 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Medios Educativos,Vicerrectoría Académica,1300,Medios Educativos - Laboratorios,1370,1370,COMUNICACIONES,Comunicaciones internas,X,,1 año,2 años,,,X,,Cumplido el tiempo de retención se seleccionan los documentos que deben ser conservados de aquellos que  serán eliminados
+Medios Educativos,Vicerrectoría Académica,1300,Medios Educativos - Laboratorios,1370,1370,COMUNICACIONES,Comunicaciones externas,X,,1 año,2 años,,,X,,
+Medios Educativos,Vicerrectoría Académica,1300,Medios Educativos - Laboratorios,1370,1370,ESTADÍSTICAS,Consolidado estadístico uso de laboratorios y auditorios,,X,7 años,3 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Medios Educativos,Vicerrectoría Académica,1300,Medios Educativos - Laboratorios,1370,1370,INFORMES,Informe de gestión,,X,1 año,1 año,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Medios Educativos,Vicerrectoría Académica,1300,Medios Educativos - Laboratorios,1370,1370,REGISTROS,Registro calendario de mantenimiento de equipos de cómputo,,X,1 año,3 años,,X,,,Cumplido el tiempo de retención se elimina la serie documental por perder sus valores primarios y carecer de valores secundarios para la Institución
+Medios Educativos,Vicerrectoría Académica,1300,Medios Educativos - Laboratorios,1370,1370,REGISTROS,Registro uso de espacios académicos,,X,1 año,3 años,,X,,,

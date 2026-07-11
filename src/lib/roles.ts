@@ -27,3 +27,13 @@ export function roleLabel(role: string | null | undefined): string {
   }
   return "Sin rol asignado";
 }
+
+/** ¿El rol administra la TRD y el catálogo archivístico? (super_admin o admin_archivo) */
+export function isArchivoAdmin(role: string | null | undefined): boolean {
+  return role === "super_admin" || role === "admin_archivo";
+}
+
+/** ¿El rol es el super administrador global? */
+export function isSuperAdmin(role: string | null | undefined): boolean {
+  return role === "super_admin";
+}

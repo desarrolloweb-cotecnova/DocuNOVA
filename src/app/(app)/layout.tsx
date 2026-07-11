@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isAllowedEmail } from "@/lib/auth/domain";
+import { activationRedirect } from "@/lib/auth/activation";
 import { AppShell } from "@/components/app-shell";
 
 /**
@@ -8,6 +9,7 @@ import { AppShell } from "@/components/app-shell";
  *  1. Sesión válida (si no, a /login).
  *  2. Dominio institucional (si no, cerrar sesión).
  *  3. Segundo factor verificado — aal2 (si no, a /mfa/enroll o /mfa/verify).
+ *  4. Cuenta activa (si no, a /pendiente).
  */
 export default async function AppLayout({
   children,
@@ -33,9 +35,15 @@ export default async function AppLayout({
   // Perfil (puede no existir todavía si la migración no se ha aplicado).
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, role")
+    .select("full_name, role, is_active")
     .eq("id", user.id)
     .maybeSingle();
+
+  // Cuenta pendiente de aprobación -> pantalla informativa.
+  const pending = activationRedirect(
+    profile ? { is_active: profile.is_active } : null,
+  );
+  if (pending) redirect(pending);
 
   return (
     <AppShell

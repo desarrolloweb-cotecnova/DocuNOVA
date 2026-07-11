@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogOut } from "lucide-react";
-import { NAV_ITEMS } from "@/lib/navigation";
+import { navItemsForRole } from "@/lib/navigation";
 import { roleLabel } from "@/lib/roles";
 import { APP_NAME } from "@/lib/config";
 import { cn } from "@/lib/utils";
@@ -20,6 +20,7 @@ export function AppShell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const navItems = navItemsForRole(role);
 
   return (
     <div className="flex min-h-full flex-1">
@@ -29,7 +30,7 @@ export function AppShell({
           <span className="text-lg font-semibold">{APP_NAME}</span>
         </div>
         <nav className="flex-1 space-y-1 p-3">
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const active =
               pathname === item.href || pathname.startsWith(`${item.href}/`);
             const Icon = item.icon;
