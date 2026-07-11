@@ -23,7 +23,8 @@ begin
     select unnest(array[
       'profiles','ejes','macroprocesos','procesos','oficinas_productoras',
       'series','subseries','usuarios_semilla','datos_sensibles',
-      'expedientes','documentos'
+      'expedientes','documentos',
+      'aprobacion_solicitudes','aprobacion_pasos','firmas','auditoria'
     ])
   loop
     if not exists (
@@ -63,7 +64,16 @@ begin
     raise exception 'Falta política SELECT en datos_sensibles';
   end if;
 
-  raise notice 'PARTE A: OK — RLS habilitada, activación por defecto e independencia de la cédula verificadas.';
+  -- A.5 Bitácora y firmas son append-only: authenticated NO tiene UPDATE/DELETE.
+  if exists (
+    select 1 from information_schema.role_table_grants
+    where table_schema='public' and table_name in ('auditoria','firmas')
+      and grantee = 'authenticated' and privilege_type in ('UPDATE','DELETE')
+  ) then
+    raise exception 'auditoria/firmas NO deben permitir UPDATE/DELETE (append-only)';
+  end if;
+
+  raise notice 'PARTE A: OK — RLS habilitada, activación por defecto, cédula aislada y bitácora append-only verificadas.';
 end $$;
 
 -- Conteos del catálogo importado (deben coincidir con la semilla).
@@ -138,4 +148,26 @@ end $$;
 -- Verificación de búsqueda de texto (documentos electrónicos):
 --   select titulo from public.documentos
 --   where busqueda @@ websearch_to_tsquery('spanish', 'acta de grado');
+-- -----------------------------------------------------------------------------
+
+-- -----------------------------------------------------------------------------
+-- PARTE D — Aprobación y firma electrónica (GUÍA MANUAL)
+--
+-- Objetivo (prompt §4 y §7): flujo de aprobación en secuencia, firma electrónica
+-- simple con hash + IP, y bitácora append-only.
+--
+--   -- Iniciar un flujo (como quien puede escribir en el proceso del documento):
+--   select public.crear_solicitud(
+--     '<DOCUMENTO>', array['<APROBADOR_1>','<APROBADOR_2>']::uuid[], '10.0.0.1');
+--
+--   -- Un usuario que NO es el aprobador en turno no puede decidir:
+--   --   select public.decidir_paso('<PASO>', 'aprobado');  --> ERROR
+--
+--   -- El aprobador en turno aprueba -> se registra una fila en public.firmas
+--   -- con hash_documento, ip y rol_snapshot; el flujo avanza al siguiente paso.
+--   -- Al aprobar el último paso, la solicitud queda 'aprobado'.
+--
+--   -- La bitácora registra cada acción y NO admite edición:
+--   select accion, entidad_tipo, created_at from public.auditoria order by created_at desc;
+--   --   update public.auditoria set accion='x';   --> ERROR (append-only)
 -- -----------------------------------------------------------------------------

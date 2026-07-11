@@ -116,7 +116,7 @@ export default async function DocumentosPage({
             {resultados.map((r) => (
               <li key={r.id} className="rounded-lg border bg-card p-4">
                 <Link
-                  href={`/expedientes/${r.expediente_id}`}
+                  href={`/documentos/${r.id}`}
                   className="font-medium text-primary hover:underline"
                 >
                   {r.titulo}

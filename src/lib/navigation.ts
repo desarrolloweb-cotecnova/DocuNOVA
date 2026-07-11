@@ -2,6 +2,7 @@ import {
   LayoutDashboard,
   FolderArchive,
   FileStack,
+  ClipboardCheck,
   ListTree,
   Settings,
   type LucideIcon,
@@ -27,6 +28,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Panel", icon: LayoutDashboard },
   { href: "/expedientes", label: "Expedientes", icon: FolderArchive },
   { href: "/documentos", label: "Buscar documentos", icon: FileStack },
+  { href: "/aprobaciones", label: "Aprobaciones", icon: ClipboardCheck },
   { href: "/trd", label: "Tablas de Retención (TRD)", icon: ListTree },
   {
     href: "/admin",

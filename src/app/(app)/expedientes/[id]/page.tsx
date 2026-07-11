@@ -98,7 +98,12 @@ export default async function ExpedienteDetallePage({
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium">{d.titulo}</p>
+                    <Link
+                      href={`/documentos/${d.id}`}
+                      className="font-medium text-primary hover:underline"
+                    >
+                      {d.titulo}
+                    </Link>
                     <p className="text-xs text-muted-foreground">
                       {tipoDocumentoLabel(d.tipo)}
                       {d.fecha_documento ? ` · ${d.fecha_documento}` : ""}
