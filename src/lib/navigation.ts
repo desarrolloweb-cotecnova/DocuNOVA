@@ -25,13 +25,8 @@ export type NavItem = {
  */
 export const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Panel", icon: LayoutDashboard },
-  {
-    href: "/expedientes",
-    label: "Expedientes",
-    icon: FolderArchive,
-    disabled: true,
-  },
-  { href: "/documentos", label: "Documentos", icon: FileStack, disabled: true },
+  { href: "/expedientes", label: "Expedientes", icon: FolderArchive },
+  { href: "/documentos", label: "Buscar documentos", icon: FileStack },
   { href: "/trd", label: "Tablas de Retención (TRD)", icon: ListTree },
   {
     href: "/admin",

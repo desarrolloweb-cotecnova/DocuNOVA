@@ -22,7 +22,8 @@ begin
   for t in
     select unnest(array[
       'profiles','ejes','macroprocesos','procesos','oficinas_productoras',
-      'series','subseries','usuarios_semilla','datos_sensibles'
+      'series','subseries','usuarios_semilla','datos_sensibles',
+      'expedientes','documentos'
     ])
   loop
     if not exists (
@@ -110,4 +111,31 @@ end $$;
 --   (b) Solo el super admin (o el dueño) puede leer datos_sensibles.
 --   (c) Un usuario no super_admin no puede cambiar su propio rol/is_active
 --       (lo impide el trigger protect_profile_privileges).
+-- -----------------------------------------------------------------------------
+
+-- -----------------------------------------------------------------------------
+-- PARTE C — Aislamiento por proceso en Expedientes/Documentos (GUÍA MANUAL)
+--
+-- Objetivo (prompt, arnés a): un usuario del Proceso X no puede LEER ni ESCRIBIR
+-- expedientes/documentos del Proceso Y.
+--
+--   set local role authenticated;
+--   set local request.jwt.claims = '{"sub":"<UUID_FUNCIONARIO_X>","role":"authenticated"}';
+--
+--   -- Lectura: solo expedientes de su proceso.
+--   select titulo, proceso_id from public.expedientes;   --> solo Proceso X
+--
+--   -- Escritura cruzada: intentar crear un expediente clasificado en una
+--   -- subserie del Proceso Y debe fallar por la política can_write_proceso:
+--   insert into public.expedientes (titulo, subserie_id)
+--   values ('prueba', '<SUBSERIE_DE_OTRO_PROCESO>');     --> ERROR de RLS
+--
+--   -- El rol 'consulta' nunca puede escribir (solo select):
+--   --   insert ... --> ERROR de RLS  (can_write_proceso excluye a 'consulta')
+--
+--   reset role;
+--
+-- Verificación de búsqueda de texto (documentos electrónicos):
+--   select titulo from public.documentos
+--   where busqueda @@ websearch_to_tsquery('spanish', 'acta de grado');
 -- -----------------------------------------------------------------------------
