@@ -3,6 +3,7 @@ import {
   FolderArchive,
   FileStack,
   ClipboardCheck,
+  Bell,
   ListTree,
   Settings,
   type LucideIcon,
@@ -29,6 +30,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/expedientes", label: "Expedientes", icon: FolderArchive },
   { href: "/documentos", label: "Buscar documentos", icon: FileStack },
   { href: "/aprobaciones", label: "Aprobaciones", icon: ClipboardCheck },
+  { href: "/notificaciones", label: "Notificaciones", icon: Bell },
   { href: "/trd", label: "Tablas de Retención (TRD)", icon: ListTree },
   {
     href: "/admin",

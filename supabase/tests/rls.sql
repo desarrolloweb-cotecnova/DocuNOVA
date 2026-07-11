@@ -24,7 +24,8 @@ begin
       'profiles','ejes','macroprocesos','procesos','oficinas_productoras',
       'series','subseries','usuarios_semilla','datos_sensibles',
       'expedientes','documentos',
-      'aprobacion_solicitudes','aprobacion_pasos','firmas','auditoria'
+      'aprobacion_solicitudes','aprobacion_pasos','firmas','auditoria',
+      'notificaciones'
     ])
   loop
     if not exists (
