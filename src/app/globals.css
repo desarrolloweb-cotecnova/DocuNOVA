@@ -5,61 +5,69 @@
 
 /*
   Sistema de diseño de DocuNOVA (basado en shadcn/ui para Tailwind v4).
-  Los colores se definen con oklch y se exponen como variables de tema.
-  La paleta primaria (azul institucional) puede ajustarse aquí sin tocar componentes.
+  Identidad institucional de Cotecnova:
+    - Primario  (verde):   #00602F
+    - Secundario (naranja): #EE7117
+    - Terciario  (gris):    #525252
+    - Fondo: blanco
+  Los tokens se ajustan aquí sin tocar componentes.
 */
 
 :root {
   --radius: 0.625rem;
 
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
+  --background: #ffffff;
+  --foreground: #16211a;
+  --card: #ffffff;
+  --card-foreground: #16211a;
+  --popover: #ffffff;
+  --popover-foreground: #16211a;
 
-  /* Azul institucional Cotecnova (placeholder, ajustable) */
-  --primary: oklch(0.48 0.18 258);
-  --primary-foreground: oklch(0.985 0 0);
+  /* Verde institucional Cotecnova */
+  --primary: #00602f;
+  --primary-foreground: #ffffff;
 
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
+  /* Naranja institucional Cotecnova */
+  --secondary: #ee7117;
+  --secondary-foreground: #ffffff;
 
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.48 0.18 258);
+  --muted: #f0f4f1;
+  --muted-foreground: #5b6b60;
+  --accent: #e8f2ec;
+  --accent-foreground: #00522a;
+  --destructive: #c02a1c;
+  --destructive-foreground: #ffffff;
+
+  --border: #dde5df;
+  --input: #dde5df;
+  --ring: #00602f;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
+  --background: #0c130e;
+  --foreground: #e7efe9;
+  --card: #121b15;
+  --card-foreground: #e7efe9;
+  --popover: #121b15;
+  --popover-foreground: #e7efe9;
 
-  --primary: oklch(0.65 0.16 258);
-  --primary-foreground: oklch(0.145 0 0);
+  /* Verde aclarado para contraste sobre fondo oscuro */
+  --primary: #3fae70;
+  --primary-foreground: #06130b;
 
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.985 0 0);
+  --secondary: #f2882e;
+  --secondary-foreground: #1a1206;
 
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.65 0.16 258);
+  --muted: #17241b;
+  --muted-foreground: #9db0a3;
+  --accent: #17241b;
+  --accent-foreground: #e7efe9;
+  --destructive: #e5534b;
+  --destructive-foreground: #0c130e;
+
+  --border: #223129;
+  --input: #26362c;
+  --ring: #3fae70;
 }
 
 @theme inline {

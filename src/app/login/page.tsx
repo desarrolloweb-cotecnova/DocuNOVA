@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
+import { LogoFull } from "@/components/brand/logo";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { ALLOWED_EMAIL_DOMAIN, APP_NAME } from "@/lib/config";
 
@@ -29,8 +29,8 @@ export default async function LoginPage({
   return (
     <main className="flex flex-1 items-center justify-center bg-muted/40 p-6">
       <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">{APP_NAME}</CardTitle>
+        <CardHeader className="items-center text-center">
+          <LogoFull className="mb-1" />
           <CardDescription>
             Sistema de Gestión Documental de Cotecnova.
             <br />

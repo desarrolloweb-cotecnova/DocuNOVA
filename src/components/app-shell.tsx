@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { navItemsForRole } from "@/lib/navigation";
 import { roleLabel } from "@/lib/roles";
-import { APP_NAME } from "@/lib/config";
+import { LogoFull, LogoMark } from "@/components/brand/logo";
 import { cn } from "@/lib/utils";
 
 export function AppShell({
@@ -26,8 +26,8 @@ export function AppShell({
     <div className="flex min-h-full flex-1">
       {/* Barra lateral */}
       <aside className="hidden w-64 flex-col border-r bg-card md:flex">
-        <div className="flex h-16 items-center border-b px-6">
-          <span className="text-lg font-semibold">{APP_NAME}</span>
+        <div className="flex h-16 items-center border-b px-5">
+          <LogoFull />
         </div>
         <nav className="flex-1 space-y-1 p-3">
           {navItems.map((item) => {
@@ -71,7 +71,13 @@ export function AppShell({
       {/* Contenido */}
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-16 items-center justify-between gap-4 border-b bg-card px-4 md:px-6">
-          <span className="font-semibold md:hidden">{APP_NAME}</span>
+          <span className="flex items-center gap-2 md:hidden">
+            <LogoMark className="size-7" />
+            <span className="font-extrabold tracking-tight">
+              <span className="text-primary">Docu</span>
+              <span style={{ color: "#EE7117" }}>NOVA</span>
+            </span>
+          </span>
           <div className="ml-auto flex items-center gap-4">
             <div className="text-right leading-tight">
               <p className="text-sm font-medium">{fullName ?? email}</p>
