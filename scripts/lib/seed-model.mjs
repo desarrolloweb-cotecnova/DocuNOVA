@@ -93,10 +93,17 @@ export function buildModel(trdText, usuariosText) {
       });
     }
     orden += 1;
+    // Algunas filas de la TRD no tienen subserie: la retención está a nivel de
+    // serie. En ese caso, el nombre de la subserie es la primera línea de la
+    // serie (nunca vacío, pues la columna es obligatoria).
+    const nombreSubserie =
+      (r.Subserie_TipoDocumental ?? "").trim() ||
+      (r.Serie ?? "").split("\n")[0].trim() ||
+      "(Serie completa)";
     subseries.push({
       id: uuidFor("subserie", `${serieKey}|${orden}`),
       serie_id: seriesMap.get(serieKey).id,
-      nombre: r.Subserie_TipoDocumental,
+      nombre: nombreSubserie,
       soporte_fisico: xToBool(r.Soporte_Fisico),
       soporte_electronico: xToBool(r.Soporte_Electronico),
       retencion_gestion: r.Retencion_ArchivoGestion,
