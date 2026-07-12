@@ -3,34 +3,21 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { HelpCircle, Bell, LogOut, User } from "lucide-react";
+import { HelpCircle, LogOut, User, ShieldCheck } from "lucide-react";
 import { roleLabel } from "@/lib/roles";
 import { ayudaParaRuta } from "@/lib/help";
-import { tipoNotificacionLabel, notificacionHref } from "@/lib/notificaciones";
 import { cn } from "@/lib/utils";
-
-type NotifItem = {
-  id: string;
-  asunto: string;
-  tipo: string;
-  leida: boolean;
-  created_at: string;
-  entidad_tipo: string | null;
-  entidad_id: string | null;
-};
 
 export type TopbarProps = {
   email: string;
   fullName: string | null;
   role: string | null;
-  procesoNombre: string | null;
+  unidadNombre: string | null;
   oficinaLabel: string | null;
   avatarUrl: string | null;
-  notificaciones: NotifItem[];
-  noLeidas: number;
 };
 
-type Menu = "ayuda" | "notifs" | "perfil" | null;
+type Menu = "ayuda" | "perfil" | null;
 
 export function Topbar(props: TopbarProps) {
   const [menu, setMenu] = useState<Menu>(null);
@@ -39,7 +26,7 @@ export function Topbar(props: TopbarProps) {
   const ayuda = ayudaParaRuta(pathname);
   const nombre = props.fullName ?? props.email;
 
-  // Cerrar al hacer clic fuera o al cambiar de ruta.
+  // Cerrar al hacer clic fuera.
   useEffect(() => {
     function onDown(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) setMenu(null);
@@ -77,68 +64,6 @@ export function Topbar(props: TopbarProps) {
         )}
       </div>
 
-      {/* Notificaciones */}
-      <div className="relative">
-        <IconButton
-          label="Notificaciones"
-          active={menu === "notifs"}
-          onClick={() => toggle("notifs")}
-        >
-          <Bell className="size-5" />
-          {props.noLeidas > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full bg-secondary text-[10px] font-bold text-secondary-foreground">
-              {props.noLeidas > 9 ? "9+" : props.noLeidas}
-            </span>
-          )}
-        </IconButton>
-        {menu === "notifs" && (
-          <Panel className="w-80">
-            <div className="border-b px-4 py-2 text-sm font-semibold">
-              Notificaciones
-            </div>
-            {props.notificaciones.length === 0 ? (
-              <p className="p-4 text-sm text-muted-foreground">
-                No tienes notificaciones.
-              </p>
-            ) : (
-              <ul className="max-h-80 overflow-y-auto">
-                {props.notificaciones.map((n) => {
-                  const href = notificacionHref(n) ?? "/notificaciones";
-                  return (
-                    <li key={n.id}>
-                      <Link
-                        href={href}
-                        className={cn(
-                          "block border-b px-4 py-3 text-sm hover:bg-accent",
-                          !n.leida && "bg-secondary/5",
-                        )}
-                      >
-                        <span className="flex items-center gap-2 font-medium">
-                          {!n.leida && (
-                            <span className="size-2 shrink-0 rounded-full bg-secondary" />
-                          )}
-                          {n.asunto}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {tipoNotificacionLabel(n.tipo)} ·{" "}
-                          {new Date(n.created_at).toLocaleDateString("es-CO")}
-                        </span>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-            <Link
-              href="/notificaciones"
-              className="block px-4 py-2 text-center text-sm font-medium text-primary hover:underline"
-            >
-              Ver todas
-            </Link>
-          </Panel>
-        )}
-      </div>
-
       {/* Perfil */}
       <div className="relative">
         <button
@@ -165,8 +90,8 @@ export function Topbar(props: TopbarProps) {
             </div>
             <div className="flex flex-wrap gap-1.5 px-4 pb-3">
               <Chip tone="orange">{roleLabel(props.role)}</Chip>
-              {props.procesoNombre && (
-                <Chip tone="green">{props.procesoNombre}</Chip>
+              {props.unidadNombre && (
+                <Chip tone="green">{props.unidadNombre}</Chip>
               )}
               {props.oficinaLabel && (
                 <Chip tone="gray">{props.oficinaLabel}</Chip>
@@ -179,6 +104,13 @@ export function Topbar(props: TopbarProps) {
               >
                 <User className="size-4 text-muted-foreground" />
                 Mi perfil
+              </Link>
+              <Link
+                href="/mfa/enroll"
+                className="flex items-center gap-2 px-4 py-2.5 text-sm hover:bg-accent"
+              >
+                <ShieldCheck className="size-4 text-muted-foreground" />
+                Verificación en dos pasos
               </Link>
             </div>
             <div className="border-t">
