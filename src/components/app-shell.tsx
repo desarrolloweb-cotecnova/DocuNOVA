@@ -26,8 +26,8 @@ export function AppShell({
     <div className="flex min-h-full flex-1">
       {/* Barra lateral */}
       <aside className="hidden w-64 flex-col border-r bg-card md:flex">
-        <div className="flex h-16 items-center border-b px-5">
-          <LogoFull />
+        <div className="flex h-20 items-center border-b px-4">
+          <LogoFull className="h-12" />
         </div>
         <nav className="flex-1 space-y-1 p-3">
           {navItems.map((item) => {
