@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { navItemsForRole } from "@/lib/navigation";
 import { roleLabel } from "@/lib/roles";
-import { LogoFull, LogoMark } from "@/components/brand/logo";
+import { LogoFull } from "@/components/brand/logo";
 import { cn } from "@/lib/utils";
 
 export function AppShell({
@@ -71,13 +71,7 @@ export function AppShell({
       {/* Contenido */}
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-16 items-center justify-between gap-4 border-b bg-card px-4 md:px-6">
-          <span className="flex items-center gap-2 md:hidden">
-            <LogoMark className="size-7" />
-            <span className="font-extrabold tracking-tight">
-              <span className="text-primary">Docu</span>
-              <span style={{ color: "#EE7117" }}>NOVA</span>
-            </span>
-          </span>
+          <LogoFull className="h-8 md:hidden" />
           <div className="ml-auto flex items-center gap-4">
             <div className="text-right leading-tight">
               <p className="text-sm font-medium">{fullName ?? email}</p>

@@ -16,6 +16,11 @@ export const metadata: Metadata = {
   title: "DocuNOVA — Gestión Documental de Cotecnova",
   description:
     "Sistema de Gestión de Documentos Electrónicos de Archivo (SGDEA) de Cotecnova.",
+  icons: {
+    icon: "/docunova-simbolo.png",
+    shortcut: "/docunova-simbolo.png",
+    apple: "/docunova-simbolo.png",
+  },
 };
 
 export default function RootLayout({

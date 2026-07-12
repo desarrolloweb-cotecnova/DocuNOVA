@@ -30,7 +30,7 @@ export default async function LoginPage({
     <main className="flex flex-1 items-center justify-center bg-muted/40 p-6">
       <Card className="w-full max-w-sm">
         <CardHeader className="items-center text-center">
-          <LogoFull className="mb-1" />
+          <LogoFull className="mb-2 h-16" />
           <CardDescription>
             Sistema de Gestión Documental de Cotecnova.
             <br />
