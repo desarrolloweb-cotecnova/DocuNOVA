@@ -1,138 +1,168 @@
 import type { Metadata } from "next";
 import { ShieldCheck } from "lucide-react";
-import { createClient } from "@/lib/supabase/server";
 import { APP_NAME } from "@/lib/config";
-import { roleLabel } from "@/lib/roles";
+import { roleLabel, gestionaUsuarios } from "@/lib/roles";
+import {
+  getPerfilActual,
+  getNumeroDocumento,
+  listPerfilesMinimos,
+} from "@/services/perfiles";
+import { listUnidades } from "@/services/unidades";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { actualizarPerfil } from "./actions";
 
 export const metadata: Metadata = {
   title: `Mi perfil — ${APP_NAME}`,
 };
 
 export default async function PerfilPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const perfil = await getPerfilActual();
+  const [numeroDocumento, perfiles, unidades] = await Promise.all([
+    perfil ? getNumeroDocumento(perfil.usuario_id) : Promise.resolve(null),
+    listPerfilesMinimos(),
+    listUnidades(),
+  ]);
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select(
-      "full_name, role, procesos(nombre), oficinas_productoras(codigo, nombre)",
-    )
-    .eq("id", user?.id ?? "")
-    .maybeSingle();
+  // Construir la ruta "Eje ▸ Macro ▸ Proceso" para cada proceso.
+  const porId = new Map(unidades.map((u) => [u.id, u]));
+  const procesos = unidades
+    .filter((u) => u.tipo === "proceso")
+    .map((p) => {
+      const macro = p.padre_id ? porId.get(p.padre_id) : null;
+      const eje = macro?.padre_id ? porId.get(macro.padre_id) : null;
+      const ruta = [eje?.nombre, macro?.nombre, p.nombre]
+        .filter(Boolean)
+        .join(" ▸ ");
+      return { id: p.id, ruta };
+    });
 
-  // La cédula es un dato reservado: la RLS solo la muestra al dueño y al super admin.
-  const { data: sensibles } = await supabase
-    .from("datos_sensibles")
-    .select("cedula")
-    .eq("profile_id", user?.id ?? "")
-    .maybeSingle();
-
-  const proc = profile?.procesos as { nombre: string } | null | undefined;
-  const ofi = profile?.oficinas_productoras as
-    { codigo: string; nombre: string } | null | undefined;
-  const meta = user?.user_metadata ?? {};
-  const avatarUrl =
-    (meta.avatar_url as string | undefined) ??
-    (meta.picture as string | undefined) ??
-    null;
-  const nombre: string = profile?.full_name ?? user?.email ?? "";
+  const esAdmin = gestionaUsuarios(perfil?.rol);
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
-      <h1 className="text-2xl font-semibold">Mi perfil</h1>
-
-      <div className="rounded-xl border bg-card p-6">
-        <div className="flex items-center gap-4">
-          {avatarUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={avatarUrl}
-              alt={nombre}
-              referrerPolicy="no-referrer"
-              className="size-16 rounded-full object-cover"
-            />
-          ) : (
-            <div className="flex size-16 items-center justify-center rounded-full bg-primary text-xl font-semibold text-primary-foreground">
-              {nombre
-                .split(" ")
-                .map((p) => p[0])
-                .filter(Boolean)
-                .slice(0, 2)
-                .join("")
-                .toUpperCase()}
-            </div>
-          )}
-          <div className="min-w-0">
-            <p className="text-lg font-semibold">{nombre}</p>
-            <p className="text-sm text-muted-foreground">{user?.email}</p>
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              <span className="rounded-full bg-secondary/15 px-2.5 py-0.5 text-xs font-medium text-secondary">
-                {roleLabel(profile?.role)}
-              </span>
-              {proc?.nombre && (
-                <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                  {proc.nombre}
-                </span>
-              )}
-              {ofi && (
-                <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-                  {ofi.codigo} · {ofi.nombre}
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <dl className="mt-6 divide-y border-t text-sm">
-          <Fila termino="Nombre completo" valor={nombre} />
-          <Fila termino="Correo institucional" valor={user?.email ?? "—"} />
-          <Fila termino="Rol" valor={roleLabel(profile?.role)} />
-          <Fila termino="Proceso" valor={proc?.nombre ?? "—"} />
-          <Fila
-            termino="Oficina productora"
-            valor={ofi ? `${ofi.codigo} · ${ofi.nombre}` : "—"}
-          />
-          <Fila
-            termino="Documento de identidad"
-            valor={sensibles?.cedula ?? "—"}
-            nota="Dato reservado (Ley 1581): solo visible para ti y el administrador."
-          />
-        </dl>
-      </div>
-
-      <div className="flex items-start gap-3 rounded-lg border bg-primary/5 p-4 text-sm">
-        <ShieldCheck className="mt-0.5 size-5 shrink-0 text-primary" />
-        <p className="text-muted-foreground">
-          Tu rol, proceso y oficina los asigna el administrador. Tu sesión está
-          protegida con verificación en dos pasos (segundo factor).
+    <div className="mx-auto flex max-w-2xl flex-col gap-6">
+      <div>
+        <h1 className="text-xl font-semibold">Mi perfil</h1>
+        <p className="text-sm text-muted-foreground">
+          Tus datos en DocuNOVA. El rol lo asigna un administrador.
         </p>
       </div>
-    </div>
-  );
-}
 
-function Fila({
-  termino,
-  valor,
-  nota,
-}: {
-  termino: string;
-  valor: string;
-  nota?: string;
-}) {
-  return (
-    <div className="flex flex-col gap-0.5 py-3 sm:flex-row sm:justify-between sm:gap-4">
-      <dt className="text-muted-foreground">{termino}</dt>
-      <dd className="text-right font-medium sm:max-w-[60%]">
-        {valor}
-        {nota && (
-          <span className="mt-0.5 block text-xs font-normal text-muted-foreground">
-            {nota}
-          </span>
-        )}
-      </dd>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <ShieldCheck className="size-4 text-primary" />
+            Datos personales
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form action={actualizarPerfil} className="grid gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-1 sm:col-span-2">
+              <Label htmlFor="nombre_completo">Nombre completo</Label>
+              <Input
+                id="nombre_completo"
+                name="nombre_completo"
+                defaultValue={perfil?.nombre_completo ?? ""}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="numero_documento">Documento de identidad</Label>
+              <Input
+                id="numero_documento"
+                name="numero_documento"
+                defaultValue={numeroDocumento ?? ""}
+              />
+              <p className="text-xs text-muted-foreground">
+                Dato reservado: solo lo ves tú y el administrador de usuarios.
+              </p>
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="titulo_cargo">Cargo</Label>
+              <Input
+                id="titulo_cargo"
+                name="titulo_cargo"
+                defaultValue={perfil?.titulo_cargo ?? ""}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="supervisor_id">Jefe inmediato</Label>
+              <select
+                id="supervisor_id"
+                name="supervisor_id"
+                className="h-9 rounded-md border border-input bg-background px-2 text-sm"
+              >
+                <option value="">Sin asignar</option>
+                {perfiles
+                  .filter((p) => p.usuario_id !== perfil?.usuario_id)
+                  .map((p) => (
+                    <option key={p.usuario_id} value={p.usuario_id}>
+                      {p.nombre_completo ?? p.email}
+                    </option>
+                  ))}
+              </select>
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="unidad_id">Proceso</Label>
+              <select
+                id="unidad_id"
+                name="unidad_id"
+                defaultValue={perfil?.unidad_id ?? ""}
+                disabled={!esAdmin}
+                className="h-9 rounded-md border border-input bg-background px-2 text-sm disabled:opacity-60"
+              >
+                <option value="">Sin asignar</option>
+                {procesos.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.ruta}
+                  </option>
+                ))}
+              </select>
+              {!esAdmin && (
+                <p className="text-xs text-muted-foreground">
+                  El proceso lo asigna un administrador.
+                </p>
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-4 sm:col-span-2">
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  name="es_responsable"
+                  value="1"
+                  defaultChecked={perfil?.es_responsable}
+                  disabled={!esAdmin}
+                />
+                Responsable de proceso
+              </label>
+              <span className="flex items-center gap-2 text-sm">
+                Rol:
+                <span className="rounded-full bg-secondary/15 px-2.5 py-0.5 text-xs font-medium text-secondary">
+                  {roleLabel(perfil?.rol)}
+                </span>
+              </span>
+              <span className="flex items-center gap-2 text-sm">
+                Estado:
+                <span
+                  className={
+                    perfil?.activo
+                      ? "rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"
+                      : "rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
+                  }
+                >
+                  {perfil?.activo ? "Activo" : "Inactivo"}
+                </span>
+              </span>
+            </div>
+
+            <div className="sm:col-span-2">
+              <Button type="submit">Guardar cambios</Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

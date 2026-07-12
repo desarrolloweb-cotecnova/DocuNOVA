@@ -10,39 +10,15 @@ const AYUDA: { prefijo: string; contenido: AyudaContenido }[] = [
     contenido: {
       titulo: "Panel",
       texto:
-        "Resumen de tu proceso: expedientes, documentos, lo que espera tu firma y los expedientes próximos a vencer su tiempo de retención. Haz clic en cada tarjeta para ver el detalle.",
+        "Resumen de tu actividad: registros recientes, documentos disponibles y accesos rápidos a los módulos. Haz clic en cada tarjeta para ver el detalle.",
     },
   },
   {
-    prefijo: "/expedientes",
+    prefijo: "/dependencias",
     contenido: {
-      titulo: "Expedientes",
+      titulo: "Dependencias",
       texto:
-        "Un expediente agrupa documentos de una misma subserie de la TRD. Créalo con «Nuevo expediente»; al elegir la subserie, el sistema asigna solo el proceso y la oficina. Abre un expediente para ver y agregar sus documentos.",
-    },
-  },
-  {
-    prefijo: "/documentos",
-    contenido: {
-      titulo: "Documentos",
-      texto:
-        "Busca por texto en documentos electrónicos y por título en los físicos de tu proceso. Cada documento puede enviarse a un flujo de aprobación con firma electrónica.",
-    },
-  },
-  {
-    prefijo: "/aprobaciones",
-    contenido: {
-      titulo: "Aprobaciones",
-      texto:
-        "Aquí ves los documentos que esperan tu revisión y firma. Ábrelos para aprobar (queda registrada tu firma con fecha, IP y huella del documento) o rechazar.",
-    },
-  },
-  {
-    prefijo: "/notificaciones",
-    contenido: {
-      titulo: "Notificaciones",
-      texto:
-        "Avisos del sistema sobre tus documentos: pendientes de tu firma, aprobados o rechazados. Puedes marcarlos como leídos.",
+        "Oficinas productoras agrupadas por proceso. Crea, edita o elimina oficinas y asigna sus responsables.",
     },
   },
   {
@@ -50,15 +26,39 @@ const AYUDA: { prefijo: string; contenido: AyudaContenido }[] = [
     contenido: {
       titulo: "Tablas de Retención Documental",
       texto:
-        "Consulta las series y subseries documentales por proceso, con su soporte, tiempos de retención (gestión y central) y disposición final.",
+        "Consulta y elabora las series, subseries y tipos documentales por dependencia, con su soporte, tiempos de retención y disposición final. Envía la TRD a revisión y apruébala o recházala según tu rol.",
     },
   },
   {
-    prefijo: "/admin",
+    prefijo: "/documentos",
     contenido: {
-      titulo: "Administración",
+      titulo: "Documentos",
       texto:
-        "Panel del super administrador: activa cuentas y asigna rol, proceso y oficina desde «Usuarios»; edita la estructura organizacional desde «Estructura».",
+        "Definición de documentos (rutas de cargue o formatos diligenciables) por dependencia. Créalos, márcalos como públicos y actívalos para que puedan usarse en registros.",
+    },
+  },
+  {
+    prefijo: "/registros",
+    contenido: {
+      titulo: "Registros",
+      texto:
+        "A partir de un documento activo, crea un registro documental. Aquí ves los documentos disponibles y los registros que has creado.",
+    },
+  },
+  {
+    prefijo: "/consulta",
+    contenido: {
+      titulo: "Consulta",
+      texto:
+        "Busca registros por proceso, dependencia o documento. La tabla muestra el proceso, la dependencia, el documento, la fecha y el estado.",
+    },
+  },
+  {
+    prefijo: "/gestion",
+    contenido: {
+      titulo: "Gestión de usuarios",
+      texto:
+        "Panel de administración de usuarios: activa cuentas y asigna roles. Solo disponible para superadmin y rector.",
     },
   },
   {
@@ -66,7 +66,7 @@ const AYUDA: { prefijo: string; contenido: AyudaContenido }[] = [
     contenido: {
       titulo: "Mi perfil",
       texto:
-        "Tus datos en DocuNOVA. El rol y el proceso los asigna el administrador. Tu documento de identidad es un dato reservado, visible solo para ti y el super administrador.",
+        "Tus datos en DocuNOVA. El rol lo asigna un administrador. Tu documento de identidad es un dato reservado, visible solo para ti y el administrador de usuarios.",
     },
   },
 ];

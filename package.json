@@ -15,7 +15,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "seed:generate": "node scripts/generate-seed.mjs"
+    "db:installer": "node scripts/build-installer.mjs"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.2",

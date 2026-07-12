@@ -1,142 +1,247 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { Search } from "lucide-react";
-import { createClient } from "@/lib/supabase/server";
+import { Trash2 } from "lucide-react";
 import { APP_NAME } from "@/lib/config";
+import { apruebaTRD, elabora } from "@/lib/roles";
+import { rolDelUsuario } from "@/lib/auth/roles-server";
+import { listOficinas } from "@/services/oficinas";
+import { listDocumentosPorOficina } from "@/services/documentos";
+import { listSeriesPorOficina } from "@/services/series";
 import {
-  tipoDocumentoLabel,
-  normalizarBusqueda,
   TIPOS_DOCUMENTO,
-  type TipoDocumento,
-} from "@/lib/documentos";
+  TIPO_DOCUMENTO_LABELS,
+  ESTADO_DOCUMENTO_LABELS,
+  labelDe,
+} from "@/lib/tipos";
+import { OficinaSelector } from "@/components/oficina-selector";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  crearDocumento,
+  setEstadoDocumento,
+  eliminarDocumento,
+} from "./actions";
 
 export const metadata: Metadata = {
-  title: `Buscar documentos — ${APP_NAME}`,
-};
-
-type Resultado = {
-  id: string;
-  titulo: string;
-  tipo: string;
-  fecha_documento: string | null;
-  expediente_id: string;
-  expedientes: { titulo: string } | null;
-  procesos: { nombre: string } | null;
+  title: `Documentos — ${APP_NAME}`,
 };
 
 export default async function DocumentosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; tipo?: string }>;
+  searchParams: Promise<{ oficina?: string }>;
 }) {
-  const { q, tipo } = await searchParams;
-  const consulta = normalizarBusqueda(q);
-  const tipoFiltro = TIPOS_DOCUMENTO.includes(tipo as TipoDocumento)
-    ? (tipo as TipoDocumento)
-    : "";
+  const { oficina } = await searchParams;
+  const [rol, oficinas] = await Promise.all([rolDelUsuario(), listOficinas()]);
+  const puedeElaborar = elabora(rol);
+  const puedeAprobar = apruebaTRD(rol);
 
-  const supabase = await createClient();
+  const oficinaId =
+    oficina && oficinas.some((o) => o.id === oficina) ? oficina : null;
 
-  // La RLS limita los resultados a los documentos del proceso del usuario.
-  let query = supabase
-    .from("documentos")
-    .select(
-      "id, titulo, tipo, fecha_documento, expediente_id, expedientes(titulo), procesos(nombre)",
-    )
-    .order("created_at", { ascending: false })
-    .limit(50);
-
-  if (consulta) {
-    query = query.textSearch("busqueda", consulta, {
-      type: "websearch",
-      config: "spanish",
-    });
-  }
-  if (tipoFiltro) {
-    query = query.eq("tipo", tipoFiltro);
-  }
-
-  const { data } = await query;
-  const resultados = (data ?? []) as unknown as Resultado[];
-  const hizoBusqueda = Boolean(consulta || tipoFiltro);
+  const [documentos, series] = oficinaId
+    ? await Promise.all([
+        listDocumentosPorOficina(oficinaId),
+        listSeriesPorOficina(oficinaId),
+      ])
+    : [[], []];
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6">
+    <div className="mx-auto flex max-w-4xl flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold">Buscar documentos</h1>
-        <p className="text-muted-foreground">
-          Busca por texto en documentos electrónicos y por título en documentos
-          físicos de tu proceso.
+        <h1 className="text-xl font-semibold">Documentos</h1>
+        <p className="text-sm text-muted-foreground">
+          Definición de documentos por dependencia (rutas de cargue o formatos
+          diligenciables).
         </p>
       </div>
 
-      <form method="get" className="flex flex-wrap items-end gap-3">
-        <label className="flex flex-1 flex-col gap-1 text-sm font-medium">
-          Texto
-          <div className="flex items-center gap-2 rounded-md border border-input bg-background px-3">
-            <Search className="size-4 text-muted-foreground" />
-            <input
-              name="q"
-              defaultValue={consulta}
-              placeholder="Ej. acta de grado, contrato, resolución…"
-              className="w-full bg-transparent py-2 text-sm outline-none"
-            />
-          </div>
-        </label>
-        <label className="flex flex-col gap-1 text-sm font-medium">
-          Tipo
-          <select
-            name="tipo"
-            defaultValue={tipoFiltro}
-            className="h-[38px] rounded-md border border-input bg-background px-2 text-sm"
-          >
-            <option value="">Todos</option>
-            {TIPOS_DOCUMENTO.map((t) => (
-              <option key={t} value={t}>
-                {tipoDocumentoLabel(t)}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button
-          type="submit"
-          className="h-[38px] rounded-md bg-secondary px-4 text-sm text-secondary-foreground hover:opacity-90"
-        >
-          Buscar
-        </button>
-      </form>
+      <OficinaSelector
+        oficinas={oficinas}
+        actual={oficinaId}
+        basePath="/documentos"
+      />
 
-      {hizoBusqueda ? (
-        resultados.length === 0 ? (
-          <p className="rounded-lg border bg-card p-6 text-sm text-muted-foreground">
-            No se encontraron documentos con esos criterios.
-          </p>
-        ) : (
-          <ul className="space-y-2">
-            {resultados.map((r) => (
-              <li key={r.id} className="rounded-lg border bg-card p-4">
-                <Link
-                  href={`/documentos/${r.id}`}
-                  className="font-medium text-primary hover:underline"
-                >
-                  {r.titulo}
-                </Link>
-                <p className="text-xs text-muted-foreground">
-                  {tipoDocumentoLabel(r.tipo)}
-                  {r.procesos?.nombre ? ` · ${r.procesos.nombre}` : ""}
-                  {r.expedientes?.titulo
-                    ? ` · Expediente: ${r.expedientes.titulo}`
-                    : ""}
-                  {r.fecha_documento ? ` · ${r.fecha_documento}` : ""}
-                </p>
-              </li>
-            ))}
-          </ul>
-        )
-      ) : (
-        <p className="rounded-lg border bg-card p-6 text-sm text-muted-foreground">
-          Ingresa un texto o selecciona un tipo para buscar.
+      {!oficinaId ? (
+        <p className="text-sm text-muted-foreground">
+          Elige una dependencia para ver sus documentos.
         </p>
+      ) : (
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">
+                Documentos ({documentos.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="overflow-x-auto">
+              {documentos.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  Esta dependencia no tiene documentos.
+                </p>
+              ) : (
+                <table className="w-full min-w-[640px] text-sm">
+                  <thead>
+                    <tr className="border-b text-left text-xs text-muted-foreground">
+                      <th className="pb-2">Documento</th>
+                      <th className="pb-2">Tipo</th>
+                      <th className="pb-2">Estado</th>
+                      <th className="pb-2 text-right">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {documentos.map((d) => (
+                      <tr key={d.id}>
+                        <td className="py-3">
+                          <p className="font-medium">{d.nombre}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {d.codigo ? `${d.codigo} · ` : ""}
+                            {d.serie_nombre ?? "Sin serie"}
+                            {d.es_publico ? " · Público" : ""}
+                          </p>
+                        </td>
+                        <td className="py-3">
+                          {labelDe(TIPO_DOCUMENTO_LABELS, d.tipo)}
+                        </td>
+                        <td className="py-3">
+                          <span
+                            className={
+                              d.estado === "activo"
+                                ? "rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
+                                : "rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                            }
+                          >
+                            {labelDe(ESTADO_DOCUMENTO_LABELS, d.estado)}
+                          </span>
+                        </td>
+                        <td className="py-3">
+                          <div className="flex items-center justify-end gap-2">
+                            {puedeAprobar && d.estado !== "activo" && (
+                              <form action={setEstadoDocumento}>
+                                <input type="hidden" name="id" value={d.id} />
+                                <input
+                                  type="hidden"
+                                  name="estado"
+                                  value="activo"
+                                />
+                                <Button type="submit" size="sm">
+                                  Activar
+                                </Button>
+                              </form>
+                            )}
+                            {puedeAprobar && d.estado === "activo" && (
+                              <form action={setEstadoDocumento}>
+                                <input type="hidden" name="id" value={d.id} />
+                                <input
+                                  type="hidden"
+                                  name="estado"
+                                  value="archivado"
+                                />
+                                <Button
+                                  type="submit"
+                                  size="sm"
+                                  variant="outline"
+                                >
+                                  Archivar
+                                </Button>
+                              </form>
+                            )}
+                            {puedeAprobar && (
+                              <form action={eliminarDocumento}>
+                                <input type="hidden" name="id" value={d.id} />
+                                <button
+                                  type="submit"
+                                  aria-label="Eliminar documento"
+                                  className="text-muted-foreground hover:text-destructive"
+                                >
+                                  <Trash2 className="size-4" />
+                                </button>
+                              </form>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </CardContent>
+          </Card>
+
+          {puedeElaborar && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Nuevo documento</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form
+                  action={crearDocumento}
+                  className="grid gap-3 sm:grid-cols-2"
+                >
+                  <input type="hidden" name="oficina_id" value={oficinaId} />
+                  <div className="flex flex-col gap-1 sm:col-span-2">
+                    <Label>Nombre</Label>
+                    <Input name="nombre" required />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <Label>Código</Label>
+                    <Input name="codigo" />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <Label>Serie / subserie</Label>
+                    <select
+                      name="serie_id"
+                      className="h-9 rounded-md border border-input bg-background px-2 text-sm"
+                    >
+                      <option value="">Sin serie</option>
+                      {series.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.codigo} · {s.nombre}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <Label>Tipo</Label>
+                    <select
+                      name="tipo"
+                      defaultValue="diligenciable"
+                      className="h-9 rounded-md border border-input bg-background px-2 text-sm"
+                    >
+                      {TIPOS_DOCUMENTO.map((t) => (
+                        <option key={t} value={t}>
+                          {TIPO_DOCUMENTO_LABELS[t]}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <Label>URL de plantilla</Label>
+                    <Input name="url_plantilla" placeholder="https://…" />
+                  </div>
+                  <div className="flex items-center gap-4 sm:col-span-2">
+                    <label className="flex items-center gap-1.5 text-sm">
+                      <input type="checkbox" name="es_publico" value="1" />
+                      Público
+                    </label>
+                    <label className="flex items-center gap-1.5 text-sm">
+                      <input
+                        type="checkbox"
+                        name="requiere_descarga"
+                        value="1"
+                      />
+                      Requiere descarga
+                    </label>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <Button type="submit">Crear documento</Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          )}
+        </>
       )}
     </div>
   );

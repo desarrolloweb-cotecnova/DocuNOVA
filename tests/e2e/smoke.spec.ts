@@ -5,7 +5,7 @@ test.describe("Autenticación", () => {
     await page.goto("/login");
 
     await expect(
-      page.getByText("Sistema de Gestión Documental de Cotecnova."),
+      page.getByText(/sistema de gestión de documentos/i),
     ).toBeVisible();
 
     await expect(
