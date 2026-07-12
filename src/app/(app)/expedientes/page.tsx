@@ -39,7 +39,7 @@ export default async function ExpedientesPage() {
         </div>
         <Link
           href="/expedientes/nuevo"
-          className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground hover:opacity-90"
+          className="inline-flex items-center gap-2 rounded-md bg-secondary px-3 py-2 text-sm text-secondary-foreground hover:opacity-90"
         >
           <FolderPlus className="size-4" /> Nuevo expediente
         </Link>

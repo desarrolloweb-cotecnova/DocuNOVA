@@ -54,7 +54,7 @@ export default async function TrdPage({
             className={
               "rounded-full border px-3 py-1 text-sm transition-colors " +
               (p.id === procesoId
-                ? "border-primary bg-primary text-primary-foreground"
+                ? "border-secondary bg-secondary text-secondary-foreground"
                 : "hover:bg-accent")
             }
           >

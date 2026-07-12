@@ -167,7 +167,7 @@ function FilaUsuario({
             className={
               perfil.is_active
                 ? "rounded-md border px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground"
-                : "rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground hover:opacity-90"
+                : "rounded-md bg-secondary px-3 py-1.5 text-sm text-secondary-foreground hover:opacity-90"
             }
           >
             {perfil.is_active ? "Desactivar" : "Activar"}

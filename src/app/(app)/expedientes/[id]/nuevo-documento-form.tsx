@@ -103,7 +103,7 @@ export function NuevoDocumentoForm({ expedienteId }: { expedienteId: string }) {
 
       <button
         type="submit"
-        className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:opacity-90"
+        className="rounded-md bg-secondary px-4 py-2 text-sm text-secondary-foreground hover:opacity-90"
       >
         Agregar documento
       </button>

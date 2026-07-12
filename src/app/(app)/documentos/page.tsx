@@ -100,7 +100,7 @@ export default async function DocumentosPage({
         </label>
         <button
           type="submit"
-          className="h-[38px] rounded-md bg-primary px-4 text-sm text-primary-foreground hover:opacity-90"
+          className="h-[38px] rounded-md bg-secondary px-4 text-sm text-secondary-foreground hover:opacity-90"
         >
           Buscar
         </button>

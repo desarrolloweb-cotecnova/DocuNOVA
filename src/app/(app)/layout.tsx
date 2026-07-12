@@ -32,10 +32,12 @@ export default async function AppLayout({
     redirect(aal?.nextLevel === "aal2" ? "/mfa/verify" : "/mfa/enroll");
   }
 
-  // Perfil (puede no existir todavía si la migración no se ha aplicado).
+  // Perfil con proceso/oficina (puede no existir si la migración no se aplicó).
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, role, is_active")
+    .select(
+      "full_name, role, is_active, procesos(nombre), oficinas_productoras(codigo, nombre)",
+    )
     .eq("id", user.id)
     .maybeSingle();
 
@@ -45,11 +47,38 @@ export default async function AppLayout({
   );
   if (pending) redirect(pending);
 
+  // Notificaciones para el encabezado (recientes + no leídas).
+  const [{ data: notifs }, { count }] = await Promise.all([
+    supabase
+      .from("notificaciones")
+      .select("id, asunto, tipo, leida, created_at, entidad_tipo, entidad_id")
+      .order("created_at", { ascending: false })
+      .limit(6),
+    supabase
+      .from("notificaciones")
+      .select("*", { count: "exact", head: true })
+      .eq("leida", false),
+  ]);
+
+  const proc = profile?.procesos as { nombre: string } | null | undefined;
+  const ofi = profile?.oficinas_productoras as
+    { codigo: string; nombre: string } | null | undefined;
+  const meta = user.user_metadata ?? {};
+  const avatarUrl =
+    (meta.avatar_url as string | undefined) ??
+    (meta.picture as string | undefined) ??
+    null;
+
   return (
     <AppShell
       email={user.email ?? ""}
       fullName={profile?.full_name ?? null}
       role={profile?.role ?? null}
+      procesoNombre={proc?.nombre ?? null}
+      oficinaLabel={ofi ? `${ofi.codigo} · ${ofi.nombre}` : null}
+      avatarUrl={avatarUrl}
+      notificaciones={notifs ?? []}
+      noLeidas={count ?? 0}
     >
       {children}
     </AppShell>

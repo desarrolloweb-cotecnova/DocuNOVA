@@ -2,25 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut } from "lucide-react";
 import { navItemsForRole } from "@/lib/navigation";
-import { roleLabel } from "@/lib/roles";
 import { LogoFull } from "@/components/brand/logo";
+import { Topbar, type TopbarProps } from "@/components/topbar";
 import { cn } from "@/lib/utils";
 
 export function AppShell({
-  email,
-  fullName,
-  role,
   children,
-}: {
-  email: string;
-  fullName: string | null;
-  role: string | null;
-  children: React.ReactNode;
-}) {
+  ...topbar
+}: TopbarProps & { children: React.ReactNode }) {
   const pathname = usePathname();
-  const navItems = navItemsForRole(role);
+  const navItems = navItemsForRole(topbar.role);
 
   return (
     <div className="flex min-h-full flex-1">
@@ -56,7 +48,7 @@ export function AppShell({
                 className={cn(
                   "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
                   active
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-secondary font-medium text-secondary-foreground"
                     : "hover:bg-accent hover:text-accent-foreground",
                 )}
               >
@@ -72,20 +64,8 @@ export function AppShell({
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-16 items-center justify-between gap-4 border-b bg-card px-4 md:px-6">
           <LogoFull className="h-8 md:hidden" />
-          <div className="ml-auto flex items-center gap-4">
-            <div className="text-right leading-tight">
-              <p className="text-sm font-medium">{fullName ?? email}</p>
-              <p className="text-xs text-muted-foreground">{roleLabel(role)}</p>
-            </div>
-            <form action="/auth/signout" method="post">
-              <button
-                type="submit"
-                className="inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-              >
-                <LogOut className="size-4" />
-                Salir
-              </button>
-            </form>
+          <div className="ml-auto">
+            <Topbar {...topbar} />
           </div>
         </header>
         <main className="flex-1 p-4 md:p-8">{children}</main>
