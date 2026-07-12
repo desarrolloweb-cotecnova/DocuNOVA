@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AuthenticatorApps } from "@/components/mfa/authenticator-apps";
 
 /**
  * Enrolamiento del segundo factor (TOTP) con Google Authenticator.
@@ -114,8 +115,10 @@ export default function EnrollMfaPage() {
         <CardHeader>
           <CardTitle>Configura la verificación en dos pasos</CardTitle>
           <CardDescription>
-            Escanea el código con Google Authenticator (o una app compatible) y
-            escribe el código de 6 dígitos para confirmar.
+            Por seguridad, DocuNOVA usa un segundo paso con la app{" "}
+            <span className="font-medium">Google Authenticator</span>. Instálala
+            en tu teléfono, escanea el código QR y escribe el código de 6
+            dígitos que aparece en la app.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
@@ -131,6 +134,12 @@ export default function EnrollMfaPage() {
 
           {status === "ready" && qrCode ? (
             <>
+              <AuthenticatorApps />
+              <ol className="ml-4 list-decimal space-y-1 text-sm text-muted-foreground">
+                <li>Instala Google Authenticator (botones de arriba).</li>
+                <li>Ábrela y toca «+» → «Escanear código QR».</li>
+                <li>Apunta al código de abajo y escribe los 6 dígitos.</li>
+              </ol>
               <div className="flex justify-center rounded-md border bg-white p-4">
                 {/* qr_code es un SVG en formato data URI devuelto por Supabase */}
                 <Image

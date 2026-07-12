@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AuthenticatorApps } from "@/components/mfa/authenticator-apps";
 
 /**
  * Verificación del segundo factor (TOTP) para usuarios que ya lo tienen
@@ -88,10 +89,11 @@ export default function VerifyMfaPage() {
         <CardHeader>
           <CardTitle>Verificación en dos pasos</CardTitle>
           <CardDescription>
-            Escribe el código de 6 dígitos de tu app de autenticación.
+            Escribe el código de 6 dígitos que aparece en tu app{" "}
+            <span className="font-medium">Google Authenticator</span>.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col gap-4">
           {status === "loading" ? (
             <p className="text-sm text-muted-foreground">Cargando…</p>
           ) : null}
@@ -125,6 +127,8 @@ export default function VerifyMfaPage() {
               </Button>
             </form>
           ) : null}
+
+          <AuthenticatorApps compact />
         </CardContent>
       </Card>
     </main>
