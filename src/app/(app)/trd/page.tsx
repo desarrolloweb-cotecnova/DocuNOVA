@@ -1,13 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { History, Printer } from "lucide-react";
+import { History, Printer, CheckCircle2 } from "lucide-react";
 import { APP_NAME } from "@/lib/config";
-import { apruebaTRD, elabora } from "@/lib/roles";
+import { apruebaTRD, elabora, gestionaUsuarios } from "@/lib/roles";
 import { rolDelUsuario } from "@/lib/auth/roles-server";
 import { listOficinas } from "@/services/oficinas";
 import { listUnidades } from "@/services/unidades";
+import { getPerfilActual } from "@/services/perfiles";
 import { listSeriesPorOficina, listAprobaciones } from "@/services/series";
-import { ESTADO_TRD_LABELS, labelDe, type EstadoTrd } from "@/lib/tipos";
+import {
+  ESTADO_TRD_LABELS,
+  labelDe,
+  type EstadoTrd,
+  type Unidad,
+} from "@/lib/tipos";
 import { FiltroDependencia } from "@/components/filtro-dependencia";
 import { ImportadorExcel } from "@/components/importador-excel";
 import { TrdJerarquia } from "@/components/trd-jerarquia";
@@ -31,23 +37,53 @@ const ESTADO_COLOR: Record<EstadoTrd, string> = {
   rechazado: "bg-destructive/10 text-destructive",
 };
 
+const MSG_CONFIRMACION: Record<string, string> = {
+  en_revision: "La TRD fue enviada a revisión.",
+  aprobado: "La TRD fue aprobada.",
+  rechazado: "La TRD fue rechazada.",
+};
+
 export default async function TrdPage({
   searchParams,
 }: {
-  searchParams: Promise<{ oficina?: string }>;
+  searchParams: Promise<{ oficina?: string; msg?: string }>;
 }) {
-  const { oficina } = await searchParams;
-  const [rol, oficinas, unidades] = await Promise.all([
+  const { oficina, msg } = await searchParams;
+  const [rol, perfil, oficinas, unidades] = await Promise.all([
     rolDelUsuario(),
+    getPerfilActual(),
     listOficinas(),
     listUnidades(),
   ]);
   const puedeElaborar = elabora(rol);
   const puedeAprobar = apruebaTRD(rol);
+  const confirmacion = msg ? MSG_CONFIRMACION[msg] : null;
 
-  const oficinaSel =
-    oficina && oficinas.find((o) => o.id === oficina) ? oficina : null;
-  const oficinaId = oficinaSel;
+  // superadmin/rector/administrador ven todos los procesos; el resto queda
+  // limitado a su propio proceso (perfil.unidad_id). Es un filtro de UI — la
+  // RLS del backend sigue autorizando la escritura por rol.
+  const puedeVerTodo = gestionaUsuarios(rol) || rol === "administrador";
+  const procesoUsuario = perfil?.unidad_id ?? null;
+
+  const oficinasVisibles = puedeVerTodo
+    ? oficinas
+    : procesoUsuario
+      ? oficinas.filter((o) => o.unidad_id === procesoUsuario)
+      : [];
+
+  // Reducir el catálogo de unidades a la rama del proceso del usuario cuando no
+  // ve todo (para que el filtro en cascada muestre solo su eje/macro/proceso).
+  const unidadesVisibles: Unidad[] = (() => {
+    if (puedeVerTodo || !procesoUsuario) return unidades;
+    const porId = new Map(unidades.map((u) => [u.id, u] as const));
+    const proceso = porId.get(procesoUsuario);
+    const macro = proceso?.padre_id ? porId.get(proceso.padre_id) : undefined;
+    const eje = macro?.padre_id ? porId.get(macro.padre_id) : undefined;
+    return [eje, macro, proceso].filter((u): u is Unidad => Boolean(u));
+  })();
+
+  const oficinaId =
+    oficina && oficinasVisibles.some((o) => o.id === oficina) ? oficina : null;
   const oficinaCodigo =
     oficinas.find((o) => o.id === oficinaId)?.codigo ?? "";
 
@@ -95,14 +131,26 @@ export default async function TrdPage({
         />
       )}
 
+      {confirmacion && (
+        <p className="flex items-center gap-2 rounded-md border border-primary/30 bg-primary/10 p-3 text-sm font-medium text-primary">
+          <CheckCircle2 className="size-4" />
+          {confirmacion}
+        </p>
+      )}
+
       <FiltroDependencia
-        unidades={unidades}
-        oficinas={oficinas}
+        unidades={unidadesVisibles}
+        oficinas={oficinasVisibles}
         oficinaActual={oficinaId}
         basePath="/trd"
       />
 
-      {!oficinaId ? (
+      {!puedeVerTodo && !procesoUsuario ? (
+        <p className="text-sm text-muted-foreground">
+          Aún no tienes un proceso asignado. Solicita a un administrador que te
+          asocie a un proceso para poder ver y elaborar su TRD.
+        </p>
+      ) : !oficinaId ? (
         <p className="text-sm text-muted-foreground">
           Elige una dependencia para comenzar.
         </p>
