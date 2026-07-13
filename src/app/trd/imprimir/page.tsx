@@ -164,10 +164,26 @@ export default async function ImprimirTrdPage({
                 <th style={{ width: "80px" }}>Código</th>
                 <th>Serie / Subserie / Tipo</th>
                 <th style={{ width: "70px" }}>Nivel</th>
-                <th style={{ width: "45px" }}>Físico</th>
-                <th style={{ width: "45px" }}>Digital</th>
-                <th style={{ width: "50px" }}>Gest.</th>
-                <th style={{ width: "50px" }}>Cent.</th>
+                <th style={{ width: "55px" }}>
+                  Soporte
+                  <br />
+                  Físico
+                </th>
+                <th style={{ width: "55px" }}>
+                  Soporte
+                  <br />
+                  Digital
+                </th>
+                <th style={{ width: "60px" }}>
+                  Años en
+                  <br />
+                  Gestión
+                </th>
+                <th style={{ width: "60px" }}>
+                  Años en
+                  <br />
+                  Central
+                </th>
                 <th style={{ width: "40px" }}>CT</th>
                 <th style={{ width: "40px" }}>S</th>
                 <th style={{ width: "40px" }}>E</th>
@@ -208,8 +224,8 @@ export default async function ImprimirTrdPage({
           Convenciones de disposición final: <strong>CT</strong> Conservación
           total · <strong>S</strong> Selección · <strong>E</strong> Eliminación
           · <strong>D</strong> Digitalización. Retención en años:{" "}
-          <strong>Gest.</strong> Archivo de gestión · <strong>Cent.</strong>{" "}
-          Archivo central.
+          <strong>Años en Gestión</strong> Archivo de gestión ·{" "}
+          <strong>Años en Central</strong> Archivo central.
         </p>
       </div>
     </div>

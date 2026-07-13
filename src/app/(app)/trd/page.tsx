@@ -45,8 +45,11 @@ export default async function TrdPage({
   const puedeElaborar = elabora(rol);
   const puedeAprobar = apruebaTRD(rol);
 
-  const oficinaId =
-    oficina && oficinas.some((o) => o.id === oficina) ? oficina : null;
+  const oficinaSel =
+    oficina && oficinas.find((o) => o.id === oficina) ? oficina : null;
+  const oficinaId = oficinaSel;
+  const oficinaCodigo =
+    oficinas.find((o) => o.id === oficinaId)?.codigo ?? "";
 
   const [series, aprobaciones] = oficinaId
     ? await Promise.all([
@@ -161,6 +164,7 @@ export default async function TrdPage({
             <CardContent>
               <TrdJerarquia
                 oficinaId={oficinaId}
+                oficinaCodigo={oficinaCodigo}
                 series={series}
                 puedeElaborar={puedeElaborar}
                 puedeAprobar={puedeAprobar}

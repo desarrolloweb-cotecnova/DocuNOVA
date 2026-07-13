@@ -9,7 +9,6 @@ import { getPerfilActual } from "@/services/perfiles";
 import { listDocumentosPorOficina } from "@/services/documentos";
 import { listSeriesPorOficina } from "@/services/series";
 import {
-  TIPOS_DOCUMENTO,
   TIPO_DOCUMENTO_LABELS,
   ESTADO_DOCUMENTO_LABELS,
   labelDe,
@@ -17,12 +16,10 @@ import {
 } from "@/lib/tipos";
 import { FiltroDependencia } from "@/components/filtro-dependencia";
 import { ImportadorExcel } from "@/components/importador-excel";
+import { DocumentosArbol } from "@/components/documentos-arbol";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
-  crearDocumento,
   setEstadoDocumento,
   eliminarDocumento,
   importarDocumentos,
@@ -79,6 +76,8 @@ export default async function DocumentosPage({
         listSeriesPorOficina(oficinaId),
       ])
     : [[], []];
+
+  const trdAprobada = series[0]?.estado_aprobacion === "aprobado";
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6">
@@ -220,72 +219,18 @@ export default async function DocumentosPage({
           {puedeElaborar && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Nuevo documento</CardTitle>
+                <CardTitle className="text-base">
+                  Crear documentos desde la TRD
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <form
-                  action={crearDocumento}
-                  className="grid gap-3 sm:grid-cols-2"
-                >
-                  <input type="hidden" name="oficina_id" value={oficinaId} />
-                  <div className="flex flex-col gap-1 sm:col-span-2">
-                    <Label>Nombre</Label>
-                    <Input name="nombre" required />
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <Label>Código</Label>
-                    <Input name="codigo" />
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <Label>Serie / subserie</Label>
-                    <select
-                      name="serie_id"
-                      className="h-9 rounded-md border border-input bg-background px-2 text-sm"
-                    >
-                      <option value="">Sin serie</option>
-                      {series.map((s) => (
-                        <option key={s.id} value={s.id}>
-                          {s.codigo} · {s.nombre}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <Label>Tipo</Label>
-                    <select
-                      name="tipo"
-                      defaultValue="diligenciable"
-                      className="h-9 rounded-md border border-input bg-background px-2 text-sm"
-                    >
-                      {TIPOS_DOCUMENTO.map((t) => (
-                        <option key={t} value={t}>
-                          {TIPO_DOCUMENTO_LABELS[t]}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <Label>URL de plantilla</Label>
-                    <Input name="url_plantilla" placeholder="https://…" />
-                  </div>
-                  <div className="flex items-center gap-4 sm:col-span-2">
-                    <label className="flex items-center gap-1.5 text-sm">
-                      <input type="checkbox" name="es_publico" value="1" />
-                      Público
-                    </label>
-                    <label className="flex items-center gap-1.5 text-sm">
-                      <input
-                        type="checkbox"
-                        name="requiere_descarga"
-                        value="1"
-                      />
-                      Requiere descarga
-                    </label>
-                  </div>
-                  <div className="sm:col-span-2">
-                    <Button type="submit">Crear documento</Button>
-                  </div>
-                </form>
+                <DocumentosArbol
+                  oficinaId={oficinaId}
+                  series={series}
+                  documentos={documentos}
+                  trdAprobada={trdAprobada}
+                  puedeElaborar={puedeElaborar}
+                />
               </CardContent>
             </Card>
           )}

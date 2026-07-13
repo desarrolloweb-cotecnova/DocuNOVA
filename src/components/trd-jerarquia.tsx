@@ -3,6 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NIVEL_SERIE_ICON, type Serie } from "@/lib/tipos";
+
+/** Etiquetas de disposición final en el orden en que se muestran. */
+const DISPOSICIONES: { campo: keyof Serie; label: string }[] = [
+  { campo: "disp_conservacion", label: "Conservación" },
+  { campo: "disp_seleccion", label: "Selección" },
+  { campo: "disp_eliminacion", label: "Eliminación" },
+  { campo: "disp_digital", label: "Digitalización" },
+];
 import {
   crearSerie,
   actualizarSerie,
@@ -21,11 +29,13 @@ import {
  */
 export function TrdJerarquia({
   oficinaId,
+  oficinaCodigo,
   series,
   puedeElaborar,
   puedeAprobar,
 }: {
   oficinaId: string;
+  oficinaCodigo: string;
   series: Serie[];
   puedeElaborar: boolean;
   puedeAprobar: boolean;
@@ -44,7 +54,11 @@ export function TrdJerarquia({
             Agregar serie
           </summary>
           <div className="mt-2">
-            <FormNodoTRD oficinaId={oficinaId} nivel="serie" />
+            <FormNodoTRD
+              oficinaId={oficinaId}
+              nivel="serie"
+              codigoSugerido={`${oficinaCodigo}.`}
+            />
           </div>
         </details>
       )}
@@ -112,6 +126,7 @@ export function TrdJerarquia({
                             oficinaId={oficinaId}
                             nivel="tipo"
                             padreId={sub.id}
+                            codigoSugerido={`${sub.codigo}.`}
                           />
                         </div>
                       </details>
@@ -130,6 +145,7 @@ export function TrdJerarquia({
                     oficinaId={oficinaId}
                     nivel="subserie"
                     padreId={serie.id}
+                    codigoSugerido={`${serie.codigo}.`}
                   />
                 </div>
               </details>
@@ -178,6 +194,8 @@ function Nodo({
         )}
       </div>
 
+      {unidad.nivel !== "serie" && <ResumenTRD unidad={unidad} />}
+
       {puedeElaborar && (
         <details className="text-sm">
           <summary className="flex w-fit cursor-pointer items-center gap-1.5 text-muted-foreground hover:text-foreground">
@@ -203,12 +221,17 @@ function FormNodoTRD({
   nivel,
   padreId,
   serie,
+  codigoSugerido,
 }: {
   oficinaId: string;
   nivel: Serie["nivel"];
   padreId?: string;
   serie?: Serie;
+  codigoSugerido?: string;
 }) {
+  // Una serie solo agrupa; la retención, el soporte y la disposición se
+  // diligencian en sus subseries y tipos documentales.
+  const esSerie = nivel === "serie";
   return (
     <form
       action={serie ? actualizarSerie : crearSerie}
@@ -221,85 +244,125 @@ function FormNodoTRD({
 
       <div className="flex flex-col gap-1">
         <Label>Código</Label>
-        <Input name="codigo" defaultValue={serie?.codigo ?? ""} required />
+        <Input
+          name="codigo"
+          defaultValue={serie?.codigo ?? codigoSugerido ?? ""}
+          required
+        />
       </div>
       <div className="flex flex-col gap-1">
         <Label>Nombre</Label>
         <Input name="nombre" defaultValue={serie?.nombre ?? ""} required />
       </div>
-      <div className="flex flex-col gap-1">
-        <Label>Años en gestión</Label>
-        <Input
-          name="anios_gestion"
-          type="number"
-          min="0"
-          defaultValue={serie?.anios_gestion ?? ""}
-        />
-      </div>
-      <div className="flex flex-col gap-1">
-        <Label>Años en central</Label>
-        <Input
-          name="anios_central"
-          type="number"
-          min="0"
-          defaultValue={serie?.anios_central ?? ""}
-        />
-      </div>
-      <fieldset className="flex flex-wrap gap-3 rounded-md border border-input p-3 sm:col-span-2">
-        <legend className="px-1 text-xs font-medium text-muted-foreground">
-          Tipo de soporte
-        </legend>
-        <Casilla
-          name="soporte_fisico"
-          label="Soporte físico"
-          on={serie?.soporte_fisico}
-        />
-        <Casilla
-          name="soporte_digital"
-          label="Soporte digital"
-          on={serie?.soporte_digital}
-        />
-      </fieldset>
-      <fieldset className="flex flex-wrap gap-3 rounded-md border border-input p-3 sm:col-span-2">
-        <legend className="px-1 text-xs font-medium text-muted-foreground">
-          Disposición final
-        </legend>
-        <Casilla
-          name="disp_conservacion"
-          label="Conservación"
-          on={serie?.disp_conservacion}
-        />
-        <Casilla
-          name="disp_seleccion"
-          label="Selección"
-          on={serie?.disp_seleccion}
-        />
-        <Casilla
-          name="disp_eliminacion"
-          label="Eliminación"
-          on={serie?.disp_eliminacion}
-        />
-        <Casilla
-          name="disp_digital"
-          label="Digitalización"
-          on={serie?.disp_digital}
-        />
-      </fieldset>
-      <div className="flex flex-col gap-1 sm:col-span-2">
-        <Label>Procedimiento</Label>
-        <textarea
-          name="procedimiento"
-          defaultValue={serie?.procedimiento ?? ""}
-          rows={2}
-          className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-        />
-      </div>
+
+      {!esSerie && (
+        <>
+          <div className="flex flex-col gap-1">
+            <Label>Años en gestión</Label>
+            <Input
+              name="anios_gestion"
+              type="number"
+              min="0"
+              defaultValue={serie?.anios_gestion ?? ""}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <Label>Años en central</Label>
+            <Input
+              name="anios_central"
+              type="number"
+              min="0"
+              defaultValue={serie?.anios_central ?? ""}
+            />
+          </div>
+          <fieldset className="flex flex-wrap gap-3 rounded-md border border-input p-3 sm:col-span-2">
+            <legend className="px-1 text-xs font-medium text-muted-foreground">
+              Tipo de soporte
+            </legend>
+            <Casilla
+              name="soporte_fisico"
+              label="Soporte físico"
+              on={serie?.soporte_fisico}
+            />
+            <Casilla
+              name="soporte_digital"
+              label="Soporte digital"
+              on={serie?.soporte_digital}
+            />
+          </fieldset>
+          <fieldset className="flex flex-wrap gap-3 rounded-md border border-input p-3 sm:col-span-2">
+            <legend className="px-1 text-xs font-medium text-muted-foreground">
+              Disposición final
+            </legend>
+            <Casilla
+              name="disp_conservacion"
+              label="Conservación"
+              on={serie?.disp_conservacion}
+            />
+            <Casilla
+              name="disp_seleccion"
+              label="Selección"
+              on={serie?.disp_seleccion}
+            />
+            <Casilla
+              name="disp_eliminacion"
+              label="Eliminación"
+              on={serie?.disp_eliminacion}
+            />
+            <Casilla
+              name="disp_digital"
+              label="Digitalización"
+              on={serie?.disp_digital}
+            />
+          </fieldset>
+          <div className="flex flex-col gap-1 sm:col-span-2">
+            <Label>Procedimiento</Label>
+            <textarea
+              name="procedimiento"
+              defaultValue={serie?.procedimiento ?? ""}
+              rows={2}
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+            />
+          </div>
+        </>
+      )}
       <div className="sm:col-span-2">
         <Button type="submit" size="sm">
           {serie ? "Guardar cambios" : "Agregar"}
         </Button>
       </div>
     </form>
+  );
+}
+
+/** Resumen de retención, soporte y disposición de una subserie o tipo. */
+function ResumenTRD({ unidad }: { unidad: Serie }) {
+  const soportes = [
+    unidad.soporte_fisico && "Físico",
+    unidad.soporte_digital && "Digital",
+  ].filter(Boolean);
+  const disposiciones = DISPOSICIONES.filter((d) => unidad[d.campo]).map(
+    (d) => d.label,
+  );
+  return (
+    <dl className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+      <div className="flex gap-1">
+        <dt className="font-medium">Años en gestión:</dt>
+        <dd>{unidad.anios_gestion ?? "—"}</dd>
+      </div>
+      <div className="flex gap-1">
+        <dt className="font-medium">Años en central:</dt>
+        <dd>{unidad.anios_central ?? "—"}</dd>
+      </div>
+      <div className="flex gap-1">
+        <dt className="font-medium">Soporte:</dt>
+        <dd>{soportes.length ? soportes.join(", ") : "—"}</dd>
+      </div>
+      <div className="flex gap-1">
+        <dt className="font-medium">Disposición final:</dt>
+        <dd>{disposiciones.length ? disposiciones.join(", ") : "—"}</dd>
+      </div>
+    </dl>
   );
 }
 
