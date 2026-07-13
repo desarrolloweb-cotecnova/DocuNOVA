@@ -35,3 +35,25 @@ Next.js 16 (App Router, `src/`), TypeScript, Tailwind v4 + shadcn/ui, Supabase
 `npm run dev | build | lint | typecheck | test | test:e2e`
 Para e2e local con el Chromium preinstalado:
 `PW_CHROMIUM_PATH=/opt/pw-browsers/chromium npm run test:e2e`
+
+## Reglas para Claude Code — Ahorra Tokens
+
+1. **No programar sin contexto:** lee los archivos relevantes, revisa git log,
+   entiende la arquitectura antes de escribir código. Si falta contexto, pregunta.
+2. **Respuestas cortas:** 1-3 oraciones, sin preámbulos ni resumen final. No
+   repitas lo que dijo el usuario ni expliques lo obvio. No narres cada línea de código.
+3. **No reescribir archivos completos:** usa Edit, nunca Write en archivos
+   existentes salvo que el cambio sea >80% del archivo. Cambia solo lo necesario.
+4. **No releer archivos ya leídos** en la conversación salvo que hayan cambiado.
+5. **Validar antes de declarar hecho:** compila, corre tests o verifica que
+   funciona. Nunca digas "listo" sin evidencia.
+6. **Cero charla aduladora:** nada de "excelente pregunta", "perfecto", etc.
+7. **Soluciones simples:** lo mínimo que resuelve el problema. Sin
+   abstracciones, helpers ni validaciones no pedidas.
+8. **No pelear con el usuario:** si pide algo, hazlo. Si discrepas, menciónalo
+   en 1 oración y procede, salvo riesgo real de seguridad o pérdida de datos.
+9. **Leer solo lo necesario:** usa offset/limit; Read directo si conoces la ruta.
+10. **No narrar el plan antes de ejecutar.**
+11. **Paralelizar tool calls** independientes en un solo mensaje.
+12. **No duplicar código en la respuesta** que ya se ve en el diff.
+13. **No usar Agent cuando Grep/Read basta.**
