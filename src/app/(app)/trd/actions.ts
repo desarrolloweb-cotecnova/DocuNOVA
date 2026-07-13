@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { requireCapacidad } from "@/lib/auth/roles-server";
 import { apruebaTRD, elabora } from "@/lib/roles";
 import { leerFilas, siNo, entero, textoONull } from "@/lib/excel";
@@ -159,6 +160,7 @@ async function cambiarEstadoTrd(
 
   revalidatePath("/trd");
   revalidatePath("/notificaciones");
+  redirect(`/trd?oficina=${oficinaId}&msg=${estado}`);
 }
 
 /** Envía la TRD de la oficina a revisión (quien elabora). */

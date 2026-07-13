@@ -75,6 +75,15 @@ notificaciones.
   Registros y Consulta; colaborador solo Registros y Consulta; consulta solo
   Consulta. El Panel de inicio queda disponible para todo rol activo.
 
+### TRD
+
+- **CA-T1.** Quien elabora (gestor+) puede enviar la TRD a revisión: se registra
+  el estado `en_revision` en el historial sin error (la RLS de `aprobaciones_trd`
+  lo permite). Tras enviar/aprobar/rechazar se muestra un mensaje de confirmación.
+- **CA-T2.** En TRD, superadmin/rector/administrador ven todos los procesos; los
+  demás roles (p. ej. gestor) solo ven las dependencias de su propio proceso
+  (`perfiles.unidad_id`).
+
 ### Datos y seguridad
 
 - **CA-7.** Al crearse un usuario en Supabase Auth, se crea automáticamente su
