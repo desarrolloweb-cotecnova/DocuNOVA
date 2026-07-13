@@ -13,6 +13,7 @@ export type ResultadoConsulta = {
 
 type ConsultaRow = {
   id: string;
+  oficina_id: string | null;
   estado: EstadoRegistro;
   creado_en: string;
   documentos: { nombre: string } | null;
@@ -21,19 +22,37 @@ type ConsultaRow = {
 
 /**
  * Consulta registros uniendo documento, oficina (dependencia) y proceso.
- * El filtro de texto se aplica sobre proceso, dependencia y documento.
+ * Filtros opcionales:
+ *  - `oficinaId`: restringe a una dependencia concreta.
+ *  - `oficinasVisibles`: lista blanca de ids de oficinas (para restringir por
+ *    proceso del usuario cuando no ve todo).
+ *  - `q`: texto que se busca en proceso, dependencia o documento.
  */
 export async function buscarRegistros(
-  q?: string,
+  opciones: {
+    q?: string;
+    oficinaId?: string | null;
+    oficinasVisibles?: string[] | null;
+  } = {},
 ): Promise<ResultadoConsulta[]> {
   const supabase = await createClient();
-  const { data } = await supabase
+
+  let query = supabase
     .from("registros")
     .select(
-      "id, estado, creado_en, documentos(nombre), oficinas(nombre, unidades(nombre))",
+      "id, oficina_id, estado, creado_en, documentos(nombre), oficinas(nombre, unidades(nombre))",
     )
     .order("creado_en", { ascending: false })
     .limit(500);
+
+  if (opciones.oficinaId) {
+    query = query.eq("oficina_id", opciones.oficinaId);
+  } else if (opciones.oficinasVisibles) {
+    if (opciones.oficinasVisibles.length === 0) return [];
+    query = query.in("oficina_id", opciones.oficinasVisibles);
+  }
+
+  const { data } = await query;
 
   const filas: ResultadoConsulta[] = (
     (data as unknown as ConsultaRow[] | null) ?? []
@@ -46,7 +65,7 @@ export async function buscarRegistros(
     estado: r.estado,
   }));
 
-  const termino = q?.trim().toLowerCase();
+  const termino = opciones.q?.trim().toLowerCase();
   if (!termino) return filas;
 
   return filas.filter((f) =>

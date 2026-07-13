@@ -1,20 +1,19 @@
 import type { Metadata } from "next";
 import { Plus, FileStack } from "lucide-react";
 import { APP_NAME } from "@/lib/config";
-import { creaRegistros } from "@/lib/roles";
+import { creaRegistros, gestionaUsuarios } from "@/lib/roles";
 import { rolDelUsuario } from "@/lib/auth/roles-server";
 import { listOficinas } from "@/services/oficinas";
+import { listUnidades } from "@/services/unidades";
+import { getPerfilActual } from "@/services/perfiles";
 import { listDocumentosActivos } from "@/services/documentos";
 import { listRegistrosPorOficina } from "@/services/registros";
-import {
-  TIPO_DOCUMENTO_LABELS,
-  ESTADO_REGISTRO_LABELS,
-  labelDe,
-} from "@/lib/tipos";
-import { OficinaSelector } from "@/components/oficina-selector";
+import { TIPO_DOCUMENTO_LABELS, labelDe, type Unidad } from "@/lib/tipos";
+import { FiltroDependencia } from "@/components/filtro-dependencia";
+import { TablaRegistros } from "@/components/tabla-registros";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { crearRegistro, setEstadoRegistro } from "./actions";
+import { crearRegistro } from "./actions";
 
 export const metadata: Metadata = {
   title: `Registros — ${APP_NAME}`,
@@ -26,11 +25,35 @@ export default async function RegistrosPage({
   searchParams: Promise<{ oficina?: string }>;
 }) {
   const { oficina } = await searchParams;
-  const [rol, oficinas] = await Promise.all([rolDelUsuario(), listOficinas()]);
+  const [rol, perfil, oficinas, unidades] = await Promise.all([
+    rolDelUsuario(),
+    getPerfilActual(),
+    listOficinas(),
+    listUnidades(),
+  ]);
   const puedeRegistrar = creaRegistros(rol);
 
+  // Mismo criterio de proceso propio que Documentos/Consulta.
+  const puedeVerTodo = gestionaUsuarios(rol) || rol === "administrador";
+  const procesoUsuario = perfil?.unidad_id ?? null;
+
+  const oficinasVisibles = puedeVerTodo
+    ? oficinas
+    : procesoUsuario
+      ? oficinas.filter((o) => o.unidad_id === procesoUsuario)
+      : [];
+
+  const unidadesVisibles: Unidad[] = (() => {
+    if (puedeVerTodo || !procesoUsuario) return unidades;
+    const porId = new Map(unidades.map((u) => [u.id, u] as const));
+    const proceso = porId.get(procesoUsuario);
+    const macro = proceso?.padre_id ? porId.get(proceso.padre_id) : undefined;
+    const eje = macro?.padre_id ? porId.get(macro.padre_id) : undefined;
+    return [eje, macro, proceso].filter((u): u is Unidad => Boolean(u));
+  })();
+
   const oficinaId =
-    oficina && oficinas.some((o) => o.id === oficina) ? oficina : null;
+    oficina && oficinasVisibles.some((o) => o.id === oficina) ? oficina : null;
 
   const [documentos, registros] = oficinaId
     ? await Promise.all([
@@ -44,23 +67,30 @@ export default async function RegistrosPage({
       <div>
         <h1 className="text-xl font-semibold">Registros</h1>
         <p className="text-sm text-muted-foreground">
-          Crea registros a partir de los documentos activos de una dependencia.
+          Filtra por Eje → Macroproceso → Proceso → Dependencia. A partir de un
+          documento activo puedes crear un registro.
         </p>
       </div>
 
-      <OficinaSelector
-        oficinas={oficinas}
-        actual={oficinaId}
+      <FiltroDependencia
+        unidades={unidadesVisibles}
+        oficinas={oficinasVisibles}
+        oficinaActual={oficinaId}
         basePath="/registros"
       />
 
-      {!oficinaId ? (
+      {!puedeVerTodo && !procesoUsuario ? (
         <p className="text-sm text-muted-foreground">
-          Elige una dependencia para comenzar.
+          Aún no tienes un proceso asignado. Solicita a un administrador que te
+          asocie a un proceso para poder ver y crear registros.
+        </p>
+      ) : !oficinaId ? (
+        <p className="text-sm text-muted-foreground">
+          Elige una dependencia para ver sus registros.
         </p>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-2">
-          {/* Documentos disponibles */}
+        <>
+          {/* Documentos disponibles para crear registros */}
           <Card>
             <CardHeader>
               <CardTitle className="text-base">
@@ -113,74 +143,9 @@ export default async function RegistrosPage({
             </CardContent>
           </Card>
 
-          {/* Registros creados */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">
-                Registros ({registros.length})
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {registros.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  Todavía no hay registros en esta dependencia.
-                </p>
-              ) : (
-                <ul className="divide-y">
-                  {registros.map((r) => (
-                    <li key={r.id} className="flex flex-col gap-1 py-3 text-sm">
-                      <span className="flex items-center justify-between gap-2">
-                        <span className="min-w-0 truncate font-medium">
-                          {r.documento_nombre ?? "Documento"}
-                        </span>
-                        <span
-                          className={
-                            r.estado === "completado"
-                              ? "shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
-                              : r.estado === "anulado"
-                                ? "shrink-0 rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-medium text-destructive"
-                                : "shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
-                          }
-                        >
-                          {labelDe(ESTADO_REGISTRO_LABELS, r.estado)}
-                        </span>
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {new Date(r.creado_en).toLocaleDateString("es-CO")}
-                      </span>
-                      {puedeRegistrar && r.estado === "borrador" && (
-                        <span className="flex gap-2">
-                          <form action={setEstadoRegistro}>
-                            <input type="hidden" name="id" value={r.id} />
-                            <input
-                              type="hidden"
-                              name="estado"
-                              value="completado"
-                            />
-                            <Button type="submit" size="sm" variant="outline">
-                              Completar
-                            </Button>
-                          </form>
-                          <form action={setEstadoRegistro}>
-                            <input type="hidden" name="id" value={r.id} />
-                            <input
-                              type="hidden"
-                              name="estado"
-                              value="anulado"
-                            />
-                            <Button type="submit" size="sm" variant="ghost">
-                              Anular
-                            </Button>
-                          </form>
-                        </span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+          {/* Tabla de registros con búsqueda */}
+          <TablaRegistros registros={registros} puedeActuar={puedeRegistrar} />
+        </>
       )}
     </div>
   );
