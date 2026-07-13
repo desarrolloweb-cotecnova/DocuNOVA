@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import type { Unidad } from "@/lib/tipos";
 import type { OficinaListado, ResponsableListado } from "@/services/oficinas";
 import {
-  crearUnidad,
   crearOficina,
   actualizarOficina,
   eliminarOficina,
@@ -22,8 +21,6 @@ type PerfilMin = {
   nombre_completo: string | null;
   email: string;
 };
-
-type FormAbierto = "eje" | "macro" | "proceso" | "oficina" | null;
 
 export function DependenciasCliente({
   unidades,
@@ -42,7 +39,7 @@ export function DependenciasCliente({
   const [ejeId, setEjeId] = useState("");
   const [macroId, setMacroId] = useState("");
   const [procId, setProcId] = useState("");
-  const [abierto, setAbierto] = useState<FormAbierto>(null);
+  const [oficinaAbierta, setOficinaAbierta] = useState(false);
 
   const ejes = useMemo(
     () => unidades.filter((u) => u.tipo === "eje"),
@@ -93,18 +90,15 @@ export function DependenciasCliente({
       .some((v) => v!.toLowerCase().includes(termino));
   });
 
-  function reset(nivel: "eje" | "macro" | "proceso") {
+  function reset(nivel: "eje" | "macro") {
     if (nivel === "eje") {
       setMacroId("");
       setProcId("");
-    } else if (nivel === "macro") {
+    } else {
       setProcId("");
     }
-    setAbierto(null);
+    setOficinaAbierta(false);
   }
-
-  const toggle = (f: FormAbierto) =>
-    setAbierto((prev) => (prev === f ? null : f));
 
   return (
     <div className="flex flex-col gap-6">
@@ -167,7 +161,7 @@ export function DependenciasCliente({
                 value={procId}
                 onChange={(e) => {
                   setProcId(e.target.value);
-                  setAbierto(null);
+                  setOficinaAbierta(false);
                 }}
                 disabled={!macroId}
                 className="h-9 rounded-md border border-input bg-background px-2 text-sm disabled:opacity-60"
@@ -182,59 +176,27 @@ export function DependenciasCliente({
             </div>
           </div>
 
-          {/* Botones Agregar (según aplique) */}
+          {/* Agregar dependencia (oficina) al proceso seleccionado */}
           {puedeEditar && (
-            <div className="flex flex-wrap gap-2 border-t pt-3">
-              <Button size="sm" variant="outline" onClick={() => toggle("eje")}>
-                <Plus className="size-4" />
-                Eje
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={!ejeId}
-                onClick={() => toggle("macro")}
-              >
-                <Plus className="size-4" />
-                Macroproceso
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={!macroId}
-                onClick={() => toggle("proceso")}
-              >
-                <Plus className="size-4" />
-                Proceso
-              </Button>
+            <div className="border-t pt-3">
               <Button
                 size="sm"
                 disabled={!procId}
-                onClick={() => toggle("oficina")}
+                onClick={() => setOficinaAbierta((v) => !v)}
               >
                 <Plus className="size-4" />
-                Dependencia (oficina)
+                Agregar dependencia (oficina)
               </Button>
+              {!procId && (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Elige un proceso para poder crear su oficina. La estructura
+                  (ejes, macroprocesos y procesos) se administra en Gestión.
+                </p>
+              )}
             </div>
           )}
 
-          {/* Formularios de "Agregar" */}
-          {abierto === "eje" && <FormUnidad tipo="eje" titulo="Nuevo eje" />}
-          {abierto === "macro" && ejeId && (
-            <FormUnidad
-              tipo="macroproceso"
-              padreId={ejeId}
-              titulo="Nuevo macroproceso"
-            />
-          )}
-          {abierto === "proceso" && macroId && (
-            <FormUnidad
-              tipo="proceso"
-              padreId={macroId}
-              titulo="Nuevo proceso"
-            />
-          )}
-          {abierto === "oficina" && procId && <FormOficina unidadId={procId} />}
+          {oficinaAbierta && procId && <FormOficina unidadId={procId} />}
         </CardContent>
       </Card>
 
@@ -362,40 +324,6 @@ export function DependenciasCliente({
         )}
       </div>
     </div>
-  );
-}
-
-function FormUnidad({
-  tipo,
-  padreId,
-  titulo,
-}: {
-  tipo: "eje" | "macroproceso" | "proceso";
-  padreId?: string;
-  titulo: string;
-}) {
-  return (
-    <form
-      action={crearUnidad}
-      className="grid gap-3 rounded-md border bg-background p-3 sm:grid-cols-2"
-    >
-      <p className="text-sm font-medium sm:col-span-2">{titulo}</p>
-      <input type="hidden" name="tipo" value={tipo} />
-      {padreId && <input type="hidden" name="padre_id" value={padreId} />}
-      <div className="flex flex-col gap-1">
-        <Label>Código</Label>
-        <Input name="codigo" required />
-      </div>
-      <div className="flex flex-col gap-1">
-        <Label>Nombre</Label>
-        <Input name="nombre" required />
-      </div>
-      <div className="sm:col-span-2">
-        <Button type="submit" size="sm">
-          Agregar
-        </Button>
-      </div>
-    </form>
   );
 }
 

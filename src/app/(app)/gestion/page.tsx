@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { UserPlus, Trash2 } from "lucide-react";
+import { UserPlus, Trash2, FolderTree } from "lucide-react";
 import { APP_NAME } from "@/lib/config";
 import { roleLabel, gestionaUsuarios, ROLES_ASIGNABLES } from "@/lib/roles";
 import { rolDelUsuario } from "@/lib/auth/roles-server";
 import { listPerfiles, listPreRegistros } from "@/services/perfiles";
+import { listUnidades } from "@/services/unidades";
+import { listOficinas } from "@/services/oficinas";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { EstructuraGestion } from "@/components/estructura-gestion";
 import {
   setRol,
   setActivo,
@@ -17,25 +20,31 @@ import {
 } from "./actions";
 
 export const metadata: Metadata = {
-  title: `Gestión de usuarios — ${APP_NAME}`,
+  title: `Gestión — ${APP_NAME}`,
 };
 
 export default async function GestionPage() {
   const rol = await rolDelUsuario();
   if (!gestionaUsuarios(rol)) redirect("/dashboard");
 
-  const [perfiles, preRegistros] = await Promise.all([
+  const [perfiles, preRegistros, unidades, oficinas] = await Promise.all([
     listPerfiles(),
     listPreRegistros(),
+    listUnidades(),
+    listOficinas(),
   ]);
+
+  const unidadesConOficina = oficinas
+    .map((o) => o.unidad_id)
+    .filter((x): x is string => Boolean(x));
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6">
       <div>
-        <h1 className="text-xl font-semibold">Gestión de usuarios</h1>
+        <h1 className="text-xl font-semibold">Gestión</h1>
         <p className="text-sm text-muted-foreground">
-          Activa cuentas y asigna roles. Los usuarios se crean al iniciar sesión
-          con Google; usa el pre-registro para asignarles rol por adelantado.
+          Administra usuarios y la estructura organizacional (ejes,
+          macroprocesos y procesos).
         </p>
       </div>
 
@@ -194,6 +203,22 @@ export default async function GestionPage() {
               ))}
             </ul>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Estructura organizacional */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <FolderTree className="size-4 text-secondary" />
+            Estructura organizacional
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <EstructuraGestion
+            unidades={unidades}
+            unidadesConOficina={unidadesConOficina}
+          />
         </CardContent>
       </Card>
     </div>

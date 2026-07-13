@@ -84,35 +84,6 @@ export async function quitarResponsable(formData: FormData) {
   revalidatePath("/dependencias");
 }
 
-/** Crea una unidad organizacional (eje, macroproceso o proceso). */
-export async function crearUnidad(formData: FormData) {
-  const supabase = await requireCapacidad(apruebaTRD);
-  const tipo = str(formData.get("tipo")) as TipoUnidad;
-  const padre_id = nullable(formData.get("padre_id"));
-  if (tipo !== "eje" && !padre_id) {
-    throw new Error("Un macroproceso o proceso requiere una unidad padre");
-  }
-  const { error } = await supabase.from("unidades").insert({
-    tipo,
-    codigo: str(formData.get("codigo")),
-    nombre: str(formData.get("nombre")),
-    padre_id: tipo === "eje" ? null : padre_id,
-  });
-  if (error) throw new Error(error.message);
-  revalidatePath("/dependencias");
-}
-
-/** Elimina una unidad organizacional. */
-export async function eliminarUnidad(formData: FormData) {
-  const supabase = await requireCapacidad(apruebaTRD);
-  const { error } = await supabase
-    .from("unidades")
-    .delete()
-    .eq("id", str(formData.get("id")));
-  if (error) throw new Error(error.message);
-  revalidatePath("/dependencias");
-}
-
 /**
  * Carga masiva de dependencias desde Excel: por cada fila hace upsert de
  * eje → macroproceso → proceso → oficina (resolviendo padres por código).
