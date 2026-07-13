@@ -75,3 +75,53 @@ export function esLector(role: string | null | undefined): boolean {
     role !== "pendiente"
   );
 }
+
+/**
+ * Módulos (rutas) que cada rol puede ver en la navegación. El "Panel" es la
+ * pantalla de inicio y está disponible para todo rol activo; los módulos de
+ * archivo se restringen según el rol. La comprobación es por prefijo de ruta,
+ * así que cubre las subrutas de cada módulo.
+ */
+const MODULOS_POR_ROL: Record<Role, string[]> = {
+  superadmin: [
+    "/dashboard",
+    "/dependencias",
+    "/trd",
+    "/documentos",
+    "/registros",
+    "/consulta",
+    "/gestion",
+  ],
+  rector: [
+    "/dashboard",
+    "/dependencias",
+    "/trd",
+    "/documentos",
+    "/registros",
+    "/consulta",
+    "/gestion",
+  ],
+  administrador: [
+    "/dashboard",
+    "/dependencias",
+    "/trd",
+    "/documentos",
+    "/registros",
+    "/consulta",
+  ],
+  gestor: ["/dashboard", "/trd", "/documentos", "/registros", "/consulta"],
+  colaborador: ["/dashboard", "/registros", "/consulta"],
+  consulta: ["/dashboard", "/consulta"],
+  pendiente: [],
+};
+
+/** ¿El rol puede ver el módulo cuya ruta base es `href`? */
+export function puedeVerModulo(
+  role: string | null | undefined,
+  href: string,
+): boolean {
+  if (!role || !(role in MODULOS_POR_ROL)) return false;
+  return MODULOS_POR_ROL[role as Role].some(
+    (base) => href === base || href.startsWith(`${base}/`),
+  );
+}

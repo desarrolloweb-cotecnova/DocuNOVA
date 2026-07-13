@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { isAllowedEmail } from "@/lib/auth/domain";
+import { esSesionImpersonada } from "@/lib/auth/impersonacion";
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>;
 
@@ -28,11 +29,16 @@ export async function requireAuth(): Promise<{
   if (!user) redirect("/login");
   if (!isAllowedEmail(user.email)) redirect("/auth/signout?reason=domain");
 
-  const { data: aal } =
-    await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  // Excepción de MFA para las sesiones impersonadas: el administrador ya superó
+  // su propio segundo factor al iniciar la impersonación (el marcador va firmado
+  // con la service_role key, así que no puede fabricarse en el cliente).
+  if (!(await esSesionImpersonada())) {
+    const { data: aal } =
+      await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
 
-  if (aal?.currentLevel !== "aal2") {
-    redirect(aal?.nextLevel === "aal2" ? "/mfa/verify" : "/mfa/enroll");
+    if (aal?.currentLevel !== "aal2") {
+      redirect(aal?.nextLevel === "aal2" ? "/mfa/verify" : "/mfa/enroll");
+    }
   }
 
   return { supabase, user };

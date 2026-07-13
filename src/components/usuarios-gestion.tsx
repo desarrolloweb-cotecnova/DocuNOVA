@@ -1,16 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, X } from "lucide-react";
+import { Pencil, X, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { roleLabel, ROLES_ASIGNABLES } from "@/lib/roles";
+import { roleLabel, gestionaUsuarios, ROLES_ASIGNABLES } from "@/lib/roles";
 import type { PerfilListado } from "@/services/perfiles";
 import {
-  setRol,
   setActivo,
   actualizarPerfilUsuario,
+  iniciarImpersonacion,
 } from "@/app/(app)/gestion/actions";
 
 export type ProcesoOpcion = { id: string; ruta: string };
@@ -24,10 +24,12 @@ export function UsuariosGestion({
   perfiles,
   cedulas,
   procesos,
+  usuarioActualId,
 }: {
   perfiles: PerfilListado[];
   cedulas: Record<string, string>;
   procesos: ProcesoOpcion[];
+  usuarioActualId: string;
 }) {
   const [editando, setEditando] = useState<PerfilListado | null>(null);
 
@@ -57,23 +59,9 @@ export function UsuariosGestion({
                 </p>
               </td>
               <td className="py-3">
-                <form action={setRol} className="flex items-center gap-2">
-                  <input type="hidden" name="id" value={p.usuario_id} />
-                  <select
-                    name="rol"
-                    defaultValue={p.rol}
-                    className="h-8 rounded-md border border-input bg-background px-2 text-sm"
-                  >
-                    {ROLES_ASIGNABLES.map((r) => (
-                      <option key={r} value={r}>
-                        {roleLabel(r)}
-                      </option>
-                    ))}
-                  </select>
-                  <Button type="submit" size="sm" variant="outline">
-                    Guardar
-                  </Button>
-                </form>
+                <span className="rounded-full bg-secondary/15 px-2 py-0.5 text-xs font-medium text-secondary">
+                  {roleLabel(p.rol)}
+                </span>
               </td>
               <td className="py-3">
                 <span
@@ -97,6 +85,22 @@ export function UsuariosGestion({
                     <Pencil className="size-3.5" />
                     Editar perfil
                   </Button>
+                  {p.usuario_id !== usuarioActualId &&
+                    p.activo &&
+                    !gestionaUsuarios(p.rol) && (
+                      <form action={iniciarImpersonacion}>
+                        <input type="hidden" name="id" value={p.usuario_id} />
+                        <Button
+                          type="submit"
+                          size="sm"
+                          variant="outline"
+                          title="Abrir una sesión como este usuario"
+                        >
+                          <LogIn className="size-3.5" />
+                          Ver como
+                        </Button>
+                      </form>
+                    )}
                   <form action={setActivo}>
                     <input type="hidden" name="id" value={p.usuario_id} />
                     <input
@@ -200,6 +204,22 @@ function ModalEditar({
               name="titulo_cargo"
               defaultValue={perfil.titulo_cargo ?? ""}
             />
+          </div>
+
+          <div className="flex flex-col gap-1 sm:col-span-2">
+            <Label htmlFor="ep-rol">Rol</Label>
+            <select
+              id="ep-rol"
+              name="rol"
+              defaultValue={perfil.rol}
+              className="h-9 rounded-md border border-input bg-background px-2 text-sm"
+            >
+              {ROLES_ASIGNABLES.map((r) => (
+                <option key={r} value={r}>
+                  {roleLabel(r)}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="flex flex-col gap-1">

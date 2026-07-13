@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth/guard";
 import { activationRedirect } from "@/lib/auth/activation";
+import { leerImpersonacion } from "@/lib/auth/impersonacion";
 import {
   listMisNotificaciones,
   contarMisNoLeidas,
@@ -57,8 +58,16 @@ export default async function AppLayout({
     contarMisNoLeidas(),
   ]);
 
+  // Banner de impersonación: si la sesión actual es una impersonación válida,
+  // mostramos a quién se está viendo y el botón para volver.
+  const imp = await leerImpersonacion();
+  const impersonando = imp
+    ? { nombre: profile?.nombre_completo ?? user.email ?? "usuario" }
+    : null;
+
   return (
     <AppShell
+      impersonando={impersonando}
       email={user.email ?? ""}
       fullName={profile?.nombre_completo ?? null}
       role={profile?.rol ?? null}

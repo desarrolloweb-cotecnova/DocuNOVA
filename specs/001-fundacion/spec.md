@@ -57,6 +57,23 @@ notificaciones.
   crea activo con esos datos en el primer inicio de sesión.
 - **CA-G4.** Es posible invitar varios usuarios a la vez mediante carga de un
   Excel (plantilla descargable), igual que en dependencias, TRD y documentos.
+- **CA-G5.** Un administrador de usuarios (superadmin/rector) puede "Ver como"
+  otro usuario: se forja una sesión real de ese usuario (la RLS y el rol se
+  reflejan tal cual) desde el servidor con la service_role key. No se puede
+  impersonar a otro administrador de usuarios ni a una cuenta inactiva.
+- **CA-G6.** Durante la impersonación se omite el segundo factor (aal2) solo
+  para esa sesión; el marcador que la habilita va firmado (HMAC con la
+  service_role key), de modo que un usuario no puede fabricarlo para saltarse su
+  propio MFA. Un banner permanente indica a quién se está viendo y permite
+  volver a la cuenta del administrador con un clic (restaura su sesión).
+- **CA-G7.** Cada inicio y fin de impersonación queda registrado en
+  `impersonacion_log` (auditoría visible solo para administradores de usuarios).
+- **CA-G8.** El rol de un usuario se cambia desde el formulario "Editar perfil"
+  (no con un control separado en la fila), junto con el resto de sus datos.
+- **CA-G9.** La navegación muestra los módulos según el rol: superadmin y rector
+  ven todos; administrador todos menos Gestión; gestor solo TRD, Documentos,
+  Registros y Consulta; colaborador solo Registros y Consulta; consulta solo
+  Consulta. El Panel de inicio queda disponible para todo rol activo.
 
 ### Datos y seguridad
 

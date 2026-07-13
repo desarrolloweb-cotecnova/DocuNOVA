@@ -10,7 +10,7 @@ import {
   CalendarClock,
   type LucideIcon,
 } from "lucide-react";
-import { gestionaUsuarios } from "./roles";
+import { apruebaTRD, puedeVerModulo } from "./roles";
 
 export type NavItem = {
   href: string;
@@ -18,14 +18,13 @@ export type NavItem = {
   icon: LucideIcon;
   /** Marca funcionalidades planificadas para fases posteriores. */
   disabled?: boolean;
-  /** Si se define, solo los roles para los que la función devuelve true lo ven. */
-  visible?: (role: string | null | undefined) => boolean;
 };
 
 /**
- * Navegación principal. "Gestión" solo es visible para quien administra
- * usuarios (superadmin/rector). Los ítems deshabilitados corresponden a módulos
- * de próximas fases (Correspondencia, Reuniones).
+ * Navegación principal. La visibilidad de cada módulo por rol se define en
+ * `puedeVerModulo` (src/lib/roles.ts). Los ítems deshabilitados corresponden a
+ * módulos de próximas fases (Correspondencia, Reuniones) y solo se muestran a
+ * los roles con acceso amplio (aprobadores).
  */
 export const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Panel", icon: LayoutDashboard },
@@ -34,12 +33,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/documentos", label: "Documentos", icon: FileStack },
   { href: "/registros", label: "Registros", icon: ClipboardCheck },
   { href: "/consulta", label: "Consulta", icon: Search },
-  {
-    href: "/gestion",
-    label: "Gestión",
-    icon: Users,
-    visible: gestionaUsuarios,
-  },
+  { href: "/gestion", label: "Gestión", icon: Users },
   // Próximamente
   {
     href: "/correspondencia",
@@ -57,5 +51,7 @@ export const NAV_ITEMS: NavItem[] = [
 
 /** Filtra la navegación según el rol del usuario. */
 export function navItemsForRole(role: string | null | undefined): NavItem[] {
-  return NAV_ITEMS.filter((item) => !item.visible || item.visible(role));
+  return NAV_ITEMS.filter((item) =>
+    item.disabled ? apruebaTRD(role) : puedeVerModulo(role, item.href),
+  );
 }
