@@ -84,6 +84,18 @@ notificaciones.
   demás roles (p. ej. gestor) solo ven las dependencias de su propio proceso
   (`perfiles.unidad_id`).
 
+### Carga masiva por Excel (Dependencias, TRD, Documentos)
+
+- **CA-C1.** La carga masiva (subir y descargar plantilla) solo está disponible
+  para administradores (superadmin, rector, administrador). La descarga de
+  plantilla exige ese rol (403 en caso contrario).
+- **CA-C2.** La plantilla se descarga con los datos actuales de la base (una fila
+  por registro) más la hoja de instrucciones; si no hay datos, trae la fila de
+  ejemplo.
+- **CA-C3.** Al subir el archivo, solo se agregan los registros nuevos: las filas
+  cuyo código ya existe se omiten (no se actualizan). En Dependencias, los
+  eje/macro/proceso existentes se reutilizan y solo se crean los que falten.
+
 ### Datos y seguridad
 
 - **CA-7.** Al crearse un usuario en Supabase Auth, se crea automáticamente su

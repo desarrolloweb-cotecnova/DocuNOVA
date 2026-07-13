@@ -122,10 +122,10 @@ export default async function TrdPage({
         )}
       </div>
 
-      {puedeElaborar && (
+      {puedeAprobar && (
         <ImportadorExcel
           titulo="Carga masiva de TRD"
-          descripcion="Sube un Excel con las series/subseries/tipos de una o varias dependencias (cada fila indica el código de su oficina)."
+          descripcion="Descarga la plantilla (trae la TRD actual), edítala y súbela. Solo se agregan las entradas nuevas; las de código ya existente se omiten."
           plantillaHref="/trd/plantilla"
           accion={importarTRD}
         />

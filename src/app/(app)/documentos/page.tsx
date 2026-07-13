@@ -89,10 +89,10 @@ export default async function DocumentosPage({
         </p>
       </div>
 
-      {puedeElaborar && (
+      {puedeAprobar && (
         <ImportadorExcel
           titulo="Carga masiva de documentos"
-          descripcion="Sube un Excel con los documentos de una o varias dependencias (cada fila indica el código de su oficina)."
+          descripcion="Descarga la plantilla (trae los documentos actuales), edítala y súbela. Solo se agregan los documentos nuevos; los de código ya existente se omiten."
           plantillaHref="/documentos/plantilla"
           accion={importarDocumentos}
         />

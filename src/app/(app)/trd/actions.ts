@@ -189,7 +189,7 @@ export async function importarTRD(
 ): Promise<ResultadoImport> {
   let supabase: Awaited<ReturnType<typeof requireCapacidad>>;
   try {
-    supabase = await requireCapacidad(elabora);
+    supabase = await requireCapacidad(apruebaTRD);
   } catch {
     return fallo("No tienes permiso para cargar la TRD.");
   }
@@ -237,7 +237,7 @@ export async function importarTRD(
   }
 
   let creados = 0;
-  let actualizados = 0;
+  let omitidos = 0;
   const errores: string[] = [];
 
   for (let i = 0; i < filas.length; i++) {
@@ -273,6 +273,8 @@ export async function importarTRD(
         }
       }
 
+      // Solo se agregan entradas nuevas: si ya existe (oficina, código, nivel),
+      // se omite.
       const { data: existente } = await supabase
         .from("series")
         .select("id")
@@ -280,35 +282,34 @@ export async function importarTRD(
         .eq("codigo", f.codigo)
         .eq("nivel", nivel)
         .maybeSingle();
+      if (existente) {
+        omitidos++;
+        continue;
+      }
 
-      const { error } = await supabase.from("series").upsert(
-        {
-          oficina_id: ofId,
-          codigo: f.codigo,
-          nombre: f.nombre,
-          nivel,
-          padre_id,
-          soporte_fisico: siNo(f.soporte_fisico),
-          soporte_digital: siNo(f.soporte_digital),
-          anios_gestion: entero(f.anios_gestion),
-          anios_central: entero(f.anios_central),
-          disp_conservacion: siNo(f.disp_conservacion),
-          disp_seleccion: siNo(f.disp_seleccion),
-          disp_eliminacion: siNo(f.disp_eliminacion),
-          disp_digital: siNo(f.disp_digital),
-          procedimiento: textoONull(f.procedimiento),
-        },
-        { onConflict: "oficina_id,codigo,nivel" },
-      );
+      const { error } = await supabase.from("series").insert({
+        oficina_id: ofId,
+        codigo: f.codigo,
+        nombre: f.nombre,
+        nivel,
+        padre_id,
+        soporte_fisico: siNo(f.soporte_fisico),
+        soporte_digital: siNo(f.soporte_digital),
+        anios_gestion: entero(f.anios_gestion),
+        anios_central: entero(f.anios_central),
+        disp_conservacion: siNo(f.disp_conservacion),
+        disp_seleccion: siNo(f.disp_seleccion),
+        disp_eliminacion: siNo(f.disp_eliminacion),
+        disp_digital: siNo(f.disp_digital),
+        procedimiento: textoONull(f.procedimiento),
+      });
       if (error) throw new Error(error.message);
-
-      if (existente) actualizados++;
-      else creados++;
+      creados++;
     } catch (e) {
       errores.push(`Fila ${linea}: ${(e as Error).message}`);
     }
   }
 
   revalidatePath("/trd");
-  return { ok: true, creados, actualizados, omitidos: 0, errores };
+  return { ok: true, creados, actualizados: 0, omitidos, errores };
 }
