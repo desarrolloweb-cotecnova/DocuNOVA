@@ -56,23 +56,29 @@ export function EstructuraGestion({
       )}
 
       {ejes.map((eje) => (
-        <div key={eje.id} className="rounded-lg border">
+        <div
+          key={eje.id}
+          className="rounded-lg border border-primary/30 bg-primary/10"
+        >
           <Nodo unidad={eje} puedeEliminar={puedeEliminar(eje)} />
 
-          <div className="space-y-2 border-t bg-muted/20 p-3 pl-6">
+          <div className="space-y-2 border-t border-primary/25 bg-primary/5 p-3 pl-6">
             {macros
               .filter((m) => m.padre_id === eje.id)
               .map((macro) => (
-                <div key={macro.id} className="rounded-md border bg-card">
+                <div
+                  key={macro.id}
+                  className="rounded-md border border-primary/25 bg-card"
+                >
                   <Nodo unidad={macro} puedeEliminar={puedeEliminar(macro)} />
 
-                  <div className="space-y-2 border-t bg-muted/20 p-3 pl-6">
+                  <div className="space-y-2 border-t border-primary/20 bg-primary/[0.04] p-3 pl-6">
                     {procesos
                       .filter((p) => p.padre_id === macro.id)
                       .map((proc) => (
                         <div
                           key={proc.id}
-                          className="rounded-md border bg-card"
+                          className="rounded-md border border-primary/20 bg-card"
                         >
                           <Nodo
                             unidad={proc}
