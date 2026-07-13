@@ -8,19 +8,21 @@ import type { Unidad } from "@/lib/tipos";
 import type { OficinaListado } from "@/services/oficinas";
 
 /**
- * Filtro en cascada para el módulo TRD: Eje → Macroproceso → Proceso →
- * Dependencia. Al elegir dependencia navega a /trd?oficina=<id>, respetando el
- * patrón de la página TRD (server component + searchParams). Si viene una
- * `oficinaActual`, deriva los selects para preseleccionar la ruta jerárquica.
+ * Filtro en cascada reutilizable (TRD, Documentos, etc.): Eje → Macroproceso
+ * → Proceso → Dependencia. Al elegir dependencia navega a
+ * `<basePath>?oficina=<id>` (patrón server component + searchParams).
+ * Si viene una `oficinaActual`, deriva los selects para preseleccionar la ruta.
  */
-export function TrdCliente({
+export function FiltroDependencia({
   unidades,
   oficinas,
   oficinaActual,
+  basePath,
 }: {
   unidades: Unidad[];
   oficinas: OficinaListado[];
   oficinaActual: string | null;
+  basePath: string;
 }) {
   const router = useRouter();
 
@@ -72,7 +74,7 @@ export function TrdCliente({
     : [];
 
   function irAOficina(id: string) {
-    router.push(id ? `/trd?oficina=${id}` : "/trd");
+    router.push(id ? `${basePath}?oficina=${id}` : basePath);
   }
 
   return (

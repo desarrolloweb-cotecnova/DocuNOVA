@@ -16,7 +16,7 @@ import {
   type EstadoTrd,
   type Serie,
 } from "@/lib/tipos";
-import { TrdCliente } from "@/components/trd-cliente";
+import { FiltroDependencia } from "@/components/filtro-dependencia";
 import { ImportadorExcel } from "@/components/importador-excel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -104,10 +104,11 @@ export default async function TrdPage({
         />
       )}
 
-      <TrdCliente
+      <FiltroDependencia
         unidades={unidades}
         oficinas={oficinas}
         oficinaActual={oficinaId}
+        basePath="/trd"
       />
 
       {!oficinaId ? (
@@ -335,7 +336,10 @@ function FormularioSerie({
           defaultValue={serie?.anios_central ?? ""}
         />
       </div>
-      <fieldset className="flex flex-wrap gap-3 sm:col-span-2">
+      <fieldset className="flex flex-wrap gap-3 rounded-md border border-input p-3 sm:col-span-2">
+        <legend className="px-1 text-xs font-medium text-muted-foreground">
+          Tipo de soporte
+        </legend>
         <Casilla
           name="soporte_fisico"
           label="Soporte físico"
@@ -346,6 +350,11 @@ function FormularioSerie({
           label="Soporte digital"
           on={serie?.soporte_digital}
         />
+      </fieldset>
+      <fieldset className="flex flex-wrap gap-3 rounded-md border border-input p-3 sm:col-span-2">
+        <legend className="px-1 text-xs font-medium text-muted-foreground">
+          Disposición final
+        </legend>
         <Casilla
           name="disp_conservacion"
           label="Conservación"
