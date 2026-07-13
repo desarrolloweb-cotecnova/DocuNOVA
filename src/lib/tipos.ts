@@ -187,6 +187,45 @@ export type Registro = {
   actualizado_en: string;
 };
 
+// -----------------------------------------------------------------------------
+// Notificaciones
+// -----------------------------------------------------------------------------
+export const TIPOS_NOTIFICACION = [
+  "trd_enviada_revision",
+  "trd_aprobada",
+  "trd_rechazada",
+  "documento_activado",
+  "documento_archivado",
+  "registro_completado",
+  "registro_anulado",
+] as const;
+export type TipoNotificacion = (typeof TIPOS_NOTIFICACION)[number];
+
+export const TIPO_NOTIFICACION_LABELS: Record<TipoNotificacion, string> = {
+  trd_enviada_revision: "TRD enviada a revisión",
+  trd_aprobada: "TRD aprobada",
+  trd_rechazada: "TRD rechazada",
+  documento_activado: "Documento activado",
+  documento_archivado: "Documento archivado",
+  registro_completado: "Registro completado",
+  registro_anulado: "Registro anulado",
+};
+
+export type EntidadNotificacion =
+  "serie" | "oficina" | "documento" | "registro";
+
+export type Notificacion = {
+  id: string;
+  destinatario: string;
+  tipo: TipoNotificacion;
+  asunto: string;
+  mensaje: string | null;
+  entidad_tipo: EntidadNotificacion | null;
+  entidad_id: string | null;
+  leida: boolean;
+  creado_en: string;
+};
+
 /** Etiqueta genérica: devuelve la del mapa o un guion si no existe. */
 export function labelDe<T extends string>(
   mapa: Record<T, string>,

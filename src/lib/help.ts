@@ -54,6 +54,14 @@ const AYUDA: { prefijo: string; contenido: AyudaContenido }[] = [
     },
   },
   {
+    prefijo: "/notificaciones",
+    contenido: {
+      titulo: "Notificaciones",
+      texto:
+        "Avisos del sistema sobre tus dependencias: TRD enviada a revisión, aprobada o rechazada; documentos activados o archivados; registros completados o anulados. Haz clic en una notificación para abrir el módulo relacionado o márcalas como leídas.",
+    },
+  },
+  {
     prefijo: "/gestion",
     contenido: {
       titulo: "Gestión de usuarios",
