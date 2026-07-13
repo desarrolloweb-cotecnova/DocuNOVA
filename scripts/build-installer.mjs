@@ -30,6 +30,7 @@ drop trigger if exists on_auth_user_created on auth.users;
 
 -- Tablas del esquema NUEVO
 drop table if exists
+  public.notificaciones,
   public.registros,
   public.documentos,
   public.aprobaciones_trd,
@@ -83,6 +84,7 @@ drop function if exists
 
 -- Tipos (nuevos y antiguos)
 drop type if exists
+  public.tipo_notificacion,
   public.estado_registro,
   public.estado_documento,
   public.tipo_documento,

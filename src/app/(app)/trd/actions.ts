@@ -5,7 +5,18 @@ import { requireCapacidad } from "@/lib/auth/roles-server";
 import { apruebaTRD, elabora } from "@/lib/roles";
 import { leerFilas, siNo, entero, textoONull } from "@/lib/excel";
 import { fallo, type ResultadoImport } from "@/lib/importacion";
-import { NIVELES_SERIE, type EstadoTrd, type NivelSerie } from "@/lib/tipos";
+import {
+  emitirNotificaciones,
+  getAprobadoresIds,
+  getAutorEnvioTrd,
+  getResponsablesIds,
+} from "@/lib/notificaciones-server";
+import {
+  NIVELES_SERIE,
+  type EstadoTrd,
+  type NivelSerie,
+  type TipoNotificacion,
+} from "@/lib/tipos";
 
 function str(v: FormDataEntryValue | null): string {
   return typeof v === "string" ? v.trim() : "";
@@ -86,6 +97,13 @@ async function cambiarEstadoTrd(
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Antes de actualizar, capturamos al autor del envío a revisión (para
+  // notificarlo cuando se aprueba/rechaza).
+  const autorRevisionPrevio =
+    estado === "aprobado" || estado === "rechazado"
+      ? await getAutorEnvioTrd(supabase, oficinaId)
+      : null;
+
   const { error: e1 } = await supabase
     .from("series")
     .update({ estado_aprobacion: estado })
@@ -99,7 +117,48 @@ async function cambiarEstadoTrd(
     comentario,
   });
   if (e2) throw new Error(e2.message);
+
+  // Emitir notificaciones según el evento.
+  const { data: ofRow } = await supabase
+    .from("oficinas")
+    .select("codigo, nombre")
+    .eq("id", oficinaId)
+    .maybeSingle();
+  const nombreOficina = ofRow ? `${ofRow.codigo} · ${ofRow.nombre}` : "oficina";
+
+  if (estado === "en_revision") {
+    const aprobadores = await getAprobadoresIds(supabase);
+    // Excluir al propio autor por si tiene un rol aprobador.
+    const destinatarios = aprobadores.filter((id) => id !== user?.id);
+    await emitirNotificaciones(supabase, {
+      destinatarios,
+      tipo: "trd_enviada_revision",
+      asunto: `TRD enviada a revisión — ${nombreOficina}`,
+      mensaje: comentario,
+      entidadTipo: "oficina",
+      entidadId: oficinaId,
+    });
+  } else if (estado === "aprobado" || estado === "rechazado") {
+    const responsables = await getResponsablesIds(supabase, oficinaId);
+    const destinatarios = [
+      ...(autorRevisionPrevio ? [autorRevisionPrevio] : []),
+      ...responsables,
+    ].filter((id) => id !== user?.id);
+    const tipo: TipoNotificacion =
+      estado === "aprobado" ? "trd_aprobada" : "trd_rechazada";
+    const etiqueta = estado === "aprobado" ? "aprobada" : "rechazada";
+    await emitirNotificaciones(supabase, {
+      destinatarios,
+      tipo,
+      asunto: `TRD ${etiqueta} — ${nombreOficina}`,
+      mensaje: comentario,
+      entidadTipo: "oficina",
+      entidadId: oficinaId,
+    });
+  }
+
   revalidatePath("/trd");
+  revalidatePath("/notificaciones");
 }
 
 /** Envía la TRD de la oficina a revisión (quien elabora). */

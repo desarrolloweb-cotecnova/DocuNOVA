@@ -3,9 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { HelpCircle, LogOut, User, ShieldCheck } from "lucide-react";
+import { Bell, HelpCircle, LogOut, User, ShieldCheck } from "lucide-react";
 import { roleLabel } from "@/lib/roles";
 import { ayudaParaRuta } from "@/lib/help";
+import { notificacionHref } from "@/lib/notificaciones";
+import type { Notificacion } from "@/lib/tipos";
+import { TIPO_NOTIFICACION_LABELS, labelDe } from "@/lib/tipos";
 import { cn } from "@/lib/utils";
 
 export type TopbarProps = {
@@ -15,9 +18,11 @@ export type TopbarProps = {
   unidadNombre: string | null;
   oficinaLabel: string | null;
   avatarUrl: string | null;
+  notificaciones: Notificacion[];
+  noLeidas: number;
 };
 
-type Menu = "ayuda" | "perfil" | null;
+type Menu = "ayuda" | "notifs" | "perfil" | null;
 
 export function Topbar(props: TopbarProps) {
   const [menu, setMenu] = useState<Menu>(null);
@@ -60,6 +65,65 @@ export function Topbar(props: TopbarProps) {
               </p>
               <p className="text-sm text-muted-foreground">{ayuda.texto}</p>
             </div>
+          </Panel>
+        )}
+      </div>
+
+      {/* Notificaciones */}
+      <div className="relative">
+        <IconButton
+          label="Notificaciones"
+          active={menu === "notifs"}
+          onClick={() => toggle("notifs")}
+        >
+          <Bell className="size-5" />
+          {props.noLeidas > 0 && (
+            <span className="absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full bg-secondary text-[10px] font-bold text-secondary-foreground">
+              {props.noLeidas > 9 ? "9+" : props.noLeidas}
+            </span>
+          )}
+        </IconButton>
+        {menu === "notifs" && (
+          <Panel className="w-80">
+            <div className="border-b px-4 py-2 text-sm font-semibold">
+              Notificaciones
+            </div>
+            {props.notificaciones.length === 0 ? (
+              <p className="p-4 text-sm text-muted-foreground">
+                No tienes notificaciones.
+              </p>
+            ) : (
+              <ul className="max-h-80 overflow-y-auto">
+                {props.notificaciones.map((n) => (
+                  <li key={n.id}>
+                    <Link
+                      href={notificacionHref(n)}
+                      className={cn(
+                        "block border-b px-4 py-3 text-sm hover:bg-accent",
+                        !n.leida && "bg-secondary/5",
+                      )}
+                    >
+                      <span className="flex items-center gap-2 font-medium">
+                        {!n.leida && (
+                          <span className="size-2 shrink-0 rounded-full bg-secondary" />
+                        )}
+                        {n.asunto}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {labelDe(TIPO_NOTIFICACION_LABELS, n.tipo)} ·{" "}
+                        {new Date(n.creado_en).toLocaleDateString("es-CO")}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <Link
+              href="/notificaciones"
+              className="block px-4 py-2 text-center text-sm font-medium text-primary hover:underline"
+            >
+              Ver todas
+            </Link>
           </Panel>
         )}
       </div>

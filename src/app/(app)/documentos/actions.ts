@@ -6,6 +6,10 @@ import { apruebaTRD, elabora } from "@/lib/roles";
 import { leerFilas, siNo, textoONull } from "@/lib/excel";
 import { fallo, type ResultadoImport } from "@/lib/importacion";
 import {
+  emitirNotificaciones,
+  getResponsablesIds,
+} from "@/lib/notificaciones-server";
+import {
   ESTADOS_DOCUMENTO,
   TIPOS_DOCUMENTO,
   type EstadoDocumento,
@@ -49,12 +53,42 @@ export async function crearDocumento(formData: FormData) {
 export async function setEstadoDocumento(formData: FormData) {
   const supabase = await requireCapacidad(apruebaTRD);
   const estado = str(formData.get("estado")) as EstadoDocumento;
+  const id = str(formData.get("id"));
+
   const { error } = await supabase
     .from("documentos")
     .update({ estado })
-    .eq("id", str(formData.get("id")));
+    .eq("id", id);
   if (error) throw new Error(error.message);
+
+  // Notificar a los responsables de la oficina cuando el documento se activa
+  // o se archiva (los estados con impacto operativo).
+  if (estado === "activo" || estado === "archivado") {
+    const { data: doc } = await supabase
+      .from("documentos")
+      .select("oficina_id, nombre")
+      .eq("id", id)
+      .maybeSingle();
+    if (doc?.oficina_id) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const responsables = await getResponsablesIds(supabase, doc.oficina_id);
+      const destinatarios = responsables.filter((uid) => uid !== user?.id);
+      const etiqueta = estado === "activo" ? "activado" : "archivado";
+      await emitirNotificaciones(supabase, {
+        destinatarios,
+        tipo:
+          estado === "activo" ? "documento_activado" : "documento_archivado",
+        asunto: `Documento ${etiqueta} — ${doc.nombre ?? id}`,
+        entidadTipo: "documento",
+        entidadId: id,
+      });
+    }
+  }
+
   revalidatePath("/documentos");
+  revalidatePath("/notificaciones");
 }
 
 /** Elimina un documento — solo aprobador. */

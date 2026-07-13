@@ -1,6 +1,10 @@
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth/guard";
 import { activationRedirect } from "@/lib/auth/activation";
+import {
+  listMisNotificaciones,
+  contarMisNoLeidas,
+} from "@/services/notificaciones";
 import { AppShell } from "@/components/app-shell";
 
 /**
@@ -46,6 +50,13 @@ export default async function AppLayout({
     (meta.picture as string | undefined) ??
     null;
 
+  // Notificaciones para el encabezado (últimas + contador). Los servicios
+  // devuelven arrays vacíos / 0 si la tabla aún no existe.
+  const [notificaciones, noLeidas] = await Promise.all([
+    listMisNotificaciones(6),
+    contarMisNoLeidas(),
+  ]);
+
   return (
     <AppShell
       email={user.email ?? ""}
@@ -54,6 +65,8 @@ export default async function AppLayout({
       unidadNombre={unidad?.nombre ?? null}
       oficinaLabel={ofi ? `${ofi.codigo} · ${ofi.nombre}` : null}
       avatarUrl={avatarUrl}
+      notificaciones={notificaciones}
+      noLeidas={noLeidas}
     >
       {children}
     </AppShell>
