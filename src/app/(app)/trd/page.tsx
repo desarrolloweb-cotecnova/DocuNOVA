@@ -1,31 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Pencil, Trash2, History, Printer } from "lucide-react";
+import { History, Printer } from "lucide-react";
 import { APP_NAME } from "@/lib/config";
 import { apruebaTRD, elabora } from "@/lib/roles";
 import { rolDelUsuario } from "@/lib/auth/roles-server";
 import { listOficinas } from "@/services/oficinas";
 import { listUnidades } from "@/services/unidades";
 import { listSeriesPorOficina, listAprobaciones } from "@/services/series";
-import {
-  ESTADO_TRD_LABELS,
-  NIVELES_SERIE,
-  NIVEL_SERIE_ICON,
-  NIVEL_SERIE_LABELS,
-  labelDe,
-  type EstadoTrd,
-  type Serie,
-} from "@/lib/tipos";
+import { ESTADO_TRD_LABELS, labelDe, type EstadoTrd } from "@/lib/tipos";
 import { FiltroDependencia } from "@/components/filtro-dependencia";
 import { ImportadorExcel } from "@/components/importador-excel";
+import { TrdJerarquia } from "@/components/trd-jerarquia";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
-  crearSerie,
-  actualizarSerie,
-  eliminarSerie,
   enviarRevision,
   aprobarTRD,
   rechazarTRD,
@@ -163,84 +151,22 @@ export default async function TrdPage({
             </CardContent>
           </Card>
 
-          {/* Árbol de series */}
+          {/* Árbol jerárquico serie → subserie → tipo documental */}
           <Card>
             <CardHeader>
               <CardTitle className="text-base">
                 Series, subseries y tipos documentales ({series.length})
               </CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-col gap-1">
-              {series.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  Esta dependencia aún no tiene entradas de TRD.
-                </p>
-              ) : (
-                series.map((s) => (
-                  <div key={s.id} className="rounded-md border">
-                    <div className="flex items-center justify-between gap-2 px-3 py-2">
-                      <span
-                        className="text-sm"
-                        style={{
-                          paddingLeft:
-                            s.nivel === "subserie"
-                              ? 16
-                              : s.nivel === "tipo"
-                                ? 32
-                                : 0,
-                        }}
-                      >
-                        {NIVEL_SERIE_ICON[s.nivel]}{" "}
-                        <span className="font-medium">{s.codigo}</span>{" "}
-                        {s.nombre}
-                      </span>
-                      {puedeAprobar && (
-                        <form action={eliminarSerie}>
-                          <input type="hidden" name="id" value={s.id} />
-                          <button
-                            type="submit"
-                            aria-label="Eliminar entrada"
-                            className="text-muted-foreground hover:text-destructive"
-                          >
-                            <Trash2 className="size-4" />
-                          </button>
-                        </form>
-                      )}
-                    </div>
-                    {puedeElaborar && (
-                      <details className="border-t px-3 py-2 text-sm">
-                        <summary className="flex cursor-pointer items-center gap-1.5 text-muted-foreground hover:text-foreground">
-                          <Pencil className="size-3.5" />
-                          Editar
-                        </summary>
-                        <div className="mt-3">
-                          <FormularioSerie
-                            oficinaId={oficinaId}
-                            accion={actualizarSerie}
-                            serie={s}
-                          />
-                        </div>
-                      </details>
-                    )}
-                  </div>
-                ))
-              )}
+            <CardContent>
+              <TrdJerarquia
+                oficinaId={oficinaId}
+                series={series}
+                puedeElaborar={puedeElaborar}
+                puedeAprobar={puedeAprobar}
+              />
             </CardContent>
           </Card>
-
-          {/* Nueva entrada */}
-          {puedeElaborar && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">
-                  Nueva entrada de TRD
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <FormularioSerie oficinaId={oficinaId} accion={crearSerie} />
-              </CardContent>
-            </Card>
-          )}
 
           {/* Historial */}
           {aprobaciones.length > 0 && (
@@ -280,133 +206,5 @@ export default async function TrdPage({
         </>
       )}
     </div>
-  );
-}
-
-function FormularioSerie({
-  oficinaId,
-  accion,
-  serie,
-}: {
-  oficinaId: string;
-  accion: (formData: FormData) => void;
-  serie?: Serie;
-}) {
-  return (
-    <form action={accion} className="grid gap-3 sm:grid-cols-2">
-      <input type="hidden" name="oficina_id" value={oficinaId} />
-      {serie && <input type="hidden" name="id" value={serie.id} />}
-      <div className="flex flex-col gap-1">
-        <Label>Código</Label>
-        <Input name="codigo" defaultValue={serie?.codigo ?? ""} required />
-      </div>
-      <div className="flex flex-col gap-1">
-        <Label>Nivel</Label>
-        <select
-          name="nivel"
-          defaultValue={serie?.nivel ?? "serie"}
-          className="h-9 rounded-md border border-input bg-background px-2 text-sm"
-        >
-          {NIVELES_SERIE.map((n) => (
-            <option key={n} value={n}>
-              {NIVEL_SERIE_LABELS[n]}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="flex flex-col gap-1 sm:col-span-2">
-        <Label>Nombre</Label>
-        <Input name="nombre" defaultValue={serie?.nombre ?? ""} required />
-      </div>
-      <div className="flex flex-col gap-1">
-        <Label>Años en gestión</Label>
-        <Input
-          name="anios_gestion"
-          type="number"
-          min="0"
-          defaultValue={serie?.anios_gestion ?? ""}
-        />
-      </div>
-      <div className="flex flex-col gap-1">
-        <Label>Años en central</Label>
-        <Input
-          name="anios_central"
-          type="number"
-          min="0"
-          defaultValue={serie?.anios_central ?? ""}
-        />
-      </div>
-      <fieldset className="flex flex-wrap gap-3 rounded-md border border-input p-3 sm:col-span-2">
-        <legend className="px-1 text-xs font-medium text-muted-foreground">
-          Tipo de soporte
-        </legend>
-        <Casilla
-          name="soporte_fisico"
-          label="Soporte físico"
-          on={serie?.soporte_fisico}
-        />
-        <Casilla
-          name="soporte_digital"
-          label="Soporte digital"
-          on={serie?.soporte_digital}
-        />
-      </fieldset>
-      <fieldset className="flex flex-wrap gap-3 rounded-md border border-input p-3 sm:col-span-2">
-        <legend className="px-1 text-xs font-medium text-muted-foreground">
-          Disposición final
-        </legend>
-        <Casilla
-          name="disp_conservacion"
-          label="Conservación"
-          on={serie?.disp_conservacion}
-        />
-        <Casilla
-          name="disp_seleccion"
-          label="Selección"
-          on={serie?.disp_seleccion}
-        />
-        <Casilla
-          name="disp_eliminacion"
-          label="Eliminación"
-          on={serie?.disp_eliminacion}
-        />
-        <Casilla
-          name="disp_digital"
-          label="Digitalización"
-          on={serie?.disp_digital}
-        />
-      </fieldset>
-      <div className="flex flex-col gap-1 sm:col-span-2">
-        <Label>Procedimiento</Label>
-        <textarea
-          name="procedimiento"
-          defaultValue={serie?.procedimiento ?? ""}
-          rows={2}
-          className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-        />
-      </div>
-      <div className="sm:col-span-2">
-        <Button type="submit">
-          {serie ? "Guardar cambios" : "Crear entrada"}
-        </Button>
-      </div>
-    </form>
-  );
-}
-
-function Casilla({
-  name,
-  label,
-  on,
-}: {
-  name: string;
-  label: string;
-  on?: boolean;
-}) {
-  return (
-    <label className="flex items-center gap-1.5 text-sm">
-      <input type="checkbox" name={name} value="1" defaultChecked={on} />
-      {label}
-    </label>
   );
 }
