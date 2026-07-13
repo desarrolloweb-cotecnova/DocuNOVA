@@ -8,6 +8,8 @@ import {
   ROLES_ASIGNABLES,
   type Role,
 } from "@/lib/roles";
+import { leerFilas, textoONull } from "@/lib/excel";
+import { fallo, type ResultadoImport } from "@/lib/importacion";
 import type { TipoUnidad } from "@/lib/tipos";
 
 function str(v: FormDataEntryValue | null): string {
@@ -16,6 +18,10 @@ function str(v: FormDataEntryValue | null): string {
 function nullable(v: FormDataEntryValue | null): string | null {
   const s = str(v);
   return s === "" ? null : s;
+}
+function bool(v: FormDataEntryValue | null): boolean {
+  const s = str(v);
+  return s === "1" || s === "on";
 }
 
 /** Cambia el rol de un usuario. */
@@ -47,7 +53,7 @@ export async function setActivo(formData: FormData) {
   revalidatePath("/gestion");
 }
 
-/** Crea un pre-registro (el usuario obtendrá el rol al iniciar sesión). */
+/** Invita a un usuario (pre-registro): obtendrá su rol al iniciar sesión. */
 export async function crearPreRegistro(formData: FormData) {
   const supabase = await requireCapacidad(gestionaUsuarios);
   const email = str(formData.get("email")).toLowerCase();
@@ -61,6 +67,7 @@ export async function crearPreRegistro(formData: FormData) {
       email,
       nombre,
       rol,
+      numero_documento: nullable(formData.get("numero_documento")),
       unidad_id: nullable(formData.get("unidad_id")),
       oficina_id: nullable(formData.get("oficina_id")),
     },
@@ -68,6 +75,153 @@ export async function crearPreRegistro(formData: FormData) {
   );
   if (error) throw new Error(error.message);
   revalidatePath("/gestion");
+}
+
+/**
+ * Edita el perfil de un usuario ya registrado (solo admin de usuarios): nombre,
+ * cargo, jefe inmediato, proceso, responsable de proceso y cédula. El jefe
+ * inmediato es un usuario marcado como responsable del proceso.
+ */
+export async function actualizarPerfilUsuario(formData: FormData) {
+  const supabase = await requireCapacidad(gestionaUsuarios);
+  const id = str(formData.get("id"));
+  if (!id) throw new Error("Usuario no válido");
+
+  const { error: e1 } = await supabase
+    .from("perfiles")
+    .update({
+      nombre_completo: nullable(formData.get("nombre_completo")),
+      titulo_cargo: nullable(formData.get("titulo_cargo")),
+      supervisor_id: nullable(formData.get("supervisor_id")),
+      unidad_id: nullable(formData.get("unidad_id")),
+      es_responsable: bool(formData.get("es_responsable")),
+    })
+    .eq("usuario_id", id);
+  if (e1) throw new Error(e1.message);
+
+  const { error: e2 } = await supabase.from("datos_personales").upsert(
+    {
+      usuario_id: id,
+      numero_documento: nullable(formData.get("numero_documento")),
+    },
+    { onConflict: "usuario_id" },
+  );
+  if (e2) throw new Error(e2.message);
+
+  revalidatePath("/gestion");
+}
+
+/**
+ * Carga masiva de usuarios (invitaciones) desde Excel: por cada fila hace
+ * upsert en usuarios_semilla, resolviendo proceso_codigo y oficina_codigo.
+ */
+export async function importarUsuarios(
+  _prev: ResultadoImport,
+  formData: FormData,
+): Promise<ResultadoImport> {
+  let supabase: Awaited<ReturnType<typeof requireCapacidad>>;
+  try {
+    supabase = await requireCapacidad(gestionaUsuarios);
+  } catch {
+    return fallo("No tienes permiso para cargar usuarios.");
+  }
+
+  const archivo = formData.get("archivo");
+  if (!(archivo instanceof File) || archivo.size === 0) {
+    return fallo("No se recibió ningún archivo.");
+  }
+
+  let filas: Record<string, string>[];
+  try {
+    filas = await leerFilas(archivo);
+  } catch {
+    return fallo("No se pudo leer el archivo. ¿Es un Excel válido?");
+  }
+  if (filas.length === 0) return fallo("El archivo no tiene filas de datos.");
+
+  const [{ data: unidadesData }, { data: oficinasData }] = await Promise.all([
+    supabase.from("unidades").select("id, codigo").eq("tipo", "proceso"),
+    supabase.from("oficinas").select("id, codigo"),
+  ]);
+  const unidadPorCodigo = new Map(
+    (unidadesData ?? []).map((u) => [u.codigo, u.id]),
+  );
+  const oficinaPorCodigo = new Map(
+    (oficinasData ?? []).map((o) => [o.codigo, o.id]),
+  );
+
+  let creados = 0;
+  let actualizados = 0;
+  const errores: string[] = [];
+
+  for (let i = 0; i < filas.length; i++) {
+    const f = filas[i];
+    const linea = i + 2; // +1 encabezado, +1 base 1
+    try {
+      const email = (f.email ?? "").toLowerCase();
+      const nombre = f.nombre ?? "";
+      if (!email || !nombre) {
+        errores.push(`Fila ${linea}: correo y nombre son obligatorios.`);
+        continue;
+      }
+
+      const rol = (f.rol || "consulta") as Role;
+      if (!ROLES_ASIGNABLES.includes(rol)) {
+        errores.push(`Fila ${linea}: rol '${f.rol}' no válido.`);
+        continue;
+      }
+
+      let unidadId: string | null = null;
+      if (f.proceso_codigo) {
+        unidadId = unidadPorCodigo.get(f.proceso_codigo) ?? null;
+        if (!unidadId) {
+          errores.push(
+            `Fila ${linea}: proceso '${f.proceso_codigo}' no existe.`,
+          );
+          continue;
+        }
+      }
+
+      let oficinaId: string | null = null;
+      if (f.oficina_codigo) {
+        oficinaId = oficinaPorCodigo.get(f.oficina_codigo) ?? null;
+        if (!oficinaId) {
+          errores.push(
+            `Fila ${linea}: oficina '${f.oficina_codigo}' no existe.`,
+          );
+          continue;
+        }
+      }
+
+      const { data: existente } = await supabase
+        .from("usuarios_semilla")
+        .select("email")
+        .eq("email", email)
+        .maybeSingle();
+
+      const { error } = await supabase.from("usuarios_semilla").upsert(
+        {
+          email,
+          nombre,
+          rol,
+          numero_documento: textoONull(f.numero_documento),
+          unidad_id: unidadId,
+          oficina_id: oficinaId,
+          notas: textoONull(f.notas),
+        },
+        { onConflict: "email" },
+      );
+      if (error) throw new Error(error.message);
+
+      if (existente) actualizados++;
+      else creados++;
+    } catch (e) {
+      errores.push(`Fila ${linea}: ${(e as Error).message}`);
+    }
+  }
+
+  revalidatePath("/gestion");
+  return { ok: true, creados, actualizados, omitidos: 0, errores };
 }
 
 /** Elimina un pre-registro. */

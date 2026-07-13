@@ -7,6 +7,7 @@ export type PerfilListado = {
   email: string;
   nombre_completo: string | null;
   titulo_cargo: string | null;
+  supervisor_id: string | null;
   rol: Role;
   activo: boolean;
   es_responsable: boolean;
@@ -34,7 +35,7 @@ export async function getPerfilActual(): Promise<PerfilListado | null> {
   const { data } = await supabase
     .from("perfiles")
     .select(
-      "usuario_id, email, nombre_completo, titulo_cargo, rol, activo, es_responsable, unidad_id, unidades(nombre)",
+      "usuario_id, email, nombre_completo, titulo_cargo, supervisor_id, rol, activo, es_responsable, unidad_id, unidades(nombre)",
     )
     .eq("usuario_id", user.id)
     .maybeSingle();
@@ -48,7 +49,7 @@ export async function listPerfiles(): Promise<PerfilListado[]> {
   const { data } = await supabase
     .from("perfiles")
     .select(
-      "usuario_id, email, nombre_completo, titulo_cargo, rol, activo, es_responsable, unidad_id, unidades(nombre)",
+      "usuario_id, email, nombre_completo, titulo_cargo, supervisor_id, rol, activo, es_responsable, unidad_id, unidades(nombre)",
     )
     .order("email");
 
@@ -78,6 +79,25 @@ export async function listPerfilesMinimos(): Promise<
     .select("usuario_id, nombre_completo, email")
     .order("email");
   return data ?? [];
+}
+
+/**
+ * Números de documento (cédulas) por usuario. La RLS de `datos_personales`
+ * solo devuelve las filas visibles para quien consulta (el admin de usuarios
+ * las ve todas), así que es seguro llamarla desde Gestión.
+ */
+export async function listNumerosDocumento(): Promise<Record<string, string>> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("datos_personales")
+    .select("usuario_id, numero_documento");
+  const mapa: Record<string, string> = {};
+  for (const row of (data as
+    | { usuario_id: string; numero_documento: string | null }[]
+    | null) ?? []) {
+    if (row.numero_documento) mapa[row.usuario_id] = row.numero_documento;
+  }
+  return mapa;
 }
 
 /** Pre-registro de un usuario (aún sin cuenta). */

@@ -45,6 +45,19 @@ notificaciones.
   usuario accede al panel.
 - **CA-6.** El usuario puede cerrar sesión desde el panel.
 
+### Gestión de usuarios
+
+- **CA-G1.** En el módulo de Gestión, un administrador de usuarios (superadmin/
+  rector) puede editar el perfil de un usuario registrado: nombre completo,
+  cédula, cargo, jefe inmediato, proceso y marca de responsable de proceso.
+- **CA-G2.** El jefe inmediato solo puede elegirse entre los usuarios marcados
+  como responsables de proceso.
+- **CA-G3.** "Invitar nuevo usuario" (pre-registro / `usuarios_semilla`) permite
+  invitar por correo indicando nombre, cédula, rol y proceso; el perfil real se
+  crea activo con esos datos en el primer inicio de sesión.
+- **CA-G4.** Es posible invitar varios usuarios a la vez mediante carga de un
+  Excel (plantilla descargable), igual que en dependencias, TRD y documentos.
+
 ### Datos y seguridad
 
 - **CA-7.** Al crearse un usuario en Supabase Auth, se crea automáticamente su

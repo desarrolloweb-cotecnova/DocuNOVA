@@ -4,7 +4,11 @@ import { UserPlus, Trash2 } from "lucide-react";
 import { APP_NAME } from "@/lib/config";
 import { roleLabel, gestionaUsuarios, ROLES_ASIGNABLES } from "@/lib/roles";
 import { rolDelUsuario } from "@/lib/auth/roles-server";
-import { listPerfiles, listPreRegistros } from "@/services/perfiles";
+import {
+  listPerfiles,
+  listPreRegistros,
+  listNumerosDocumento,
+} from "@/services/perfiles";
 import { listUnidades } from "@/services/unidades";
 import { listOficinas } from "@/services/oficinas";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,12 +16,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { EstructuraGestion } from "@/components/estructura-gestion";
+import { UsuariosGestion } from "@/components/usuarios-gestion";
+import { ImportadorExcel } from "@/components/importador-excel";
 import { Tabs } from "@/components/tabs";
 import {
-  setRol,
-  setActivo,
   crearPreRegistro,
   eliminarPreRegistro,
+  importarUsuarios,
 } from "./actions";
 
 export const metadata: Metadata = {
@@ -28,16 +33,31 @@ export default async function GestionPage() {
   const rol = await rolDelUsuario();
   if (!gestionaUsuarios(rol)) redirect("/dashboard");
 
-  const [perfiles, preRegistros, unidades, oficinas] = await Promise.all([
-    listPerfiles(),
-    listPreRegistros(),
-    listUnidades(),
-    listOficinas(),
-  ]);
+  const [perfiles, preRegistros, cedulas, unidades, oficinas] =
+    await Promise.all([
+      listPerfiles(),
+      listPreRegistros(),
+      listNumerosDocumento(),
+      listUnidades(),
+      listOficinas(),
+    ]);
 
   const unidadesConOficina = oficinas
     .map((o) => o.unidad_id)
     .filter((x): x is string => Boolean(x));
+
+  // Procesos con su ruta "Eje ▸ Macro ▸ Proceso" para los selectores.
+  const porId = new Map(unidades.map((u) => [u.id, u]));
+  const procesos = unidades
+    .filter((u) => u.tipo === "proceso")
+    .map((p) => {
+      const macro = p.padre_id ? porId.get(p.padre_id) : null;
+      const eje = macro?.padre_id ? porId.get(macro.padre_id) : null;
+      const ruta = [eje?.nombre, macro?.nombre, p.nombre]
+        .filter(Boolean)
+        .join(" ▸ ");
+      return { id: p.id, ruta };
+    });
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6">
@@ -57,115 +77,39 @@ export default async function GestionPage() {
             label: "Usuarios",
             content: (
               <div className="flex flex-col gap-6">
-                {/* Usuarios */}
+                {/* Usuarios registrados */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-base">
                       Usuarios ({perfiles.length})
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="overflow-x-auto">
-                    <table className="w-full min-w-[640px] text-sm">
-                      <thead>
-                        <tr className="border-b text-left text-xs text-muted-foreground">
-                          <th className="pb-2">Usuario</th>
-                          <th className="pb-2">Rol</th>
-                          <th className="pb-2">Estado</th>
-                          <th className="pb-2 text-right">Acciones</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y">
-                        {perfiles.map((p) => (
-                          <tr key={p.usuario_id}>
-                            <td className="py-3">
-                              <p className="font-medium">
-                                {p.nombre_completo ?? p.email}
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                {p.email}
-                              </p>
-                            </td>
-                            <td className="py-3">
-                              <form
-                                action={setRol}
-                                className="flex items-center gap-2"
-                              >
-                                <input
-                                  type="hidden"
-                                  name="id"
-                                  value={p.usuario_id}
-                                />
-                                <select
-                                  name="rol"
-                                  defaultValue={p.rol}
-                                  className="h-8 rounded-md border border-input bg-background px-2 text-sm"
-                                >
-                                  {ROLES_ASIGNABLES.map((r) => (
-                                    <option key={r} value={r}>
-                                      {roleLabel(r)}
-                                    </option>
-                                  ))}
-                                </select>
-                                <Button
-                                  type="submit"
-                                  size="sm"
-                                  variant="outline"
-                                >
-                                  Guardar
-                                </Button>
-                              </form>
-                            </td>
-                            <td className="py-3">
-                              <span
-                                className={
-                                  p.activo
-                                    ? "rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
-                                    : "rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
-                                }
-                              >
-                                {p.activo ? "Activo" : "Inactivo"}
-                              </span>
-                            </td>
-                            <td className="py-3 text-right">
-                              <form action={setActivo} className="inline">
-                                <input
-                                  type="hidden"
-                                  name="id"
-                                  value={p.usuario_id}
-                                />
-                                <input
-                                  type="hidden"
-                                  name="activar"
-                                  value={p.activo ? "0" : "1"}
-                                />
-                                <Button
-                                  type="submit"
-                                  size="sm"
-                                  variant={p.activo ? "outline" : "default"}
-                                >
-                                  {p.activo ? "Desactivar" : "Activar"}
-                                </Button>
-                              </form>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                  <CardContent>
+                    <UsuariosGestion
+                      perfiles={perfiles}
+                      cedulas={cedulas}
+                      procesos={procesos}
+                    />
                   </CardContent>
                 </Card>
 
-                {/* Pre-registro */}
+                {/* Invitar nuevo usuario */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-base">
                       <UserPlus className="size-4 text-secondary" />
-                      Pre-registro de usuarios
+                      Invitar nuevo usuario
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="flex flex-col gap-4">
+                    <p className="text-sm text-muted-foreground">
+                      Pre-registra a un empleado por su correo. Al iniciar sesión
+                      por primera vez, su cuenta se crea activa con el rol y el
+                      proceso indicados aquí.
+                    </p>
                     <form
                       action={crearPreRegistro}
-                      className="grid gap-3 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-end"
+                      className="grid gap-3 sm:grid-cols-2"
                     >
                       <div className="flex flex-col gap-1">
                         <Label htmlFor="pr-email">Correo institucional</Label>
@@ -182,6 +126,10 @@ export default async function GestionPage() {
                         <Input id="pr-nombre" name="nombre" required />
                       </div>
                       <div className="flex flex-col gap-1">
+                        <Label htmlFor="pr-cedula">Cédula</Label>
+                        <Input id="pr-cedula" name="numero_documento" />
+                      </div>
+                      <div className="flex flex-col gap-1">
                         <Label htmlFor="pr-rol">Rol</Label>
                         <select
                           id="pr-rol"
@@ -196,7 +144,25 @@ export default async function GestionPage() {
                           ))}
                         </select>
                       </div>
-                      <Button type="submit">Agregar</Button>
+                      <div className="flex flex-col gap-1 sm:col-span-2">
+                        <Label htmlFor="pr-proceso">Proceso</Label>
+                        <select
+                          id="pr-proceso"
+                          name="unidad_id"
+                          defaultValue=""
+                          className="h-9 rounded-md border border-input bg-background px-2 text-sm"
+                        >
+                          <option value="">Sin asignar</option>
+                          {procesos.map((p) => (
+                            <option key={p.id} value={p.id}>
+                              {p.ruta}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <Button type="submit">Invitar usuario</Button>
+                      </div>
                     </form>
 
                     {preRegistros.length > 0 && (
@@ -237,6 +203,13 @@ export default async function GestionPage() {
                     )}
                   </CardContent>
                 </Card>
+
+                <ImportadorExcel
+                  titulo="Carga masiva de usuarios"
+                  descripcion="Sube un Excel para invitar (pre-registrar) varios empleados a la vez. Se crean o actualizan según su correo."
+                  plantillaHref="/gestion/plantilla"
+                  accion={importarUsuarios}
+                />
               </div>
             ),
           },
