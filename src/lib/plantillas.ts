@@ -4,7 +4,7 @@
  * (route handlers .../plantilla) como para validar el archivo subido (importadores).
  */
 
-export type PlantillaId = "dependencias" | "trd" | "documentos";
+export type PlantillaId = "dependencias" | "trd" | "documentos" | "usuarios";
 
 export type Plantilla = {
   id: PlantillaId;
@@ -16,6 +16,50 @@ export type Plantilla = {
 };
 
 export const PLANTILLAS: Record<PlantillaId, Plantilla> = {
+  usuarios: {
+    id: "usuarios",
+    archivo: "plantilla-usuarios.xlsx",
+    hoja: "Usuarios",
+    columnas: [
+      "email",
+      "nombre",
+      "numero_documento",
+      "rol",
+      "proceso_codigo",
+      "oficina_codigo",
+      "notas",
+    ],
+    ejemplo: {
+      email: "nombre@cotecnova.edu.co",
+      nombre: "Nombre Apellido",
+      numero_documento: "1088000000",
+      rol: "consulta",
+      proceso_codigo: "P6",
+      oficina_codigo: "300",
+      notas: "",
+    },
+    instrucciones: [
+      "PLANTILLA DE USUARIOS (INVITACIONES) — DocuNOVA",
+      "",
+      "Cada fila invita (pre-registra) a un empleado por su correo institucional.",
+      "El perfil real se crea cuando la persona inicia sesión por primera vez:",
+      "en ese momento toma el rol y el proceso indicados aquí y entra activa.",
+      "Duplicados por correo: si ya existe la invitación, se actualiza (upsert).",
+      "",
+      "Columnas:",
+      "- email: correo institucional (obligatorio, clave única).",
+      "- nombre: nombre completo (obligatorio).",
+      "- numero_documento: cédula (opcional, dato reservado).",
+      "- rol: superadmin | rector | administrador | gestor | colaborador | consulta.",
+      "  Si se deja vacío, se usa 'consulta'.",
+      "- proceso_codigo: código del proceso al que pertenece (opcional; debe existir).",
+      "- oficina_codigo: código de la dependencia/oficina (opcional; debe existir).",
+      "- notas: texto opcional.",
+      "",
+      "El cargo, el jefe inmediato y la marca de responsable de proceso se definen",
+      "al editar el perfil, una vez la persona haya iniciado sesión.",
+    ],
+  },
   dependencias: {
     id: "dependencias",
     archivo: "plantilla-dependencias.xlsx",
