@@ -4,6 +4,7 @@ import { UserPlus, Trash2 } from "lucide-react";
 import { APP_NAME } from "@/lib/config";
 import { roleLabel, gestionaUsuarios, ROLES_ASIGNABLES } from "@/lib/roles";
 import { rolDelUsuario } from "@/lib/auth/roles-server";
+import { createClient } from "@/lib/supabase/server";
 import {
   listPerfiles,
   listPreRegistros,
@@ -32,6 +33,11 @@ export const metadata: Metadata = {
 export default async function GestionPage() {
   const rol = await rolDelUsuario();
   if (!gestionaUsuarios(rol)) redirect("/dashboard");
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const [perfiles, preRegistros, cedulas, unidades, oficinas] =
     await Promise.all([
@@ -89,6 +95,7 @@ export default async function GestionPage() {
                       perfiles={perfiles}
                       cedulas={cedulas}
                       procesos={procesos}
+                      usuarioActualId={user?.id ?? ""}
                     />
                   </CardContent>
                 </Card>

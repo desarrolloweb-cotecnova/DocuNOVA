@@ -1,7 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { requireCapacidad } from "@/lib/auth/roles-server";
+import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  respaldarYlimpiarSesion,
+  restaurarSesion,
+  fijarMarcador,
+  leerImpersonacion,
+} from "@/lib/auth/impersonacion";
 import {
   apruebaTRD,
   gestionaUsuarios,
@@ -234,6 +243,108 @@ export async function eliminarPreRegistro(formData: FormData) {
     .eq("email", email);
   if (error) throw new Error(error.message);
   revalidatePath("/gestion");
+}
+
+// ---------------------------------------------------------------------------
+// Impersonación ("iniciar sesión como") — solo admin de usuarios.
+// Forja una sesión real del usuario objetivo para verificar lo que ese rol ve
+// (la RLS gobierna por auth.uid()). El segundo factor se omite solo para esta
+// sesión impersonada (ver guard.ts); el marcador va firmado con la service_role.
+// ---------------------------------------------------------------------------
+
+/** Inicia una sesión como el usuario indicado (respaldando la del admin). */
+export async function iniciarImpersonacion(formData: FormData) {
+  const supabase = await requireCapacidad(gestionaUsuarios);
+  const {
+    data: { user: actor },
+  } = await supabase.auth.getUser();
+  if (!actor) throw new Error("No autenticado");
+
+  // El administrador debe tener su propio 2FA verificado en esta sesión.
+  const { data: aal } =
+    await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (aal?.currentLevel !== "aal2") {
+    throw new Error("Verifica tu segundo factor antes de impersonar.");
+  }
+
+  const objetivoId = str(formData.get("id"));
+  if (!objetivoId || objetivoId === actor.id) {
+    throw new Error("Selecciona otro usuario para impersonar.");
+  }
+
+  const service = createAdminClient();
+  const { data: objetivo, error: e0 } = await service
+    .from("perfiles")
+    .select("email, rol, activo")
+    .eq("usuario_id", objetivoId)
+    .maybeSingle();
+  if (e0) throw new Error(e0.message);
+  if (!objetivo) throw new Error("El usuario no existe.");
+  if (!objetivo.activo) {
+    throw new Error("No puedes impersonar una cuenta inactiva.");
+  }
+  if (gestionaUsuarios(objetivo.rol)) {
+    throw new Error("No puedes impersonar a otro administrador de usuarios.");
+  }
+
+  // Respalda la sesión del admin y forja la del objetivo (magiclink → verifyOtp).
+  await respaldarYlimpiarSesion();
+
+  const { data: enlace, error: e1 } = await service.auth.admin.generateLink({
+    type: "magiclink",
+    email: objetivo.email,
+  });
+  if (e1 || !enlace?.properties?.hashed_token) {
+    await restaurarSesion();
+    throw new Error(e1?.message ?? "No se pudo generar la sesión.");
+  }
+
+  const sesion = await createClient();
+  const { error: e2 } = await sesion.auth.verifyOtp({
+    type: "magiclink",
+    token_hash: enlace.properties.hashed_token,
+  });
+  if (e2) {
+    await restaurarSesion();
+    throw new Error(e2.message);
+  }
+
+  await fijarMarcador(actor.id, objetivoId);
+
+  await service.from("impersonacion_log").insert({
+    actor_id: actor.id,
+    actor_email: actor.email ?? "",
+    objetivo_id: objetivoId,
+    objetivo_email: objetivo.email,
+    accion: "inicio",
+  });
+
+  redirect("/dashboard");
+}
+
+/** Termina la impersonación y restaura la sesión del administrador. */
+export async function detenerImpersonacion() {
+  const imp = await leerImpersonacion();
+  await restaurarSesion();
+
+  if (imp) {
+    const service = createAdminClient();
+    const { data } = await service
+      .from("perfiles")
+      .select("usuario_id, email")
+      .in("usuario_id", [imp.actorId, imp.objetivoId]);
+    const email = (id: string) =>
+      data?.find((p) => p.usuario_id === id)?.email ?? "";
+    await service.from("impersonacion_log").insert({
+      actor_id: imp.actorId,
+      actor_email: email(imp.actorId),
+      objetivo_id: imp.objetivoId,
+      objetivo_email: email(imp.objetivoId),
+      accion: "fin",
+    });
+  }
+
+  redirect("/dashboard");
 }
 
 // ---------------------------------------------------------------------------

@@ -1,16 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, X } from "lucide-react";
+import { Pencil, X, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { roleLabel, ROLES_ASIGNABLES } from "@/lib/roles";
+import { roleLabel, gestionaUsuarios, ROLES_ASIGNABLES } from "@/lib/roles";
 import type { PerfilListado } from "@/services/perfiles";
 import {
   setRol,
   setActivo,
   actualizarPerfilUsuario,
+  iniciarImpersonacion,
 } from "@/app/(app)/gestion/actions";
 
 export type ProcesoOpcion = { id: string; ruta: string };
@@ -24,10 +25,12 @@ export function UsuariosGestion({
   perfiles,
   cedulas,
   procesos,
+  usuarioActualId,
 }: {
   perfiles: PerfilListado[];
   cedulas: Record<string, string>;
   procesos: ProcesoOpcion[];
+  usuarioActualId: string;
 }) {
   const [editando, setEditando] = useState<PerfilListado | null>(null);
 
@@ -97,6 +100,22 @@ export function UsuariosGestion({
                     <Pencil className="size-3.5" />
                     Editar perfil
                   </Button>
+                  {p.usuario_id !== usuarioActualId &&
+                    p.activo &&
+                    !gestionaUsuarios(p.rol) && (
+                      <form action={iniciarImpersonacion}>
+                        <input type="hidden" name="id" value={p.usuario_id} />
+                        <Button
+                          type="submit"
+                          size="sm"
+                          variant="outline"
+                          title="Abrir una sesión como este usuario"
+                        >
+                          <LogIn className="size-3.5" />
+                          Ver como
+                        </Button>
+                      </form>
+                    )}
                   <form action={setActivo}>
                     <input type="hidden" name="id" value={p.usuario_id} />
                     <input
