@@ -13,6 +13,7 @@ import {
   labelDe,
 } from "@/lib/tipos";
 import { OficinaSelector } from "@/components/oficina-selector";
+import { ImportadorExcel } from "@/components/importador-excel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,7 @@ import {
   crearDocumento,
   setEstadoDocumento,
   eliminarDocumento,
+  importarDocumentos,
 } from "./actions";
 
 export const metadata: Metadata = {
@@ -56,6 +58,15 @@ export default async function DocumentosPage({
           diligenciables).
         </p>
       </div>
+
+      {puedeElaborar && (
+        <ImportadorExcel
+          titulo="Carga masiva de documentos"
+          descripcion="Sube un Excel con los documentos de una o varias dependencias (cada fila indica el código de su oficina)."
+          plantillaHref="/documentos/plantilla"
+          accion={importarDocumentos}
+        />
+      )}
 
       <OficinaSelector
         oficinas={oficinas}
