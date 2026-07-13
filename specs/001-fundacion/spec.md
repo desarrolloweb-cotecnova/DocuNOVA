@@ -68,6 +68,12 @@ notificaciones.
   volver a la cuenta del administrador con un clic (restaura su sesión).
 - **CA-G7.** Cada inicio y fin de impersonación queda registrado en
   `impersonacion_log` (auditoría visible solo para administradores de usuarios).
+- **CA-G8.** El rol de un usuario se cambia desde el formulario "Editar perfil"
+  (no con un control separado en la fila), junto con el resto de sus datos.
+- **CA-G9.** La navegación muestra los módulos según el rol: superadmin y rector
+  ven todos; administrador todos menos Gestión; gestor solo TRD, Documentos,
+  Registros y Consulta; colaborador solo Registros y Consulta; consulta solo
+  Consulta. El Panel de inicio queda disponible para todo rol activo.
 
 ### Datos y seguridad
 

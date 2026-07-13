@@ -33,21 +33,6 @@ function bool(v: FormDataEntryValue | null): boolean {
   return s === "1" || s === "on";
 }
 
-/** Cambia el rol de un usuario. */
-export async function setRol(formData: FormData) {
-  const supabase = await requireCapacidad(gestionaUsuarios);
-  const id = str(formData.get("id"));
-  const rol = str(formData.get("rol")) as Role;
-  if (!ROLES_ASIGNABLES.includes(rol)) throw new Error("Rol no válido");
-
-  const { error } = await supabase
-    .from("perfiles")
-    .update({ rol })
-    .eq("usuario_id", id);
-  if (error) throw new Error(error.message);
-  revalidatePath("/gestion");
-}
-
 /** Activa o desactiva una cuenta. */
 export async function setActivo(formData: FormData) {
   const supabase = await requireCapacidad(gestionaUsuarios);
@@ -95,6 +80,8 @@ export async function actualizarPerfilUsuario(formData: FormData) {
   const supabase = await requireCapacidad(gestionaUsuarios);
   const id = str(formData.get("id"));
   if (!id) throw new Error("Usuario no válido");
+  const rol = str(formData.get("rol")) as Role;
+  if (!ROLES_ASIGNABLES.includes(rol)) throw new Error("Rol no válido");
 
   const { error: e1 } = await supabase
     .from("perfiles")
@@ -104,6 +91,7 @@ export async function actualizarPerfilUsuario(formData: FormData) {
       supervisor_id: nullable(formData.get("supervisor_id")),
       unidad_id: nullable(formData.get("unidad_id")),
       es_responsable: bool(formData.get("es_responsable")),
+      rol,
     })
     .eq("usuario_id", id);
   if (e1) throw new Error(e1.message);
