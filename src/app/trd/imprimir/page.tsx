@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { APP_NAME } from "@/lib/config";
+import { requireAuth } from "@/lib/auth/guard";
 import { getOficina } from "@/services/oficinas";
 import { listUnidades } from "@/services/unidades";
 import { listSeriesPorOficina } from "@/services/series";
@@ -22,6 +23,11 @@ export default async function ImprimirTrdPage({
 }: {
   searchParams: Promise<{ oficina?: string }>;
 }) {
+  // Esta ruta vive fuera del route group (app) para no heredar el AppShell
+  // (menú/topbar) en la vista imprimible, así que aplicamos manualmente el
+  // gate de sesión + dominio + aal2 con requireAuth.
+  await requireAuth();
+
   const { oficina } = await searchParams;
   if (!oficina) notFound();
 
@@ -51,8 +57,6 @@ export default async function ImprimirTrdPage({
 
   return (
     <div className="min-h-screen bg-white p-6 text-black print:p-0">
-      <ImprimirAlCargar />
-
       {/* Estilos específicos de impresión */}
       <style>{`
         @page { size: A4 landscape; margin: 14mm; }
@@ -76,13 +80,7 @@ export default async function ImprimirTrdPage({
             Vista para imprimir. Usa el diálogo del navegador para «Guardar como
             PDF».
           </p>
-          <button
-            type="button"
-            onClick={() => window.print()}
-            className="rounded-md bg-[#00602F] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#004d25]"
-          >
-            Imprimir
-          </button>
+          <ImprimirAlCargar />
         </div>
 
         {/* Encabezado */}

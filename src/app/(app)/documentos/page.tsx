@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Trash2 } from "lucide-react";
 import { APP_NAME } from "@/lib/config";
-import { apruebaTRD, elabora } from "@/lib/roles";
+import { apruebaTRD, elabora, gestionaUsuarios } from "@/lib/roles";
 import { rolDelUsuario } from "@/lib/auth/roles-server";
 import { listOficinas } from "@/services/oficinas";
+import { listUnidades } from "@/services/unidades";
+import { getPerfilActual } from "@/services/perfiles";
 import { listDocumentosPorOficina } from "@/services/documentos";
 import { listSeriesPorOficina } from "@/services/series";
 import {
@@ -11,8 +13,9 @@ import {
   TIPO_DOCUMENTO_LABELS,
   ESTADO_DOCUMENTO_LABELS,
   labelDe,
+  type Unidad,
 } from "@/lib/tipos";
-import { OficinaSelector } from "@/components/oficina-selector";
+import { FiltroDependencia } from "@/components/filtro-dependencia";
 import { ImportadorExcel } from "@/components/importador-excel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -35,12 +38,40 @@ export default async function DocumentosPage({
   searchParams: Promise<{ oficina?: string }>;
 }) {
   const { oficina } = await searchParams;
-  const [rol, oficinas] = await Promise.all([rolDelUsuario(), listOficinas()]);
+  const [rol, perfil, oficinas, unidades] = await Promise.all([
+    rolDelUsuario(),
+    getPerfilActual(),
+    listOficinas(),
+    listUnidades(),
+  ]);
   const puedeElaborar = elabora(rol);
   const puedeAprobar = apruebaTRD(rol);
 
+  // superadmin/rector/administrador ven todos los procesos; el resto queda
+  // limitado a su propio proceso (perfil.unidad_id). Es un filtro de UI —
+  // la RLS del backend sigue autorizando la escritura por rol.
+  const puedeVerTodo = gestionaUsuarios(rol) || rol === "administrador";
+  const procesoUsuario = perfil?.unidad_id ?? null;
+
+  const oficinasVisibles = puedeVerTodo
+    ? oficinas
+    : procesoUsuario
+      ? oficinas.filter((o) => o.unidad_id === procesoUsuario)
+      : [];
+
+  // Reducir el catálogo de unidades a la rama del proceso del usuario cuando no
+  // ve todo (para que el filtro en cascada muestre solo su eje/macro/proceso).
+  const unidadesVisibles: Unidad[] = (() => {
+    if (puedeVerTodo || !procesoUsuario) return unidades;
+    const porId = new Map(unidades.map((u) => [u.id, u] as const));
+    const proceso = porId.get(procesoUsuario);
+    const macro = proceso?.padre_id ? porId.get(proceso.padre_id) : undefined;
+    const eje = macro?.padre_id ? porId.get(macro.padre_id) : undefined;
+    return [eje, macro, proceso].filter((u): u is Unidad => Boolean(u));
+  })();
+
   const oficinaId =
-    oficina && oficinas.some((o) => o.id === oficina) ? oficina : null;
+    oficina && oficinasVisibles.some((o) => o.id === oficina) ? oficina : null;
 
   const [documentos, series] = oficinaId
     ? await Promise.all([
@@ -68,13 +99,19 @@ export default async function DocumentosPage({
         />
       )}
 
-      <OficinaSelector
-        oficinas={oficinas}
-        actual={oficinaId}
+      <FiltroDependencia
+        unidades={unidadesVisibles}
+        oficinas={oficinasVisibles}
+        oficinaActual={oficinaId}
         basePath="/documentos"
       />
 
-      {!oficinaId ? (
+      {!puedeVerTodo && !procesoUsuario ? (
+        <p className="text-sm text-muted-foreground">
+          Aún no tienes un proceso asignado. Solicita a un administrador que te
+          asocie a un proceso para poder ver y crear documentos.
+        </p>
+      ) : !oficinaId ? (
         <p className="text-sm text-muted-foreground">
           Elige una dependencia para ver sus documentos.
         </p>
