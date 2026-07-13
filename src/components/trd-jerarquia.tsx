@@ -2,7 +2,8 @@ import { Plus, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { NIVEL_SERIE_ICON, type Serie } from "@/lib/tipos";
+import { type Serie } from "@/lib/tipos";
+import { EtiquetaNivel } from "@/components/nivel-serie";
 
 /** Etiquetas de disposición final en el orden en que se muestran. */
 const DISPOSICIONES: { campo: keyof Serie; label: string }[] = [
@@ -171,9 +172,12 @@ function Nodo({
   return (
     <div className="flex flex-col gap-2 p-3">
       <div className="flex items-center justify-between gap-3">
-        <span className="text-sm">
-          <span className="mr-1">{NIVEL_SERIE_ICON[unidad.nivel]}</span>
-          <span className="font-medium">{unidad.codigo}</span> · {unidad.nombre}
+        <span className="flex flex-wrap items-center gap-2 text-sm">
+          <EtiquetaNivel nivel={unidad.nivel} />
+          <span>
+            <span className="font-medium">{unidad.codigo}</span> ·{" "}
+            {unidad.nombre}
+          </span>
         </span>
         {puedeAprobar && (
           <form action={eliminarSerie}>
@@ -194,7 +198,7 @@ function Nodo({
         )}
       </div>
 
-      {unidad.nivel !== "serie" && <ResumenTRD unidad={unidad} />}
+      {unidad.nivel === "subserie" && <ResumenTRD unidad={unidad} />}
 
       {puedeElaborar && (
         <details className="text-sm">
@@ -229,9 +233,9 @@ function FormNodoTRD({
   serie?: Serie;
   codigoSugerido?: string;
 }) {
-  // Una serie solo agrupa; la retención, el soporte y la disposición se
-  // diligencian en sus subseries y tipos documentales.
-  const esSerie = nivel === "serie";
+  // La retención, el soporte y la disposición se diligencian a nivel de
+  // subserie; series y tipos documentales solo llevan código y nombre.
+  const esSubserie = nivel === "subserie";
   return (
     <form
       action={serie ? actualizarSerie : crearSerie}
@@ -255,7 +259,7 @@ function FormNodoTRD({
         <Input name="nombre" defaultValue={serie?.nombre ?? ""} required />
       </div>
 
-      {!esSerie && (
+      {esSubserie && (
         <>
           <div className="flex flex-col gap-1">
             <Label>Años en gestión</Label>

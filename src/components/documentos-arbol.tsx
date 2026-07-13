@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  NIVEL_SERIE_ICON,
   TIPOS_DOCUMENTO,
   TIPO_DOCUMENTO_LABELS,
   ESTADO_DOCUMENTO_LABELS,
@@ -11,6 +10,7 @@ import {
   type Serie,
 } from "@/lib/tipos";
 import type { DocumentoListado } from "@/services/documentos";
+import { EtiquetaNivel } from "@/components/nivel-serie";
 import { crearDocumento } from "@/app/(app)/documentos/actions";
 
 /**
@@ -120,9 +120,11 @@ function NodoDoc({
 }) {
   return (
     <div className="flex flex-col gap-2 p-3">
-      <span className="text-sm">
-        <span className="mr-1">{NIVEL_SERIE_ICON[unidad.nivel]}</span>
-        <span className="font-medium">{unidad.codigo}</span> · {unidad.nombre}
+      <span className="flex flex-wrap items-center gap-2 text-sm">
+        <EtiquetaNivel nivel={unidad.nivel} />
+        <span>
+          <span className="font-medium">{unidad.codigo}</span> · {unidad.nombre}
+        </span>
       </span>
 
       {docs.length > 0 && (

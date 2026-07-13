@@ -76,7 +76,7 @@ export function AppShell({
   return (
     <div className="flex min-h-full flex-1">
       {/* Barra lateral (escritorio) */}
-      <aside className="hidden w-64 flex-col border-r bg-card md:flex">
+      <aside className="hidden w-64 flex-col border-r bg-card md:sticky md:top-0 md:flex md:h-dvh md:self-start md:overflow-y-auto">
         <div className="flex h-20 items-center border-b px-4">
           <LogoFull className="h-12" />
         </div>
