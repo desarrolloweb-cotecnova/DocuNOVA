@@ -30,7 +30,7 @@ export type NavItem = {
 export const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Panel", icon: LayoutDashboard },
   { href: "/dependencias", label: "Dependencias", icon: Building2 },
-  { href: "/trd", label: "Tablas de Retención (TRD)", icon: ListTree },
+  { href: "/trd", label: "TRD", icon: ListTree },
   { href: "/documentos", label: "Documentos", icon: FileStack },
   { href: "/registros", label: "Registros", icon: ClipboardCheck },
   { href: "/consulta", label: "Consulta", icon: Search },

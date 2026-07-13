@@ -24,9 +24,9 @@ const AYUDA: { prefijo: string; contenido: AyudaContenido }[] = [
   {
     prefijo: "/trd",
     contenido: {
-      titulo: "Tablas de Retención Documental",
+      titulo: "Tablas de Retención Documental (TRD)",
       texto:
-        "Consulta y elabora las series, subseries y tipos documentales por dependencia, con su soporte, tiempos de retención y disposición final. Envía la TRD a revisión y apruébala o recházala según tu rol.",
+        "Filtra por Eje → Macroproceso → Proceso → Dependencia para ver su TRD. Consulta y elabora las series, subseries y tipos documentales con su soporte, tiempos de retención y disposición final. Envía la TRD a revisión, apruébala o recházala según tu rol, y exporta a PDF para imprimir.",
     },
   },
   {

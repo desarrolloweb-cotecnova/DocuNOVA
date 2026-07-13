@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
-import { Pencil, Trash2, History } from "lucide-react";
+import Link from "next/link";
+import { Pencil, Trash2, History, Printer } from "lucide-react";
 import { APP_NAME } from "@/lib/config";
 import { apruebaTRD, elabora } from "@/lib/roles";
 import { rolDelUsuario } from "@/lib/auth/roles-server";
 import { listOficinas } from "@/services/oficinas";
+import { listUnidades } from "@/services/unidades";
 import { listSeriesPorOficina, listAprobaciones } from "@/services/series";
 import {
   ESTADO_TRD_LABELS,
@@ -14,7 +16,7 @@ import {
   type EstadoTrd,
   type Serie,
 } from "@/lib/tipos";
-import { OficinaSelector } from "@/components/oficina-selector";
+import { TrdCliente } from "@/components/trd-cliente";
 import { ImportadorExcel } from "@/components/importador-excel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -47,7 +49,11 @@ export default async function TrdPage({
   searchParams: Promise<{ oficina?: string }>;
 }) {
   const { oficina } = await searchParams;
-  const [rol, oficinas] = await Promise.all([rolDelUsuario(), listOficinas()]);
+  const [rol, oficinas, unidades] = await Promise.all([
+    rolDelUsuario(),
+    listOficinas(),
+    listUnidades(),
+  ]);
   const puedeElaborar = elabora(rol);
   const puedeAprobar = apruebaTRD(rol);
 
@@ -66,13 +72,27 @@ export default async function TrdPage({
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6">
-      <div>
-        <h1 className="text-xl font-semibold">
-          Tablas de Retención Documental
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Selecciona una dependencia para ver y elaborar su TRD.
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-semibold">
+            Tablas de Retención Documental
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Filtra por Eje → Macroproceso → Proceso → Dependencia para ver y
+            elaborar su TRD.
+          </p>
+        </div>
+        {oficinaId && (
+          <Link
+            href={`/trd/imprimir?oficina=${oficinaId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex h-9 items-center gap-2 rounded-md border px-3 text-sm font-medium transition-colors hover:bg-accent"
+          >
+            <Printer className="size-4" />
+            Exportar PDF
+          </Link>
+        )}
       </div>
 
       {puedeElaborar && (
@@ -84,7 +104,11 @@ export default async function TrdPage({
         />
       )}
 
-      <OficinaSelector oficinas={oficinas} actual={oficinaId} basePath="/trd" />
+      <TrdCliente
+        unidades={unidades}
+        oficinas={oficinas}
+        oficinaActual={oficinaId}
+      />
 
       {!oficinaId ? (
         <p className="text-sm text-muted-foreground">
@@ -142,7 +166,7 @@ export default async function TrdPage({
           <Card>
             <CardHeader>
               <CardTitle className="text-base">
-                Series documentales ({series.length})
+                Series, subseries y tipos documentales ({series.length})
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-1">
