@@ -15,6 +15,7 @@ import {
   type Serie,
 } from "@/lib/tipos";
 import { OficinaSelector } from "@/components/oficina-selector";
+import { ImportadorExcel } from "@/components/importador-excel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +27,7 @@ import {
   enviarRevision,
   aprobarTRD,
   rechazarTRD,
+  importarTRD,
 } from "./actions";
 
 export const metadata: Metadata = {
@@ -72,6 +74,15 @@ export default async function TrdPage({
           Selecciona una dependencia para ver y elaborar su TRD.
         </p>
       </div>
+
+      {puedeElaborar && (
+        <ImportadorExcel
+          titulo="Carga masiva de TRD"
+          descripcion="Sube un Excel con las series/subseries/tipos de una o varias dependencias (cada fila indica el código de su oficina)."
+          plantillaHref="/trd/plantilla"
+          accion={importarTRD}
+        />
+      )}
 
       <OficinaSelector oficinas={oficinas} actual={oficinaId} basePath="/trd" />
 

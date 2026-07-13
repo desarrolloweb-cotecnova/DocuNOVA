@@ -1,0 +1,162 @@
+/**
+ * Definición de las plantillas de carga masiva por Excel. Es la única fuente de
+ * verdad de los encabezados: se usa tanto para generar el archivo de guía
+ * (route handlers .../plantilla) como para validar el archivo subido (importadores).
+ */
+
+export type PlantillaId = "dependencias" | "trd" | "documentos";
+
+export type Plantilla = {
+  id: PlantillaId;
+  archivo: string;
+  hoja: string;
+  columnas: string[];
+  ejemplo: Record<string, string | number>;
+  instrucciones: string[];
+};
+
+export const PLANTILLAS: Record<PlantillaId, Plantilla> = {
+  dependencias: {
+    id: "dependencias",
+    archivo: "plantilla-dependencias.xlsx",
+    hoja: "Dependencias",
+    columnas: [
+      "eje_codigo",
+      "eje_nombre",
+      "macro_codigo",
+      "macro_nombre",
+      "proceso_codigo",
+      "proceso_nombre",
+      "oficina_codigo",
+      "oficina_nombre",
+      "ubicacion_fisica",
+      "ubicacion_digital",
+    ],
+    ejemplo: {
+      eje_codigo: "E1",
+      eje_nombre: "Direccionamiento Estratégico",
+      macro_codigo: "M1",
+      macro_nombre: "Planeación",
+      proceso_codigo: "P1",
+      proceso_nombre: "Planeación Institucional",
+      oficina_codigo: "100",
+      oficina_nombre: "Rectoría",
+      ubicacion_fisica: "Bloque A - Piso 3",
+      ubicacion_digital: "/rectoria",
+    },
+    instrucciones: [
+      "PLANTILLA DE DEPENDENCIAS — DocuNOVA",
+      "",
+      "Cada fila crea (o actualiza) toda la ruta: eje → macroproceso → proceso → oficina.",
+      "Si un código ya existe, se actualiza su nombre (upsert). Si no existe, se crea.",
+      "Puedes repetir el mismo eje/macro/proceso en varias filas: se reutiliza, no se duplica.",
+      "",
+      "Columnas (todas obligatorias salvo las ubicaciones):",
+      "- eje_codigo / eje_nombre: código y nombre del eje.",
+      "- macro_codigo / macro_nombre: código y nombre del macroproceso.",
+      "- proceso_codigo / proceso_nombre: código y nombre del proceso.",
+      "- oficina_codigo / oficina_nombre: código y nombre de la oficina (dependencia).",
+      "- ubicacion_fisica / ubicacion_digital: opcionales.",
+      "",
+      "Los códigos son únicos en todo el sistema. No dejes filas en blanco intermedias.",
+    ],
+  },
+  trd: {
+    id: "trd",
+    archivo: "plantilla-trd.xlsx",
+    hoja: "TRD",
+    columnas: [
+      "oficina_codigo",
+      "codigo",
+      "nombre",
+      "nivel",
+      "padre_codigo",
+      "soporte_fisico",
+      "soporte_digital",
+      "anios_gestion",
+      "anios_central",
+      "disp_conservacion",
+      "disp_seleccion",
+      "disp_eliminacion",
+      "disp_digital",
+      "procedimiento",
+    ],
+    ejemplo: {
+      oficina_codigo: "100",
+      codigo: "S-01",
+      nombre: "Actas",
+      nivel: "serie",
+      padre_codigo: "",
+      soporte_fisico: "Sí",
+      soporte_digital: "Sí",
+      anios_gestion: 2,
+      anios_central: 8,
+      disp_conservacion: "Sí",
+      disp_seleccion: "No",
+      disp_eliminacion: "No",
+      disp_digital: "Sí",
+      procedimiento: "Conservación total en el archivo histórico.",
+    },
+    instrucciones: [
+      "PLANTILLA DE TABLAS DE RETENCIÓN (TRD) — DocuNOVA",
+      "",
+      "Cada fila crea (o actualiza) una entrada de TRD dentro de una oficina.",
+      "Duplicados por (oficina, código, nivel): si existe, se actualiza (upsert).",
+      "",
+      "Columnas:",
+      "- oficina_codigo: código de la oficina a la que pertenece (debe existir).",
+      "- codigo / nombre: código y nombre de la entrada.",
+      "- nivel: uno de serie | subserie | tipo.",
+      "- padre_codigo: vacío para 'serie'. Para 'subserie' o 'tipo', el código de su padre.",
+      "  Ordena el archivo de arriba hacia abajo: primero la serie, luego sus subseries/tipos.",
+      "- soporte_fisico / soporte_digital: Sí o No.",
+      "- anios_gestion / anios_central: números de años (puede ir vacío).",
+      "- disp_conservacion / disp_seleccion / disp_eliminacion / disp_digital: Sí o No.",
+      "- procedimiento: texto opcional.",
+    ],
+  },
+  documentos: {
+    id: "documentos",
+    archivo: "plantilla-documentos.xlsx",
+    hoja: "Documentos",
+    columnas: [
+      "oficina_codigo",
+      "serie_codigo",
+      "codigo",
+      "nombre",
+      "tipo",
+      "es_publico",
+      "estado",
+      "url_plantilla",
+      "requiere_descarga",
+    ],
+    ejemplo: {
+      oficina_codigo: "100",
+      serie_codigo: "S-01",
+      codigo: "D-01",
+      nombre: "Formato de acta de reunión",
+      tipo: "diligenciable",
+      es_publico: "No",
+      estado: "activo",
+      url_plantilla: "",
+      requiere_descarga: "No",
+    },
+    instrucciones: [
+      "PLANTILLA DE DOCUMENTOS — DocuNOVA",
+      "",
+      "Cada fila crea (o actualiza) un documento dentro de una oficina.",
+      "Duplicados por (oficina, código): si existe, se actualiza (upsert).",
+      "Si dejas 'codigo' vacío, el documento siempre se crea como nuevo.",
+      "",
+      "Columnas:",
+      "- oficina_codigo: código de la oficina (debe existir).",
+      "- serie_codigo: código de la serie/subserie asociada (opcional; debe existir en esa oficina).",
+      "- codigo / nombre: código (opcional) y nombre del documento.",
+      "- tipo: ruta_cargue | diligenciable.",
+      "- es_publico: Sí o No.",
+      "- estado: borrador | activo | archivado. Solo 'activo' aparece para registrar.",
+      "- url_plantilla: enlace opcional a la plantilla.",
+      "- requiere_descarga: Sí o No.",
+    ],
+  },
+};
