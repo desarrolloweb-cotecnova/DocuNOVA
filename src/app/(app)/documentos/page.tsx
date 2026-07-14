@@ -18,7 +18,7 @@ import { FiltroDependencia } from "@/components/filtro-dependencia";
 import { ImportadorExcel } from "@/components/importador-excel";
 import { DocumentosArbol } from "@/components/documentos-arbol";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { SubmitButton, SubmitIcon } from "@/components/ui/submit-button";
 import {
   setEstadoDocumento,
   eliminarDocumento,
@@ -172,9 +172,13 @@ export default async function DocumentosPage({
                                   name="estado"
                                   value="activo"
                                 />
-                                <Button type="submit" size="sm">
+                                <SubmitButton
+                                  size="sm"
+                                  textoPendiente="Activando…"
+                                  exito="Documento activado."
+                                >
                                   Activar
-                                </Button>
+                                </SubmitButton>
                               </form>
                             )}
                             {puedeAprobar && d.estado === "activo" && (
@@ -185,25 +189,27 @@ export default async function DocumentosPage({
                                   name="estado"
                                   value="archivado"
                                 />
-                                <Button
-                                  type="submit"
+                                <SubmitButton
                                   size="sm"
                                   variant="outline"
+                                  textoPendiente="Archivando…"
+                                  exito="Documento archivado."
                                 >
                                   Archivar
-                                </Button>
+                                </SubmitButton>
                               </form>
                             )}
                             {puedeAprobar && (
                               <form action={eliminarDocumento}>
                                 <input type="hidden" name="id" value={d.id} />
-                                <button
-                                  type="submit"
+                                <SubmitIcon
                                   aria-label="Eliminar documento"
+                                  confirmar={`¿Eliminar el documento "${d.nombre}"? Esta acción no se puede deshacer.`}
+                                  exito="Documento eliminado."
                                   className="text-muted-foreground hover:text-destructive"
                                 >
                                   <Trash2 className="size-4" />
-                                </button>
+                                </SubmitIcon>
                               </form>
                             )}
                           </div>

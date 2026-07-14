@@ -96,6 +96,19 @@ notificaciones.
   cuyo código ya existe se omiten (no se actualizan). En Dependencias, los
   eje/macro/proceso existentes se reutilizan y solo se crean los que falten.
 
+### Retroalimentación de acciones
+
+- **CA-F1.** Los botones que ejecutan una acción muestran un estado
+  "ejecutando…" (spinner + deshabilitado) mientras corre, para que se note que
+  la acción está en curso.
+- **CA-F2.** Al completarse una acción se muestra un aviso en pantalla (toast) de
+  confirmación (p. ej. "Documento activado", "Invitación creada").
+- **CA-F3.** Las acciones destructivas (eliminar/quitar/anular/rechazar) piden
+  confirmación antes de ejecutarse.
+- **CA-F4.** El árbol de la estructura organizacional (Gestión) muestra la
+  etiqueta del nivel de cada nodo (Eje / Macroproceso / Proceso), igual que el
+  árbol de la TRD.
+
 ### Datos y seguridad
 
 - **CA-7.** Al crearse un usuario en Supabase Auth, se crea automáticamente su

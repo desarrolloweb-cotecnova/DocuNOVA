@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Building2, Trash2, Star, Pencil, Plus, Search } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SubmitButton, SubmitIcon } from "@/components/ui/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { Unidad } from "@/lib/tipos";
@@ -223,13 +224,14 @@ export function DependenciasCliente({
                 {puedeEditar && (
                   <form action={eliminarOficina}>
                     <input type="hidden" name="id" value={o.id} />
-                    <button
-                      type="submit"
+                    <SubmitIcon
                       aria-label="Eliminar oficina"
+                      confirmar={`¿Eliminar la dependencia "${o.codigo} · ${o.nombre}"? Esta acción no se puede deshacer.`}
+                      exito="Dependencia eliminada."
                       className="text-muted-foreground hover:text-destructive"
                     >
                       <Trash2 className="size-4" />
-                    </button>
+                    </SubmitIcon>
                   </form>
                 )}
               </div>
@@ -259,13 +261,14 @@ export function DependenciasCliente({
                         {puedeEditar && (
                           <form action={quitarResponsable}>
                             <input type="hidden" name="id" value={r.id} />
-                            <button
-                              type="submit"
+                            <SubmitIcon
                               aria-label="Quitar responsable"
+                              confirmar={`¿Quitar a ${r.nombre_completo ?? r.email} como responsable?`}
+                              exito="Responsable retirado."
                               className="text-xs text-muted-foreground hover:text-destructive"
                             >
                               Quitar
-                            </button>
+                            </SubmitIcon>
                           </form>
                         )}
                       </li>
@@ -294,9 +297,14 @@ export function DependenciasCliente({
                       <input type="checkbox" name="es_principal" value="1" />
                       Principal
                     </label>
-                    <Button type="submit" size="sm" variant="outline">
+                    <SubmitButton
+                      size="sm"
+                      variant="outline"
+                      textoPendiente="Asignando…"
+                      exito="Responsable asignado."
+                    >
                       Asignar
-                    </Button>
+                    </SubmitButton>
                   </form>
                 )}
               </div>
@@ -367,9 +375,13 @@ function FormOficina({
         />
       </div>
       <div className="sm:col-span-2">
-        <Button type="submit" size="sm">
+        <SubmitButton
+          size="sm"
+          textoPendiente="Guardando…"
+          exito={oficina ? "Dependencia actualizada." : "Dependencia creada."}
+        >
           {oficina ? "Guardar cambios" : "Crear oficina"}
-        </Button>
+        </SubmitButton>
       </div>
     </form>
   );

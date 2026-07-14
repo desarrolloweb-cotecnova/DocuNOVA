@@ -1,13 +1,39 @@
-import { Trash2, Pencil, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import {
+  Trash2,
+  Pencil,
+  Plus,
+  Network,
+  GitBranch,
+  Workflow,
+  type LucideIcon,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { Unidad } from "@/lib/tipos";
+import { SubmitButton, SubmitIcon } from "@/components/ui/submit-button";
+import { TIPO_UNIDAD_LABELS, type TipoUnidad, type Unidad } from "@/lib/tipos";
 import {
   crearUnidad,
   actualizarUnidad,
   eliminarUnidad,
 } from "@/app/(app)/gestion/actions";
+
+/** Ícono plano por tipo de unidad organizacional. */
+const TIPO_UNIDAD_ICON: Record<TipoUnidad, LucideIcon> = {
+  eje: Network,
+  macroproceso: GitBranch,
+  proceso: Workflow,
+};
+
+/** Chip con ícono + etiqueta del nivel (Eje / Macroproceso / Proceso). */
+function EtiquetaUnidad({ tipo }: { tipo: TipoUnidad }) {
+  const Icono = TIPO_UNIDAD_ICON[tipo];
+  return (
+    <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-primary/30 bg-background px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+      <Icono className="size-3" />
+      {TIPO_UNIDAD_LABELS[tipo]}
+    </span>
+  );
+}
 
 /**
  * Árbol de la estructura organizacional (eje → macroproceso → proceso) con CRUD.
@@ -124,19 +150,24 @@ function Nodo({
   return (
     <div className="flex flex-col gap-2 p-3">
       <div className="flex items-center justify-between gap-3">
-        <span className="text-sm">
-          <span className="font-medium">{unidad.codigo}</span> · {unidad.nombre}
+        <span className="flex flex-wrap items-center gap-2 text-sm">
+          <EtiquetaUnidad tipo={unidad.tipo} />
+          <span>
+            <span className="font-medium">{unidad.codigo}</span> ·{" "}
+            {unidad.nombre}
+          </span>
         </span>
         {puedeEliminar ? (
           <form action={eliminarUnidad}>
             <input type="hidden" name="id" value={unidad.id} />
-            <button
-              type="submit"
+            <SubmitIcon
               aria-label="Eliminar"
+              confirmar={`¿Eliminar "${unidad.codigo} · ${unidad.nombre}"? Esta acción no se puede deshacer.`}
+              exito="Elemento eliminado."
               className="text-muted-foreground hover:text-destructive"
             >
               <Trash2 className="size-4" />
-            </button>
+            </SubmitIcon>
           </form>
         ) : (
           <span
@@ -167,9 +198,9 @@ function Nodo({
             <Input name="nombre" defaultValue={unidad.nombre} required />
           </div>
           <div className="sm:col-span-2">
-            <Button type="submit" size="sm">
+            <SubmitButton size="sm" textoPendiente="Guardando…" exito="Cambios guardados.">
               Guardar cambios
-            </Button>
+            </SubmitButton>
           </div>
         </form>
       </details>
@@ -200,9 +231,9 @@ function FormUnidad({
         <Input name="nombre" required />
       </div>
       <div className="sm:col-span-2">
-        <Button type="submit" size="sm">
+        <SubmitButton size="sm" textoPendiente="Agregando…" exito="Elemento agregado.">
           Agregar
-        </Button>
+        </SubmitButton>
       </div>
     </form>
   );

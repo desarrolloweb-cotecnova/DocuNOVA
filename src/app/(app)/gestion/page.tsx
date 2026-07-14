@@ -13,9 +13,9 @@ import {
 import { listUnidades } from "@/services/unidades";
 import { listOficinas } from "@/services/oficinas";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SubmitButton, SubmitIcon } from "@/components/ui/submit-button";
 import { EstructuraGestion } from "@/components/estructura-gestion";
 import { UsuariosGestion } from "@/components/usuarios-gestion";
 import { ImportadorExcel } from "@/components/importador-excel";
@@ -168,7 +168,12 @@ export default async function GestionPage() {
                         </select>
                       </div>
                       <div className="sm:col-span-2">
-                        <Button type="submit">Invitar usuario</Button>
+                        <SubmitButton
+                          textoPendiente="Invitando…"
+                          exito="Invitación creada."
+                        >
+                          Invitar usuario
+                        </SubmitButton>
                       </div>
                     </form>
 
@@ -195,13 +200,14 @@ export default async function GestionPage() {
                                   name="email"
                                   value={pr.email}
                                 />
-                                <button
-                                  type="submit"
+                                <SubmitIcon
                                   aria-label="Eliminar pre-registro"
+                                  confirmar={`¿Eliminar la invitación de ${pr.email}?`}
+                                  exito="Invitación eliminada."
                                   className="text-muted-foreground hover:text-destructive"
                                 >
                                   <Trash2 className="size-4" />
-                                </button>
+                                </SubmitIcon>
                               </form>
                             </span>
                           </li>

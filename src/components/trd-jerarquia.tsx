@@ -1,5 +1,5 @@
 import { Plus, Pencil, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { SubmitButton, SubmitIcon } from "@/components/ui/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { type Serie } from "@/lib/tipos";
@@ -182,18 +182,23 @@ function Nodo({
         {puedeAprobar && (
           <form action={eliminarSerie}>
             <input type="hidden" name="id" value={unidad.id} />
-            <button
-              type="submit"
+            <SubmitIcon
               aria-label="Eliminar entrada"
               title={
                 unidad.nivel === "tipo"
                   ? "Eliminar este tipo documental"
                   : "Elimina también sus subseries y tipos documentales"
               }
+              confirmar={
+                unidad.nivel === "tipo"
+                  ? `¿Eliminar "${unidad.codigo} · ${unidad.nombre}"?`
+                  : `¿Eliminar "${unidad.codigo} · ${unidad.nombre}" y todas sus subseries y tipos documentales?`
+              }
+              exito="Entrada eliminada."
               className="text-muted-foreground hover:text-destructive"
             >
               <Trash2 className="size-4" />
-            </button>
+            </SubmitIcon>
           </form>
         )}
       </div>
@@ -331,9 +336,13 @@ function FormNodoTRD({
         </>
       )}
       <div className="sm:col-span-2">
-        <Button type="submit" size="sm">
+        <SubmitButton
+          size="sm"
+          textoPendiente="Guardando…"
+          exito={serie ? "Entrada actualizada." : "Entrada agregada."}
+        >
           {serie ? "Guardar cambios" : "Agregar"}
-        </Button>
+        </SubmitButton>
       </div>
     </form>
   );

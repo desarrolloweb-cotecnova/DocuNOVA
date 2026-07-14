@@ -18,7 +18,7 @@ import { FiltroDependencia } from "@/components/filtro-dependencia";
 import { ImportadorExcel } from "@/components/importador-excel";
 import { TrdJerarquia } from "@/components/trd-jerarquia";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import {
   enviarRevision,
   aprobarTRD,
@@ -169,9 +169,13 @@ export default async function TrdPage({
                 {puedeElaborar && (
                   <form action={enviarRevision}>
                     <input type="hidden" name="oficina_id" value={oficinaId} />
-                    <Button type="submit" size="sm" variant="secondary">
+                    <SubmitButton
+                      size="sm"
+                      variant="secondary"
+                      textoPendiente="Enviando…"
+                    >
                       Enviar a revisión
-                    </Button>
+                    </SubmitButton>
                   </form>
                 )}
                 {puedeAprobar && (
@@ -182,9 +186,9 @@ export default async function TrdPage({
                         name="oficina_id"
                         value={oficinaId}
                       />
-                      <Button type="submit" size="sm">
+                      <SubmitButton size="sm" textoPendiente="Aprobando…">
                         Aprobar
-                      </Button>
+                      </SubmitButton>
                     </form>
                     <form action={rechazarTRD}>
                       <input
@@ -192,9 +196,14 @@ export default async function TrdPage({
                         name="oficina_id"
                         value={oficinaId}
                       />
-                      <Button type="submit" size="sm" variant="destructive">
+                      <SubmitButton
+                        size="sm"
+                        variant="destructive"
+                        textoPendiente="Rechazando…"
+                        confirmar="¿Rechazar la TRD de esta dependencia?"
+                      >
                         Rechazar
-                      </Button>
+                      </SubmitButton>
                     </form>
                   </>
                 )}

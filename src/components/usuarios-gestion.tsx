@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Pencil, X, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { roleLabel, gestionaUsuarios, ROLES_ASIGNABLES } from "@/lib/roles";
@@ -90,15 +91,15 @@ export function UsuariosGestion({
                     !gestionaUsuarios(p.rol) && (
                       <form action={iniciarImpersonacion}>
                         <input type="hidden" name="id" value={p.usuario_id} />
-                        <Button
-                          type="submit"
+                        <SubmitButton
                           size="sm"
                           variant="outline"
+                          textoPendiente="Abriendo…"
                           title="Abrir una sesión como este usuario"
                         >
                           <LogIn className="size-3.5" />
                           Ver como
-                        </Button>
+                        </SubmitButton>
                       </form>
                     )}
                   <form action={setActivo}>
@@ -108,13 +109,13 @@ export function UsuariosGestion({
                       name="activar"
                       value={p.activo ? "0" : "1"}
                     />
-                    <Button
-                      type="submit"
+                    <SubmitButton
                       size="sm"
                       variant={p.activo ? "outline" : "default"}
+                      exito={p.activo ? "Cuenta desactivada." : "Cuenta activada."}
                     >
                       {p.activo ? "Desactivar" : "Activar"}
-                    </Button>
+                    </SubmitButton>
                   </form>
                 </div>
               </td>
@@ -276,7 +277,9 @@ function ModalEditar({
             <Button type="button" variant="outline" onClick={onCerrar}>
               Cancelar
             </Button>
-            <Button type="submit">Guardar cambios</Button>
+            <SubmitButton textoPendiente="Guardando…" exito="Perfil actualizado.">
+              Guardar cambios
+            </SubmitButton>
           </div>
         </form>
       </div>
