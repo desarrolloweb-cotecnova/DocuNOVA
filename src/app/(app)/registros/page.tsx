@@ -12,7 +12,7 @@ import { TIPO_DOCUMENTO_LABELS, labelDe, type Unidad } from "@/lib/tipos";
 import { FiltroDependencia } from "@/components/filtro-dependencia";
 import { TablaRegistros } from "@/components/tabla-registros";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { crearRegistro } from "./actions";
 
 export const metadata: Metadata = {
@@ -130,10 +130,14 @@ export default async function RegistrosPage({
                             name="oficina_id"
                             value={oficinaId}
                           />
-                          <Button type="submit" size="sm">
+                          <SubmitButton
+                            size="sm"
+                            textoPendiente="Registrando…"
+                            exito="Registro creado."
+                          >
                             <Plus className="size-4" />
                             Registrar
-                          </Button>
+                          </SubmitButton>
                         </form>
                       )}
                     </li>

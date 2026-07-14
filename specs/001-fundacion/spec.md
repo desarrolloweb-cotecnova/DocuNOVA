@@ -84,6 +84,31 @@ notificaciones.
   demás roles (p. ej. gestor) solo ven las dependencias de su propio proceso
   (`perfiles.unidad_id`).
 
+### Carga masiva por Excel (Dependencias, TRD, Documentos)
+
+- **CA-C1.** La carga masiva (subir y descargar plantilla) solo está disponible
+  para administradores (superadmin, rector, administrador). La descarga de
+  plantilla exige ese rol (403 en caso contrario).
+- **CA-C2.** La plantilla se descarga con los datos actuales de la base (una fila
+  por registro) más la hoja de instrucciones; si no hay datos, trae la fila de
+  ejemplo.
+- **CA-C3.** Al subir el archivo, solo se agregan los registros nuevos: las filas
+  cuyo código ya existe se omiten (no se actualizan). En Dependencias, los
+  eje/macro/proceso existentes se reutilizan y solo se crean los que falten.
+
+### Retroalimentación de acciones
+
+- **CA-F1.** Los botones que ejecutan una acción muestran un estado
+  "ejecutando…" (spinner + deshabilitado) mientras corre, para que se note que
+  la acción está en curso.
+- **CA-F2.** Al completarse una acción se muestra un aviso en pantalla (toast) de
+  confirmación (p. ej. "Documento activado", "Invitación creada").
+- **CA-F3.** Las acciones destructivas (eliminar/quitar/anular/rechazar) piden
+  confirmación antes de ejecutarse.
+- **CA-F4.** El árbol de la estructura organizacional (Gestión) muestra la
+  etiqueta del nivel de cada nodo (Eje / Macroproceso / Proceso), igual que el
+  árbol de la TRD.
+
 ### Datos y seguridad
 
 - **CA-7.** Al crearse un usuario en Supabase Auth, se crea automáticamente su

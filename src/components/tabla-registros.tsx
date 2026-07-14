@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { ESTADO_REGISTRO_LABELS, labelDe } from "@/lib/tipos";
 import type { RegistroListado } from "@/services/registros";
 import { setEstadoRegistro } from "@/app/(app)/registros/actions";
@@ -99,9 +99,14 @@ export function TablaRegistros({
                                 name="estado"
                                 value="completado"
                               />
-                              <Button type="submit" size="sm" variant="outline">
+                              <SubmitButton
+                                size="sm"
+                                variant="outline"
+                                textoPendiente="Completando…"
+                                exito="Registro completado."
+                              >
                                 Completar
-                              </Button>
+                              </SubmitButton>
                             </form>
                             <form action={setEstadoRegistro}>
                               <input type="hidden" name="id" value={r.id} />
@@ -110,9 +115,15 @@ export function TablaRegistros({
                                 name="estado"
                                 value="anulado"
                               />
-                              <Button type="submit" size="sm" variant="ghost">
+                              <SubmitButton
+                                size="sm"
+                                variant="ghost"
+                                textoPendiente="Anulando…"
+                                confirmar="¿Anular este registro?"
+                                exito="Registro anulado."
+                              >
                                 Anular
-                              </Button>
+                              </SubmitButton>
                             </form>
                           </span>
                         )}

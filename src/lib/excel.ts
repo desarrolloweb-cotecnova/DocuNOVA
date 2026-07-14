@@ -24,13 +24,20 @@ export async function leerFilas(file: File): Promise<Record<string, string>[]> {
   });
 }
 
-/** Genera el libro .xlsx de una plantilla (hoja de datos con ejemplo + instrucciones). */
-export function construirLibro(plantilla: Plantilla): ArrayBuffer {
+/**
+ * Genera el libro .xlsx de una plantilla con filas de datos (hoja de datos +
+ * instrucciones). Si no hay filas, usa la fila de ejemplo como guía.
+ */
+export function construirLibroDatos(
+  plantilla: Plantilla,
+  filas: Record<string, string | number>[],
+): ArrayBuffer {
   const wb = XLSX.utils.book_new();
 
-  const datos = XLSX.utils.json_to_sheet([plantilla.ejemplo], {
-    header: plantilla.columnas,
-  });
+  const datos = XLSX.utils.json_to_sheet(
+    filas.length > 0 ? filas : [plantilla.ejemplo],
+    { header: plantilla.columnas },
+  );
   XLSX.utils.book_append_sheet(wb, datos, plantilla.hoja);
 
   const instrucciones = XLSX.utils.aoa_to_sheet(
@@ -39,6 +46,11 @@ export function construirLibro(plantilla: Plantilla): ArrayBuffer {
   XLSX.utils.book_append_sheet(wb, instrucciones, "Instrucciones");
 
   return XLSX.write(wb, { type: "array", bookType: "xlsx" }) as ArrayBuffer;
+}
+
+/** Genera el libro .xlsx de una plantilla solo con la fila de ejemplo. */
+export function construirLibro(plantilla: Plantilla): ArrayBuffer {
+  return construirLibroDatos(plantilla, []);
 }
 
 /** Interpreta un valor de celda como booleano (Sí/No, 1/0, true/x…). */

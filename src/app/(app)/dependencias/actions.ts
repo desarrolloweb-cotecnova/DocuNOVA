@@ -112,8 +112,9 @@ export async function importarDependencias(
   }
   if (filas.length === 0) return fallo("El archivo no tiene filas de datos.");
 
+  // Reutiliza la unidad si su código ya existe (no la modifica); si no, la crea.
   const cacheUnidad = new Map<string, string>();
-  async function upsertUnidad(
+  async function obtenerOCrearUnidad(
     tipo: TipoUnidad,
     codigo: string,
     nombre: string,
@@ -121,18 +122,29 @@ export async function importarDependencias(
   ): Promise<string> {
     const cacheada = cacheUnidad.get(codigo);
     if (cacheada) return cacheada;
-    const { data, error } = await supabase
+    const { data: existente } = await supabase
       .from("unidades")
-      .upsert({ tipo, codigo, nombre, padre_id }, { onConflict: "codigo" })
       .select("id")
-      .single();
-    if (error) throw new Error(error.message);
-    cacheUnidad.set(codigo, data.id);
-    return data.id;
+      .eq("codigo", codigo)
+      .maybeSingle();
+    let id: string;
+    if (existente) {
+      id = existente.id;
+    } else {
+      const { data, error } = await supabase
+        .from("unidades")
+        .insert({ tipo, codigo, nombre, padre_id })
+        .select("id")
+        .single();
+      if (error) throw new Error(error.message);
+      id = data.id;
+    }
+    cacheUnidad.set(codigo, id);
+    return id;
   }
 
   let creados = 0;
-  let actualizados = 0;
+  let omitidos = 0;
   const errores: string[] = [];
 
   for (let i = 0; i < filas.length; i++) {
@@ -148,50 +160,50 @@ export async function importarDependencias(
         errores.push(`Fila ${linea}: faltan códigos obligatorios.`);
         continue;
       }
-      const ejeId = await upsertUnidad(
+      const ejeId = await obtenerOCrearUnidad(
         "eje",
         f.eje_codigo,
         f.eje_nombre || f.eje_codigo,
         null,
       );
-      const macroId = await upsertUnidad(
+      const macroId = await obtenerOCrearUnidad(
         "macroproceso",
         f.macro_codigo,
         f.macro_nombre || f.macro_codigo,
         ejeId,
       );
-      const procId = await upsertUnidad(
+      const procId = await obtenerOCrearUnidad(
         "proceso",
         f.proceso_codigo,
         f.proceso_nombre || f.proceso_codigo,
         macroId,
       );
 
+      // Solo se agregan oficinas nuevas: si el código ya existe, se omite.
       const { data: existente } = await supabase
         .from("oficinas")
         .select("id")
         .eq("codigo", f.oficina_codigo)
         .maybeSingle();
+      if (existente) {
+        omitidos++;
+        continue;
+      }
 
-      const { error } = await supabase.from("oficinas").upsert(
-        {
-          unidad_id: procId,
-          codigo: f.oficina_codigo,
-          nombre: f.oficina_nombre || f.oficina_codigo,
-          ubicacion_fisica: textoONull(f.ubicacion_fisica),
-          ubicacion_digital: textoONull(f.ubicacion_digital),
-        },
-        { onConflict: "codigo" },
-      );
+      const { error } = await supabase.from("oficinas").insert({
+        unidad_id: procId,
+        codigo: f.oficina_codigo,
+        nombre: f.oficina_nombre || f.oficina_codigo,
+        ubicacion_fisica: textoONull(f.ubicacion_fisica),
+        ubicacion_digital: textoONull(f.ubicacion_digital),
+      });
       if (error) throw new Error(error.message);
-
-      if (existente) actualizados++;
-      else creados++;
+      creados++;
     } catch (e) {
       errores.push(`Fila ${linea}: ${(e as Error).message}`);
     }
   }
 
   revalidatePath("/dependencias");
-  return { ok: true, creados, actualizados, omitidos: 0, errores };
+  return { ok: true, creados, actualizados: 0, omitidos, errores };
 }

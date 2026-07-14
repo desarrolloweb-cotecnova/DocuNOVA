@@ -1,5 +1,5 @@
 import { Plus, FileText } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -202,9 +202,9 @@ function FormDocumento({
         </label>
       </div>
       <div className="sm:col-span-2">
-        <Button type="submit" size="sm">
+        <SubmitButton size="sm" textoPendiente="Creando…" exito="Documento creado.">
           Crear documento
-        </Button>
+        </SubmitButton>
       </div>
     </form>
   );

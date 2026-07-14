@@ -9,7 +9,7 @@ import {
 } from "@/services/perfiles";
 import { listUnidades } from "@/services/unidades";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { actualizarPerfil } from "./actions";
@@ -158,7 +158,9 @@ export default async function PerfilPage() {
             </div>
 
             <div className="sm:col-span-2">
-              <Button type="submit">Guardar cambios</Button>
+              <SubmitButton textoPendiente="Guardando…" exito="Perfil actualizado.">
+                Guardar cambios
+              </SubmitButton>
             </div>
           </form>
         </CardContent>

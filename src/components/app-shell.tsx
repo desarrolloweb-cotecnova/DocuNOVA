@@ -7,6 +7,8 @@ import { Menu, X, Eye } from "lucide-react";
 import { navItemsForRole, type NavItem } from "@/lib/navigation";
 import { LogoFull } from "@/components/brand/logo";
 import { Topbar, type TopbarProps } from "@/components/topbar";
+import { ToastProvider } from "@/components/ui/toast";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { detenerImpersonacion } from "@/app/(app)/gestion/actions";
 import { cn } from "@/lib/utils";
 
@@ -79,6 +81,7 @@ export function AppShell({
   useEffect(() => setNavOpen(false), [pathname]);
 
   return (
+    <ToastProvider>
     <div className="flex min-h-full flex-1">
       {/* Barra lateral (escritorio) */}
       <aside className="hidden w-64 flex-col border-r bg-card md:sticky md:top-0 md:flex md:h-dvh md:self-start md:overflow-y-auto">
@@ -126,12 +129,12 @@ export function AppShell({
               <strong>{impersonando.nombre}</strong>
             </span>
             <form action={detenerImpersonacion}>
-              <button
-                type="submit"
-                className="rounded-md bg-amber-950/90 px-2.5 py-1 text-xs font-semibold text-amber-50 hover:bg-amber-950"
+              <SubmitButton
+                textoPendiente="Volviendo…"
+                className="h-auto rounded-md bg-amber-950/90 px-2.5 py-1 text-xs font-semibold text-amber-50 hover:bg-amber-950"
               >
                 Volver a mi cuenta
-              </button>
+              </SubmitButton>
             </form>
           </div>
         )}
@@ -151,5 +154,6 @@ export function AppShell({
         <main className="flex-1 p-4 md:p-8">{children}</main>
       </div>
     </div>
+    </ToastProvider>
   );
 }

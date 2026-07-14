@@ -6,7 +6,7 @@ import { listMisNotificaciones } from "@/services/notificaciones";
 import { TIPO_NOTIFICACION_LABELS, labelDe } from "@/lib/tipos";
 import { notificacionHref } from "@/lib/notificaciones";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { marcarLeida, marcarTodasLeidas } from "./actions";
 
 export const metadata: Metadata = {
@@ -29,10 +29,15 @@ export default async function NotificacionesPage() {
         </div>
         {noLeidas.length > 0 && (
           <form action={marcarTodasLeidas}>
-            <Button type="submit" size="sm" variant="outline">
+            <SubmitButton
+              size="sm"
+              variant="outline"
+              textoPendiente="Marcando…"
+              exito="Notificaciones marcadas como leídas."
+            >
               <CheckCheck className="size-4" />
               Marcar todas como leídas
-            </Button>
+            </SubmitButton>
           </form>
         )}
       </div>
@@ -82,9 +87,9 @@ export default async function NotificacionesPage() {
                       </Link>
                       <form action={marcarLeida}>
                         <input type="hidden" name="id" value={n.id} />
-                        <Button type="submit" size="sm" variant="ghost">
+                        <SubmitButton size="sm" variant="ghost" exito="Marcada como leída.">
                           Marcar leída
-                        </Button>
+                        </SubmitButton>
                       </form>
                     </li>
                   ))}

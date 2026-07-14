@@ -36,7 +36,7 @@ export default async function DependenciasPage() {
       {puedeEditar && (
         <ImportadorExcel
           titulo="Carga masiva de dependencias"
-          descripcion="Sube un Excel con toda la jerarquía (eje, macroproceso, proceso y oficina). Se crean o actualizan según su código."
+          descripcion="Descarga la plantilla (trae las dependencias actuales), edítala y súbela. Solo se agregan las oficinas nuevas; las de código ya existente se omiten."
           plantillaHref="/dependencias/plantilla"
           accion={importarDependencias}
         />

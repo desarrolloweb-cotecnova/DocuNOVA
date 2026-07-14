@@ -113,7 +113,7 @@ export async function importarDocumentos(
 ): Promise<ResultadoImport> {
   let supabase: Awaited<ReturnType<typeof requireCapacidad>>;
   try {
-    supabase = await requireCapacidad(elabora);
+    supabase = await requireCapacidad(apruebaTRD);
   } catch {
     return fallo("No tienes permiso para cargar documentos.");
   }
@@ -149,7 +149,7 @@ export async function importarDocumentos(
   }
 
   let creados = 0;
-  let actualizados = 0;
+  let omitidos = 0;
   const errores: string[] = [];
 
   for (let i = 0; i < filas.length; i++) {
@@ -211,6 +211,8 @@ export async function importarDocumentos(
         creado_por: user?.id ?? null,
       };
 
+      // Solo se agregan documentos nuevos: si el código ya existe en la oficina,
+      // se omite. Sin código no se puede deduplicar, así que se inserta.
       if (fila.codigo) {
         const { data: existente } = await supabase
           .from("documentos")
@@ -218,22 +220,19 @@ export async function importarDocumentos(
           .eq("oficina_id", ofId)
           .eq("codigo", fila.codigo)
           .maybeSingle();
-        const { error } = await supabase
-          .from("documentos")
-          .upsert(fila, { onConflict: "oficina_id,codigo" });
-        if (error) throw new Error(error.message);
-        if (existente) actualizados++;
-        else creados++;
-      } else {
-        const { error } = await supabase.from("documentos").insert(fila);
-        if (error) throw new Error(error.message);
-        creados++;
+        if (existente) {
+          omitidos++;
+          continue;
+        }
       }
+      const { error } = await supabase.from("documentos").insert(fila);
+      if (error) throw new Error(error.message);
+      creados++;
     } catch (e) {
       errores.push(`Fila ${linea}: ${(e as Error).message}`);
     }
   }
 
   revalidatePath("/documentos");
-  return { ok: true, creados, actualizados, omitidos: 0, errores };
+  return { ok: true, creados, actualizados: 0, omitidos, errores };
 }
