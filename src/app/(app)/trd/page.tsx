@@ -7,7 +7,12 @@ import { rolDelUsuario } from "@/lib/auth/roles-server";
 import { listOficinas } from "@/services/oficinas";
 import { listUnidades } from "@/services/unidades";
 import { getPerfilActual } from "@/services/perfiles";
-import { listSeriesPorOficina, listAprobaciones } from "@/services/series";
+import {
+  listSeriesPorOficina,
+  listAprobaciones,
+  listSeriesTodas,
+} from "@/services/series";
+import { listDocumentosTodos } from "@/services/documentos";
 import {
   ESTADO_TRD_LABELS,
   labelDe,
@@ -17,6 +22,8 @@ import {
 import { FiltroDependencia } from "@/components/filtro-dependencia";
 import { ImportadorExcel } from "@/components/importador-excel";
 import { TrdJerarquia } from "@/components/trd-jerarquia";
+import { FondoDocumental } from "@/components/fondo-documental";
+import { Tabs } from "@/components/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SubmitButton } from "@/components/ui/submit-button";
 import {
@@ -49,12 +56,15 @@ export default async function TrdPage({
   searchParams: Promise<{ oficina?: string; msg?: string }>;
 }) {
   const { oficina, msg } = await searchParams;
-  const [rol, perfil, oficinas, unidades] = await Promise.all([
-    rolDelUsuario(),
-    getPerfilActual(),
-    listOficinas(),
-    listUnidades(),
-  ]);
+  const [rol, perfil, oficinas, unidades, seriesTodas, documentosTodos] =
+    await Promise.all([
+      rolDelUsuario(),
+      getPerfilActual(),
+      listOficinas(),
+      listUnidades(),
+      listSeriesTodas(),
+      listDocumentosTodos(),
+    ]);
   const puedeElaborar = elabora(rol);
   const puedeAprobar = apruebaTRD(rol);
   const confirmacion = msg ? MSG_CONFIRMACION[msg] : null;
@@ -97,19 +107,10 @@ export default async function TrdPage({
   const estado: EstadoTrd =
     aprobaciones[0]?.estado ?? series[0]?.estado_aprobacion ?? "borrador";
 
-  return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold">
-            Tablas de Retención Documental
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Filtra por Eje → Macroproceso → Proceso → Dependencia para ver y
-            elaborar su TRD.
-          </p>
-        </div>
-        {oficinaId && (
+  const gestionTrd = (
+    <div className="flex flex-col gap-6">
+      {oficinaId && (
+        <div className="flex justify-end">
           <Link
             href={`/trd/imprimir?oficina=${oficinaId}`}
             target="_blank"
@@ -119,8 +120,8 @@ export default async function TrdPage({
             <Printer className="size-4" />
             Exportar PDF
           </Link>
-        )}
-      </div>
+        </div>
+      )}
 
       {puedeAprobar && (
         <ImportadorExcel
@@ -266,6 +267,43 @@ export default async function TrdPage({
           )}
         </>
       )}
+    </div>
+  );
+
+  return (
+    <div className="mx-auto flex max-w-5xl flex-col gap-6">
+      <div>
+        <h1 className="text-xl font-semibold">
+          Tablas de Retención Documental
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Gestiona las TRD por dependencia y consulta el fondo documental de
+          toda la organización.
+        </p>
+      </div>
+
+      <Tabs
+        defaultId="gestion"
+        tabs={[
+          {
+            id: "gestion",
+            label: "Gestión TRD",
+            content: gestionTrd,
+          },
+          {
+            id: "fondo",
+            label: "Fondo Documental",
+            content: (
+              <FondoDocumental
+                unidades={unidades}
+                oficinas={oficinas}
+                series={seriesTodas}
+                documentos={documentosTodos}
+              />
+            ),
+          },
+        ]}
+      />
     </div>
   );
 }
