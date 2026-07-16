@@ -14,6 +14,13 @@ export async function listSeriesPorOficina(
   return (data as Serie[] | null) ?? [];
 }
 
+/** Todas las series de la organización, ordenadas por código (Fondo Documental). */
+export async function listSeriesTodas(): Promise<Serie[]> {
+  const supabase = await createClient();
+  const { data } = await supabase.from("series").select("*").order("codigo");
+  return (data as Serie[] | null) ?? [];
+}
+
 /** Una serie por id. */
 export async function getSerie(id: string): Promise<Serie | null> {
   const supabase = await createClient();

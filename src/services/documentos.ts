@@ -24,6 +24,16 @@ export async function listDocumentosPorOficina(
   return (data as unknown as DocumentoRow[] | null)?.map(mapDocumento) ?? [];
 }
 
+/** Todos los documentos de la organización (Fondo Documental). */
+export async function listDocumentosTodos(): Promise<DocumentoListado[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("documentos")
+    .select("*, series(nombre)")
+    .order("nombre");
+  return (data as unknown as DocumentoRow[] | null)?.map(mapDocumento) ?? [];
+}
+
 /** Documentos activos de una oficina (disponibles para registrar). */
 export async function listDocumentosActivos(
   oficinaId: string,
