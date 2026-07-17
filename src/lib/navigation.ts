@@ -55,3 +55,27 @@ export function navItemsForRole(role: string | null | undefined): NavItem[] {
     item.disabled ? apruebaTRD(role) : puedeVerModulo(role, item.href),
   );
 }
+
+/**
+ * Títulos que se muestran en el encabezado fijo por ruta. El Panel se omite a
+ * propósito (mantiene su saludo en el cuerpo). Se resuelve por prefijo más
+ * largo, así las subrutas heredan el título de su sección.
+ */
+const PAGE_TITLES: Record<string, string> = {
+  "/dependencias": "Dependencias",
+  "/trd": "Tablas de Retención Documental",
+  "/documentos": "Documentos",
+  "/registros": "Registros",
+  "/consulta": "Consulta",
+  "/gestion": "Gestión",
+  "/perfil": "Mi perfil",
+  "/notificaciones": "Notificaciones",
+};
+
+/** Título del encabezado para una ruta, o null si no aplica (p. ej. Panel). */
+export function pageTitleForPath(pathname: string): string | null {
+  const match = Object.keys(PAGE_TITLES)
+    .filter((href) => pathname === href || pathname.startsWith(`${href}/`))
+    .sort((a, b) => b.length - a.length)[0];
+  return match ? PAGE_TITLES[match] : null;
+}

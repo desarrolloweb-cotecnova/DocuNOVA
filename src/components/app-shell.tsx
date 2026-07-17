@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Eye } from "lucide-react";
-import { navItemsForRole, type NavItem } from "@/lib/navigation";
+import {
+  navItemsForRole,
+  pageTitleForPath,
+  type NavItem,
+} from "@/lib/navigation";
 import { LogoFull } from "@/components/brand/logo";
 import { Topbar, type TopbarProps } from "@/components/topbar";
 import { ToastProvider } from "@/components/ui/toast";
@@ -74,6 +78,7 @@ export function AppShell({
 }) {
   const pathname = usePathname();
   const navItems = navItemsForRole(topbar.role);
+  const pageTitle = pageTitleForPath(pathname);
   const [navOpen, setNavOpen] = useState(false);
 
   // Cierra el menú móvil al navegar.
@@ -147,6 +152,11 @@ export function AppShell({
             <Menu className="size-6" />
           </button>
           <LogoFull className="h-11 md:hidden" />
+          {pageTitle && (
+            <h1 className="truncate text-lg font-semibold md:text-2xl">
+              {pageTitle}
+            </h1>
+          )}
           <div className="ml-auto">
             <Topbar {...topbar} />
           </div>

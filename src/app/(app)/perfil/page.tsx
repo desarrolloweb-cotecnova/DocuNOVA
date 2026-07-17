@@ -43,13 +43,6 @@ export default async function PerfilPage() {
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
-      <div>
-        <h1 className="text-xl font-semibold">Mi perfil</h1>
-        <p className="text-sm text-muted-foreground">
-          Tus datos en DocuNOVA. El rol lo asigna un administrador.
-        </p>
-      </div>
-
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">

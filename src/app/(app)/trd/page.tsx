@@ -272,16 +272,6 @@ export default async function TrdPage({
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6">
-      <div>
-        <h1 className="text-xl font-semibold">
-          Tablas de Retención Documental
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Gestiona las TRD por dependencia y consulta el fondo documental de
-          toda la organización.
-        </p>
-      </div>
-
       <Tabs
         defaultId="gestion"
         tabs={[

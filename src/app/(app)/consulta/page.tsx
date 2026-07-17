@@ -63,14 +63,6 @@ export default async function ConsultaPage({
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6">
-      <div>
-        <h1 className="text-xl font-semibold">Consulta</h1>
-        <p className="text-sm text-muted-foreground">
-          Filtra por Eje → Macroproceso → Proceso → Dependencia y busca por
-          palabra clave.
-        </p>
-      </div>
-
       <FiltroDependencia
         unidades={unidadesVisibles}
         oficinas={oficinasVisibles}
