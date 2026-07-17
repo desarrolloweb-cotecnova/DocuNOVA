@@ -81,14 +81,6 @@ export default async function DocumentosPage({
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6">
-      <div>
-        <h1 className="text-xl font-semibold">Documentos</h1>
-        <p className="text-sm text-muted-foreground">
-          Definición de documentos por dependencia (rutas de cargue o formatos
-          diligenciables).
-        </p>
-      </div>
-
       {puedeAprobar && (
         <ImportadorExcel
           titulo="Carga masiva de documentos"

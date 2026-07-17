@@ -25,14 +25,6 @@ export default async function DependenciasPage() {
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6">
-      <div>
-        <h1 className="text-xl font-semibold">Dependencias</h1>
-        <p className="text-sm text-muted-foreground">
-          Estructura organizacional y oficinas productoras. Filtra por eje,
-          macroproceso y proceso, o busca por palabra clave.
-        </p>
-      </div>
-
       {puedeEditar && (
         <ImportadorExcel
           titulo="Carga masiva de dependencias"

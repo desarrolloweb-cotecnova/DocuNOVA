@@ -64,14 +64,6 @@ export default async function RegistrosPage({
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6">
-      <div>
-        <h1 className="text-xl font-semibold">Registros</h1>
-        <p className="text-sm text-muted-foreground">
-          Filtra por Eje → Macroproceso → Proceso → Dependencia. A partir de un
-          documento activo puedes crear un registro.
-        </p>
-      </div>
-
       <FiltroDependencia
         unidades={unidadesVisibles}
         oficinas={oficinasVisibles}

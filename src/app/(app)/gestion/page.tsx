@@ -67,14 +67,6 @@ export default async function GestionPage() {
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6">
-      <div>
-        <h1 className="text-xl font-semibold">Gestión</h1>
-        <p className="text-sm text-muted-foreground">
-          Administra usuarios y la estructura organizacional (ejes,
-          macroprocesos y procesos).
-        </p>
-      </div>
-
       <Tabs
         defaultId="usuarios"
         tabs={[

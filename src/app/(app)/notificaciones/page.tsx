@@ -20,14 +20,8 @@ export default async function NotificacionesPage() {
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold">Notificaciones</h1>
-          <p className="text-sm text-muted-foreground">
-            Avisos sobre TRD, documentos y registros de tus dependencias.
-          </p>
-        </div>
-        {noLeidas.length > 0 && (
+      {noLeidas.length > 0 && (
+        <div className="flex justify-end">
           <form action={marcarTodasLeidas}>
             <SubmitButton
               size="sm"
@@ -39,8 +33,8 @@ export default async function NotificacionesPage() {
               Marcar todas como leídas
             </SubmitButton>
           </form>
-        )}
-      </div>
+        </div>
+      )}
 
       {notifs.length === 0 ? (
         <Card>
