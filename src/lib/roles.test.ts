@@ -72,4 +72,19 @@ describe("helpers de roles", () => {
     expect(puedeVerModulo("pendiente", "/consulta")).toBe(false);
     expect(puedeVerModulo(null, "/consulta")).toBe(false);
   });
+
+  it("Memoria Corporativa es visible para todo rol activo, no para pendiente", () => {
+    for (const rol of [
+      "superadmin",
+      "rector",
+      "administrador",
+      "gestor",
+      "colaborador",
+      "consulta",
+    ]) {
+      expect(puedeVerModulo(rol, "/memoria")).toBe(true);
+    }
+    expect(puedeVerModulo("pendiente", "/memoria")).toBe(false);
+    expect(puedeVerModulo(null, "/memoria")).toBe(false);
+  });
 });

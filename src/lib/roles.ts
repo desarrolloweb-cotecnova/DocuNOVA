@@ -91,6 +91,7 @@ const MODULOS_POR_ROL: Record<Role, string[]> = {
     "/registros",
     "/consulta",
     "/gestion",
+    "/memoria",
   ],
   rector: [
     "/dashboard",
@@ -100,6 +101,7 @@ const MODULOS_POR_ROL: Record<Role, string[]> = {
     "/registros",
     "/consulta",
     "/gestion",
+    "/memoria",
   ],
   administrador: [
     "/dashboard",
@@ -108,10 +110,18 @@ const MODULOS_POR_ROL: Record<Role, string[]> = {
     "/documentos",
     "/registros",
     "/consulta",
+    "/memoria",
   ],
-  gestor: ["/dashboard", "/trd", "/documentos", "/registros", "/consulta"],
-  colaborador: ["/dashboard", "/registros", "/consulta"],
-  consulta: ["/dashboard", "/consulta"],
+  gestor: [
+    "/dashboard",
+    "/trd",
+    "/documentos",
+    "/registros",
+    "/consulta",
+    "/memoria",
+  ],
+  colaborador: ["/dashboard", "/registros", "/consulta", "/memoria"],
+  consulta: ["/dashboard", "/consulta", "/memoria"],
   pendiente: [],
 };
 
