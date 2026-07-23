@@ -70,6 +70,20 @@ export async function cargarDocumento(
   if (!VISIBILIDADES_MEMORIA.includes(visibilidad)) {
     return { ok: false, mensaje: "Visibilidad inválida." };
   }
+  const componenteId = str(formData.get("componente_id"));
+  if (!componenteId) {
+    return { ok: false, mensaje: "Selecciona un componente." };
+  }
+  // El componente debe existir y pertenecer a la categoría elegida.
+  const { data: componente } = await supabase
+    .from("memoria_componentes")
+    .select("id")
+    .eq("id", componenteId)
+    .eq("categoria", categoria)
+    .maybeSingle();
+  if (!componente) {
+    return { ok: false, mensaje: "El componente no corresponde a esta memoria." };
+  }
 
   const archivo = formData.get("archivo");
   if (!(archivo instanceof File) || archivo.size === 0) {
@@ -103,6 +117,7 @@ export async function cargarDocumento(
 
   const { error } = await supabase.from("memoria_documentos").insert({
     categoria,
+    componente_id: componenteId,
     titulo,
     descripcion: nullable(formData.get("descripcion")),
     archivo_ruta: ruta,
@@ -162,9 +177,9 @@ export async function rechazarDocumento(formData: FormData) {
   revalidatePath("/memoria");
 }
 
-/** Elimina un documento y su archivo. La RLS acota quién puede (aprobador o autor). */
+/** Elimina un documento y su archivo. Solo aprobadores (administrador+). */
 export async function eliminarDocumento(formData: FormData) {
-  const supabase = await requireCapacidad(elabora);
+  const supabase = await requireCapacidad(apruebaTRD);
   const id = str(formData.get("id"));
 
   const { data: doc } = await supabase

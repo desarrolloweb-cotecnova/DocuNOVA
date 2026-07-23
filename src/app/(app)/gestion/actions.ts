@@ -19,7 +19,11 @@ import {
 } from "@/lib/roles";
 import { leerFilas, textoONull } from "@/lib/excel";
 import { fallo, type ResultadoImport } from "@/lib/importacion";
-import type { TipoUnidad } from "@/lib/tipos";
+import {
+  CATEGORIAS_MEMORIA,
+  type TipoUnidad,
+  type CategoriaMemoria,
+} from "@/lib/tipos";
 
 function str(v: FormDataEntryValue | null): string {
   return typeof v === "string" ? v.trim() : "";
@@ -385,4 +389,54 @@ export async function eliminarUnidad(formData: FormData) {
   if (error) throw new Error(error.message);
   revalidatePath("/gestion");
   revalidatePath("/dependencias");
+}
+
+// ---------------------------------------------------------------------------
+// Componentes de Memoria Corporativa (subcategorías por memoria).
+// La RLS de `memoria_componentes` exige puede_aprobar_trd (administrador+).
+// ---------------------------------------------------------------------------
+
+/** Crea un componente en una categoría de memoria. */
+export async function crearComponente(formData: FormData) {
+  const supabase = await requireCapacidad(apruebaTRD);
+  const categoria = str(formData.get("categoria")) as CategoriaMemoria;
+  const nombre = str(formData.get("nombre"));
+  if (!CATEGORIAS_MEMORIA.includes(categoria)) {
+    throw new Error("Categoría no válida");
+  }
+  if (!nombre) throw new Error("El nombre del componente es obligatorio");
+  const { error } = await supabase
+    .from("memoria_componentes")
+    .insert({ categoria, nombre });
+  if (error) throw new Error(error.message);
+  revalidatePath("/gestion");
+  revalidatePath("/memoria");
+}
+
+/** Renombra o activa/desactiva un componente. */
+export async function actualizarComponente(formData: FormData) {
+  const supabase = await requireCapacidad(apruebaTRD);
+  const id = str(formData.get("id"));
+  const nombre = str(formData.get("nombre"));
+  if (!id) throw new Error("Componente no válido");
+  if (!nombre) throw new Error("El nombre del componente es obligatorio");
+  const { error } = await supabase
+    .from("memoria_componentes")
+    .update({ nombre, activo: bool(formData.get("activo")) })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/gestion");
+  revalidatePath("/memoria");
+}
+
+/** Elimina un componente (los documentos asociados quedan sin componente). */
+export async function eliminarComponente(formData: FormData) {
+  const supabase = await requireCapacidad(apruebaTRD);
+  const { error } = await supabase
+    .from("memoria_componentes")
+    .delete()
+    .eq("id", str(formData.get("id")));
+  if (error) throw new Error(error.message);
+  revalidatePath("/gestion");
+  revalidatePath("/memoria");
 }

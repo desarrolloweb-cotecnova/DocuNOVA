@@ -11,12 +11,18 @@ import {
   type ResultadoCarga,
 } from "@/app/(app)/memoria/actions";
 import { VISIBILIDADES_MEMORIA, VISIBILIDAD_MEMORIA_LABELS } from "@/lib/tipos";
-import type { CategoriaMemoria } from "@/lib/tipos";
+import type { CategoriaMemoria, MemoriaComponente } from "@/lib/tipos";
 
 const INICIAL: ResultadoCarga = { ok: false, mensaje: "" };
 
 /** Formulario de carga de un documento en una categoría de Memoria Corporativa. */
-export function MemoriaUploader({ categoria }: { categoria: CategoriaMemoria }) {
+export function MemoriaUploader({
+  categoria,
+  componentes,
+}: {
+  categoria: CategoriaMemoria;
+  componentes: MemoriaComponente[];
+}) {
   const [estado, formAction, pending] = useActionState(
     cargarDocumento,
     INICIAL,
@@ -67,6 +73,33 @@ export function MemoriaUploader({ categoria }: { categoria: CategoriaMemoria }) 
             />
           </div>
 
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor={`componente-${categoria}`}>Componente</Label>
+            <select
+              id={`componente-${categoria}`}
+              name="componente_id"
+              required
+              defaultValue=""
+              disabled={componentes.length === 0}
+              className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50"
+            >
+              <option value="" disabled>
+                Selecciona un componente…
+              </option>
+              {componentes.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nombre}
+                </option>
+              ))}
+            </select>
+            {componentes.length === 0 && (
+              <p className="text-xs text-muted-foreground">
+                No hay componentes activos en esta memoria. Un administrador debe
+                crearlos en Gestión → Componentes Memoria Corporativa.
+              </p>
+            )}
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor={`visibilidad-${categoria}`}>Visibilidad</Label>
@@ -103,7 +136,7 @@ export function MemoriaUploader({ categoria }: { categoria: CategoriaMemoria }) 
           </p>
 
           <div>
-            <Button type="submit" disabled={pending}>
+            <Button type="submit" disabled={pending || componentes.length === 0}>
               {pending ? "Cargando…" : "Cargar documento"}
             </Button>
           </div>

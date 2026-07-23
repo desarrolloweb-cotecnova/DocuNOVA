@@ -111,6 +111,9 @@ const MODULOS_POR_ROL: Record<Role, string[]> = {
     "/registros",
     "/consulta",
     "/memoria",
+    // Solo la pestaña "Componentes Memoria Corporativa" dentro de Gestión; el
+    // resto del módulo (usuarios, estructura) se oculta en la propia página.
+    "/gestion",
   ],
   gestor: [
     "/dashboard",
