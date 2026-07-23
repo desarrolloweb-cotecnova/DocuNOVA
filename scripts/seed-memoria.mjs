@@ -149,14 +149,28 @@ async function main() {
     comps?.find((c) => c.categoria === categoria && c.nombre === nombre)?.id ??
     null;
 
+  // Procesos (unidades tipo proceso) para asignar uno a cada ejemplo, de modo
+  // que el filtro Eje/Macroproceso/Proceso quede demostrable. Si no hay, se deja
+  // sin proceso.
+  const { data: procesos } = await db
+    .from("unidades")
+    .select("id")
+    .eq("tipo", "proceso")
+    .order("codigo");
+
   let creados = 0;
   const errores = [];
-  for (const [categoria, componente, titulo, visibilidad] of EJEMPLOS) {
+  for (let i = 0; i < EJEMPLOS.length; i++) {
+    const [categoria, componente, titulo, visibilidad] = EJEMPLOS[i];
     const componenteId = compId(categoria, componente);
     if (!componenteId) {
       errores.push(`Sin componente "${componente}" en ${categoria}; se omite "${titulo}".`);
       continue;
     }
+    const unidadId =
+      procesos && procesos.length > 0
+        ? procesos[i % procesos.length].id
+        : null;
     const ruta = `${categoria}/seed-${randomUUID()}.pdf`;
     const nombreArchivo = `${titulo}.pdf`;
     const buffer = pdfDeEjemplo(titulo);
@@ -172,6 +186,7 @@ async function main() {
     const { error: eIns } = await db.from("memoria_documentos").insert({
       categoria,
       componente_id: componenteId,
+      unidad_id: unidadId,
       titulo,
       descripcion: MARCA,
       archivo_ruta: ruta,

@@ -3,6 +3,7 @@ import { APP_NAME } from "@/lib/config";
 import { apruebaTRD, elabora } from "@/lib/roles";
 import { rolDelUsuario } from "@/lib/auth/roles-server";
 import { listMemoria, listComponentesActivos } from "@/services/memoria";
+import { listUnidades } from "@/services/unidades";
 import {
   CATEGORIAS_MEMORIA,
   CATEGORIA_MEMORIA_LABELS,
@@ -19,14 +20,28 @@ export const metadata: Metadata = {
 };
 
 export default async function MemoriaPage() {
-  const [rol, documentos, componentes] = await Promise.all([
+  const [rol, documentos, componentes, unidades] = await Promise.all([
     rolDelUsuario(),
     listMemoria(),
     listComponentesActivos(),
+    listUnidades(),
   ]);
   const puedeCargar = elabora(rol);
   const puedeAprobar = apruebaTRD(rol);
   const puedeEliminar = apruebaTRD(rol);
+
+  // Procesos con su ruta "Eje ▸ Macro ▸ Proceso" para el desplegable de carga.
+  const porId = new Map(unidades.map((u) => [u.id, u]));
+  const procesos = unidades
+    .filter((u) => u.tipo === "proceso")
+    .map((p) => {
+      const macro = p.padre_id ? porId.get(p.padre_id) : null;
+      const eje = macro?.padre_id ? porId.get(macro.padre_id) : null;
+      const ruta = [eje?.nombre, macro?.nombre, p.nombre]
+        .filter(Boolean)
+        .join(" ▸ ");
+      return { id: p.id, ruta };
+    });
 
   const docsDe = (categoria: CategoriaMemoria) =>
     documentos.filter((d) => d.categoria === categoria);
@@ -49,6 +64,7 @@ export default async function MemoriaPage() {
                 <MemoriaUploader
                   categoria={categoria}
                   componentes={compsDe(categoria)}
+                  procesos={procesos}
                 />
               )}
 
@@ -57,6 +73,7 @@ export default async function MemoriaPage() {
                   <MemoriaLista
                     documentos={docsDe(categoria)}
                     componentes={compsDe(categoria)}
+                    unidades={unidades}
                     puedeAprobar={puedeAprobar}
                     puedeEliminar={puedeEliminar}
                   />

@@ -19,9 +19,11 @@ const INICIAL: ResultadoCarga = { ok: false, mensaje: "" };
 export function MemoriaUploader({
   categoria,
   componentes,
+  procesos,
 }: {
   categoria: CategoriaMemoria;
   componentes: MemoriaComponente[];
+  procesos: { id: string; ruta: string }[];
 }) {
   const [estado, formAction, pending] = useActionState(
     cargarDocumento,
@@ -100,6 +102,27 @@ export function MemoriaUploader({
             )}
           </div>
 
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor={`proceso-${categoria}`}>Proceso</Label>
+            <select
+              id={`proceso-${categoria}`}
+              name="unidad_id"
+              required
+              defaultValue=""
+              disabled={procesos.length === 0}
+              className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50"
+            >
+              <option value="" disabled>
+                Selecciona el proceso…
+              </option>
+              {procesos.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.ruta}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor={`visibilidad-${categoria}`}>Visibilidad</Label>
@@ -136,7 +159,12 @@ export function MemoriaUploader({
           </p>
 
           <div>
-            <Button type="submit" disabled={pending || componentes.length === 0}>
+            <Button
+              type="submit"
+              disabled={
+                pending || componentes.length === 0 || procesos.length === 0
+              }
+            >
               {pending ? "Cargando…" : "Cargar documento"}
             </Button>
           </div>

@@ -85,6 +85,21 @@ export async function cargarDocumento(
     return { ok: false, mensaje: "El componente no corresponde a esta memoria." };
   }
 
+  const unidadId = str(formData.get("unidad_id"));
+  if (!unidadId) {
+    return { ok: false, mensaje: "Selecciona el proceso al que pertenece." };
+  }
+  // El proceso debe existir y ser una unidad de tipo 'proceso'.
+  const { data: proceso } = await supabase
+    .from("unidades")
+    .select("id")
+    .eq("id", unidadId)
+    .eq("tipo", "proceso")
+    .maybeSingle();
+  if (!proceso) {
+    return { ok: false, mensaje: "El proceso seleccionado no es válido." };
+  }
+
   const archivo = formData.get("archivo");
   if (!(archivo instanceof File) || archivo.size === 0) {
     return { ok: false, mensaje: "Selecciona un archivo." };
@@ -118,6 +133,7 @@ export async function cargarDocumento(
   const { error } = await supabase.from("memoria_documentos").insert({
     categoria,
     componente_id: componenteId,
+    unidad_id: unidadId,
     titulo,
     descripcion: nullable(formData.get("descripcion")),
     archivo_ruta: ruta,
