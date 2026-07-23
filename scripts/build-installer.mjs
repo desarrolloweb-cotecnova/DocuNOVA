@@ -28,8 +28,15 @@ const PREAMBULO = `-- ==========================================================
 
 drop trigger if exists on_auth_user_created on auth.users;
 
+-- Políticas de almacenamiento (bucket 'memoria'): se recrean en la migración.
+drop policy if exists "memoria_objetos_insert" on storage.objects;
+drop policy if exists "memoria_objetos_update" on storage.objects;
+drop policy if exists "memoria_objetos_delete" on storage.objects;
+drop policy if exists "memoria_objetos_select" on storage.objects;
+
 -- Tablas del esquema NUEVO
 drop table if exists
+  public.memoria_documentos,
   public.notificaciones,
   public.registros,
   public.documentos,
@@ -84,6 +91,9 @@ drop function if exists
 
 -- Tipos (nuevos y antiguos)
 drop type if exists
+  public.categoria_memoria,
+  public.visibilidad_memoria,
+  public.estado_memoria,
   public.tipo_notificacion,
   public.estado_registro,
   public.estado_documento,

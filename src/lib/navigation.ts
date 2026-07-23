@@ -6,6 +6,7 @@ import {
   ClipboardCheck,
   Search,
   Users,
+  Library,
   Mail,
   CalendarClock,
   type LucideIcon,
@@ -34,6 +35,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/registros", label: "Registros", icon: ClipboardCheck },
   { href: "/consulta", label: "Consulta", icon: Search },
   { href: "/gestion", label: "Gestión", icon: Users },
+  { href: "/memoria", label: "Memoria Corporativa", icon: Library },
   // Próximamente
   {
     href: "/correspondencia",
@@ -68,6 +70,7 @@ const PAGE_TITLES: Record<string, string> = {
   "/registros": "Registros",
   "/consulta": "Consulta",
   "/gestion": "Gestión",
+  "/memoria": "Memoria Corporativa",
   "/perfil": "Mi perfil",
   "/notificaciones": "Notificaciones",
 };

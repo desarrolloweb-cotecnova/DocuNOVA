@@ -70,6 +70,14 @@ const AYUDA: { prefijo: string; contenido: AyudaContenido }[] = [
     },
   },
   {
+    prefijo: "/memoria",
+    contenido: {
+      titulo: "Memoria Corporativa",
+      texto:
+        "Repositorio institucional en cuatro categorías: Memoria Histórica, Memoria de Gobierno, Memoria Activa y Banco de Proyectos. Los gestores cargan documentos (quedan pendientes) y los administradores los publican. Los documentos públicos los consulta cualquier usuario; los privados, solo los gestores.",
+    },
+  },
+  {
     prefijo: "/perfil",
     contenido: {
       titulo: "Mi perfil",

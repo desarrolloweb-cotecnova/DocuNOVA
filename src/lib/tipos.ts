@@ -188,6 +188,71 @@ export type Registro = {
 };
 
 // -----------------------------------------------------------------------------
+// Memoria Corporativa
+// -----------------------------------------------------------------------------
+export const CATEGORIAS_MEMORIA = [
+  "historica",
+  "gobierno",
+  "activa",
+  "banco_proyectos",
+] as const;
+export type CategoriaMemoria = (typeof CATEGORIAS_MEMORIA)[number];
+
+export const CATEGORIA_MEMORIA_LABELS: Record<CategoriaMemoria, string> = {
+  historica: "Memoria Histórica",
+  gobierno: "Memoria de Gobierno",
+  activa: "Memoria Activa",
+  banco_proyectos: "Banco de Proyectos",
+};
+
+/** Descripción corta de cada categoría (encabezado de la pestaña). */
+export const CATEGORIA_MEMORIA_DESC: Record<CategoriaMemoria, string> = {
+  historica:
+    "Documentos que han perdido vigencia operativa pero conservan valor para la trazabilidad y el patrimonio documental (hitos, reglamentos no vigentes, informes de PDI/PEI).",
+  gobierno:
+    "Instrumentos vigentes que orientan el funcionamiento institucional: estatutos, reglamentos, políticas, actos administrativos, actas y contratos.",
+  activa:
+    "Documentos operativos de alta rotación y consulta frecuente: SIGYC, SAI, programas académicos vigentes, contratos y convenios activos.",
+  banco_proyectos:
+    "Proyectos institucionales en formulación, ejecución y cierre, iniciativas con aval y lecciones aprendidas.",
+};
+
+export const VISIBILIDADES_MEMORIA = ["publico", "privado"] as const;
+export type VisibilidadMemoria = (typeof VISIBILIDADES_MEMORIA)[number];
+
+export const VISIBILIDAD_MEMORIA_LABELS: Record<VisibilidadMemoria, string> = {
+  publico: "Público",
+  privado: "Privado",
+};
+
+export const ESTADOS_MEMORIA = ["pendiente", "publicado", "rechazado"] as const;
+export type EstadoMemoria = (typeof ESTADOS_MEMORIA)[number];
+
+export const ESTADO_MEMORIA_LABELS: Record<EstadoMemoria, string> = {
+  pendiente: "Pendiente de aprobación",
+  publicado: "Publicado",
+  rechazado: "Rechazado",
+};
+
+export type MemoriaDocumento = {
+  id: string;
+  categoria: CategoriaMemoria;
+  titulo: string;
+  descripcion: string | null;
+  archivo_ruta: string;
+  archivo_nombre: string;
+  archivo_tipo: string | null;
+  archivo_tamano: number | null;
+  visibilidad: VisibilidadMemoria;
+  estado: EstadoMemoria;
+  comentario_revision: string | null;
+  cargado_por: string | null;
+  aprobado_por: string | null;
+  creado_en: string;
+  actualizado_en: string;
+};
+
+// -----------------------------------------------------------------------------
 // Notificaciones
 // -----------------------------------------------------------------------------
 export const TIPOS_NOTIFICACION = [
