@@ -248,6 +248,7 @@ export type MemoriaDocumento = {
   id: string;
   categoria: CategoriaMemoria;
   componente_id: string | null;
+  unidad_id: string | null;
   titulo: string;
   descripcion: string | null;
   archivo_ruta: string;

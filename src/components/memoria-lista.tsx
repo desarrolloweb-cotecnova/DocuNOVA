@@ -26,6 +26,7 @@ import {
   labelDe,
   type EstadoMemoria,
   type MemoriaComponente,
+  type Unidad,
 } from "@/lib/tipos";
 import type { MemoriaDocumentoListado } from "@/services/memoria";
 
@@ -58,31 +59,87 @@ const SELECT_CLASS =
 export function MemoriaLista({
   documentos,
   componentes,
+  unidades,
   puedeAprobar,
   puedeEliminar,
 }: {
   documentos: MemoriaDocumentoListado[];
   componentes: MemoriaComponente[];
+  unidades: Unidad[];
   puedeAprobar: boolean;
   puedeEliminar: boolean;
 }) {
   const [componenteId, setComponenteId] = useState("");
   const [visibilidad, setVisibilidad] = useState("");
+  const [ejeId, setEjeId] = useState("");
+  const [macroId, setMacroId] = useState("");
+  const [procId, setProcId] = useState("");
   const [ascendente, setAscendente] = useState(true);
 
+  const porId = useMemo(
+    () => new Map(unidades.map((u) => [u.id, u] as const)),
+    [unidades],
+  );
+  const ejes = useMemo(
+    () => unidades.filter((u) => u.tipo === "eje"),
+    [unidades],
+  );
+  const macros = useMemo(
+    () => unidades.filter((u) => u.tipo === "macroproceso"),
+    [unidades],
+  );
+  const procesos = useMemo(
+    () => unidades.filter((u) => u.tipo === "proceso"),
+    [unidades],
+  );
+  const macrosDelEje = ejeId
+    ? macros.filter((m) => m.padre_id === ejeId)
+    : macros;
+  const procesosDelMacro = macroId
+    ? procesos.filter((p) => p.padre_id === macroId)
+    : procesos;
+
+  /** Ruta jerárquica (eje/macro/proceso ids + nombre del proceso) de un documento. */
+  const rutaDe = (unidadId: string | null) => {
+    const proc = unidadId ? porId.get(unidadId) : undefined;
+    const macro = proc?.padre_id ? porId.get(proc.padre_id) : undefined;
+    const eje = macro?.padre_id ? porId.get(macro.padre_id) : undefined;
+    return {
+      procId: proc?.id ?? "",
+      macroId: macro?.id ?? "",
+      ejeId: eje?.id ?? "",
+      nombre: proc?.nombre ?? null,
+    };
+  };
+
   const visibles = useMemo(() => {
-    const filtrados = documentos.filter(
-      (d) =>
+    const filtrados = documentos.filter((d) => {
+      const r = rutaDe(d.unidad_id);
+      return (
         (componenteId === "" || d.componente_id === componenteId) &&
-        (visibilidad === "" || d.visibilidad === visibilidad),
-    );
+        (visibilidad === "" || d.visibilidad === visibilidad) &&
+        (ejeId === "" || r.ejeId === ejeId) &&
+        (macroId === "" || r.macroId === macroId) &&
+        (procId === "" || r.procId === procId)
+      );
+    });
     return filtrados.sort((a, b) => {
       const cmp = a.titulo.localeCompare(b.titulo, "es", {
         sensitivity: "base",
       });
       return ascendente ? cmp : -cmp;
     });
-  }, [documentos, componenteId, visibilidad, ascendente]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    documentos,
+    componenteId,
+    visibilidad,
+    ejeId,
+    macroId,
+    procId,
+    ascendente,
+    porId,
+  ]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -119,6 +176,63 @@ export function MemoriaLista({
           </select>
         </label>
 
+        <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+          Eje
+          <select
+            value={ejeId}
+            onChange={(e) => {
+              setEjeId(e.target.value);
+              setMacroId("");
+              setProcId("");
+            }}
+            className={SELECT_CLASS}
+          >
+            <option value="">Todos</option>
+            {ejes.map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.nombre}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+          Macroproceso
+          <select
+            value={macroId}
+            onChange={(e) => {
+              setMacroId(e.target.value);
+              setProcId("");
+            }}
+            disabled={!ejeId}
+            className={`${SELECT_CLASS} disabled:opacity-60`}
+          >
+            <option value="">Todos</option>
+            {macrosDelEje.map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.nombre}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+          Proceso
+          <select
+            value={procId}
+            onChange={(e) => setProcId(e.target.value)}
+            disabled={!macroId}
+            className={`${SELECT_CLASS} disabled:opacity-60`}
+          >
+            <option value="">Todos</option>
+            {procesosDelMacro.map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.nombre}
+              </option>
+            ))}
+          </select>
+        </label>
+
         <button
           type="button"
           onClick={() => setAscendente((v) => !v)}
@@ -149,6 +263,7 @@ export function MemoriaLista({
               <tr className="border-b text-left text-xs text-muted-foreground">
                 <th className="pb-2">Documento</th>
                 <th className="pb-2">Componente</th>
+                <th className="pb-2">Proceso</th>
                 <th className="pb-2">Visibilidad</th>
                 <th className="pb-2">Cargado por</th>
                 <th className="pb-2">Fecha</th>
@@ -183,6 +298,9 @@ export function MemoriaLista({
                     </td>
                     <td className="py-3 text-muted-foreground">
                       {d.componente_nombre ?? "—"}
+                    </td>
+                    <td className="py-3 text-muted-foreground">
+                      {rutaDe(d.unidad_id).nombre ?? "—"}
                     </td>
                     <td className="py-3">
                       <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
