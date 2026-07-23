@@ -234,9 +234,20 @@ export const ESTADO_MEMORIA_LABELS: Record<EstadoMemoria, string> = {
   rechazado: "Rechazado",
 };
 
+export type MemoriaComponente = {
+  id: string;
+  categoria: CategoriaMemoria;
+  nombre: string;
+  orden: number;
+  activo: boolean;
+  creado_en: string;
+  actualizado_en: string;
+};
+
 export type MemoriaDocumento = {
   id: string;
   categoria: CategoriaMemoria;
+  componente_id: string | null;
   titulo: string;
   descripcion: string | null;
   archivo_ruta: string;

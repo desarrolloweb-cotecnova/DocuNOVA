@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { UserPlus, Trash2 } from "lucide-react";
 import { APP_NAME } from "@/lib/config";
-import { roleLabel, gestionaUsuarios, ROLES_ASIGNABLES } from "@/lib/roles";
+import {
+  roleLabel,
+  apruebaTRD,
+  gestionaUsuarios,
+  ROLES_ASIGNABLES,
+} from "@/lib/roles";
 import { rolDelUsuario } from "@/lib/auth/roles-server";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -12,14 +17,16 @@ import {
 } from "@/services/perfiles";
 import { listUnidades } from "@/services/unidades";
 import { listOficinas } from "@/services/oficinas";
+import { listComponentes } from "@/services/memoria";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SubmitButton, SubmitIcon } from "@/components/ui/submit-button";
 import { EstructuraGestion } from "@/components/estructura-gestion";
 import { UsuariosGestion } from "@/components/usuarios-gestion";
+import { ComponentesMemoriaGestion } from "@/components/componentes-memoria-gestion";
 import { ImportadorExcel } from "@/components/importador-excel";
-import { Tabs } from "@/components/tabs";
+import { Tabs, type Tab } from "@/components/tabs";
 import {
   crearPreRegistro,
   eliminarPreRegistro,
@@ -32,48 +39,52 @@ export const metadata: Metadata = {
 
 export default async function GestionPage() {
   const rol = await rolDelUsuario();
-  if (!gestionaUsuarios(rol)) redirect("/dashboard");
+  // Administrador+ entra a Gestión. La gestión de usuarios y estructura queda
+  // solo para quien administra usuarios (superadmin/rector); el Administrador
+  // ve únicamente la pestaña de Componentes de Memoria Corporativa.
+  if (!apruebaTRD(rol)) redirect("/dashboard");
+  const puedeGestionarUsuarios = gestionaUsuarios(rol);
 
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [perfiles, preRegistros, cedulas, unidades, oficinas] =
-    await Promise.all([
-      listPerfiles(),
-      listPreRegistros(),
-      listNumerosDocumento(),
-      listUnidades(),
-      listOficinas(),
-    ]);
+  const componentes = await listComponentes();
+  const tabs: Tab[] = [];
 
-  const unidadesConOficina = oficinas
-    .map((o) => o.unidad_id)
-    .filter((x): x is string => Boolean(x));
+  if (puedeGestionarUsuarios) {
+    const [perfiles, preRegistros, cedulas, unidades, oficinas] =
+      await Promise.all([
+        listPerfiles(),
+        listPreRegistros(),
+        listNumerosDocumento(),
+        listUnidades(),
+        listOficinas(),
+      ]);
 
-  // Procesos con su ruta "Eje ▸ Macro ▸ Proceso" para los selectores.
-  const porId = new Map(unidades.map((u) => [u.id, u]));
-  const procesos = unidades
-    .filter((u) => u.tipo === "proceso")
-    .map((p) => {
-      const macro = p.padre_id ? porId.get(p.padre_id) : null;
-      const eje = macro?.padre_id ? porId.get(macro.padre_id) : null;
-      const ruta = [eje?.nombre, macro?.nombre, p.nombre]
-        .filter(Boolean)
-        .join(" ▸ ");
-      return { id: p.id, ruta };
-    });
+    const unidadesConOficina = oficinas
+      .map((o) => o.unidad_id)
+      .filter((x): x is string => Boolean(x));
 
-  return (
-    <div className="mx-auto flex max-w-5xl flex-col gap-6">
-      <Tabs
-        defaultId="usuarios"
-        tabs={[
-          {
-            id: "usuarios",
-            label: "Usuarios",
-            content: (
+    // Procesos con su ruta "Eje ▸ Macro ▸ Proceso" para los selectores.
+    const porId = new Map(unidades.map((u) => [u.id, u]));
+    const procesos = unidades
+      .filter((u) => u.tipo === "proceso")
+      .map((p) => {
+        const macro = p.padre_id ? porId.get(p.padre_id) : null;
+        const eje = macro?.padre_id ? porId.get(macro.padre_id) : null;
+        const ruta = [eje?.nombre, macro?.nombre, p.nombre]
+          .filter(Boolean)
+          .join(" ▸ ");
+        return { id: p.id, ruta };
+      });
+
+    tabs.push(
+      {
+        id: "usuarios",
+        label: "Usuarios",
+        content: (
               <div className="flex flex-col gap-6">
                 {/* Usuarios registrados */}
                 <Card>
@@ -228,8 +239,20 @@ export default async function GestionPage() {
               />
             ),
           },
-        ]}
-      />
+    );
+  }
+
+  tabs.push({
+    id: "componentes",
+    label: "Componentes Memoria Corporativa",
+    content: <ComponentesMemoriaGestion componentes={componentes} />,
+  });
+
+  const defaultId = puedeGestionarUsuarios ? "usuarios" : "componentes";
+
+  return (
+    <div className="mx-auto flex max-w-5xl flex-col gap-6">
+      <Tabs defaultId={defaultId} tabs={tabs} />
     </div>
   );
 }

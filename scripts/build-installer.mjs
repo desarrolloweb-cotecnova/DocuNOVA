@@ -37,6 +37,7 @@ drop policy if exists "memoria_objetos_select" on storage.objects;
 -- Tablas del esquema NUEVO
 drop table if exists
   public.memoria_documentos,
+  public.memoria_componentes,
   public.notificaciones,
   public.registros,
   public.documentos,

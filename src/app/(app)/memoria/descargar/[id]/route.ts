@@ -16,7 +16,7 @@ export async function GET(
 
   const { data: doc } = await supabase
     .from("memoria_documentos")
-    .select("archivo_ruta, archivo_nombre")
+    .select("archivo_ruta")
     .eq("id", id)
     .maybeSingle();
 
@@ -27,9 +27,11 @@ export async function GET(
     );
   }
 
+  // URL firmada de corta duración; sin `download` para que el navegador lo
+  // muestre en línea (visualizar) cuando el tipo lo permite (p. ej. PDF).
   const { data: firma, error } = await supabase.storage
     .from("memoria")
-    .createSignedUrl(doc.archivo_ruta, 60, { download: doc.archivo_nombre });
+    .createSignedUrl(doc.archivo_ruta, 60);
 
   if (error || !firma?.signedUrl) {
     return NextResponse.json(

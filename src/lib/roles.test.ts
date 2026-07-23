@@ -55,9 +55,9 @@ describe("helpers de roles", () => {
     // superadmin/rector: todos los módulos.
     expect(puedeVerModulo("superadmin", "/gestion")).toBe(true);
     expect(puedeVerModulo("rector", "/dependencias")).toBe(true);
-    // administrador: todos menos Gestión.
+    // administrador: incluye Gestión (solo la pestaña de Componentes).
     expect(puedeVerModulo("administrador", "/dependencias")).toBe(true);
-    expect(puedeVerModulo("administrador", "/gestion")).toBe(false);
+    expect(puedeVerModulo("administrador", "/gestion")).toBe(true);
     // gestor: TRD, Documentos, Registros, Consulta (no Dependencias ni Gestión).
     expect(puedeVerModulo("gestor", "/trd")).toBe(true);
     expect(puedeVerModulo("gestor", "/dependencias")).toBe(false);
