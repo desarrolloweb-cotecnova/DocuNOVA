@@ -237,6 +237,52 @@ export async function eliminarPreRegistro(formData: FormData) {
   revalidatePath("/gestion");
 }
 
+/**
+ * Restablece la verificación en dos pasos de un usuario.
+ *
+ * Para cuando alguien pierde el teléfono o el acceso a Google Authenticator:
+ * borra sus factores TOTP y cierra sus sesiones, de modo que en su próximo
+ * inicio de sesión tenga que escanear un código QR nuevo. La cuenta, su rol y
+ * sus datos no se tocan.
+ *
+ * Requiere la service_role: desde una sesión normal solo pueden desenrolarse
+ * los factores propios (`auth.mfa.unenroll`).
+ */
+export async function restablecerMfa(formData: FormData) {
+  await requireCapacidad(gestionaUsuarios);
+  const id = str(formData.get("id"));
+  if (!id) throw new Error("Falta el usuario");
+
+  const admin = createAdminClient();
+
+  const { data: factores, error: listError } =
+    await admin.auth.admin.mfa.listFactors({ userId: id });
+  if (listError) throw new Error(listError.message);
+
+  for (const f of factores?.factors ?? []) {
+    const { error } = await admin.auth.admin.mfa.deleteFactor({
+      userId: id,
+      id: f.id,
+    });
+    if (error) throw new Error(error.message);
+  }
+
+  // Cerrar sus sesiones: siguen elevadas a aal2 y mantendrían el acceso pese al
+  // restablecimiento. `auth.admin.signOut()` no vale aquí porque recibe el JWT
+  // del propio usuario, y el esquema `auth` no está expuesto por PostgREST; de
+  // ahí la función SECURITY DEFINER de la migración 0012.
+  const { error: revokeError } = await admin.rpc("admin_revoke_user_sessions", {
+    target_user_id: id,
+  });
+  if (revokeError) {
+    // No es fatal: los factores ya se borraron y en el próximo inicio de sesión
+    // se exigirá enrolar de nuevo.
+    console.warn("No se pudieron cerrar las sesiones:", revokeError.message);
+  }
+
+  revalidatePath("/gestion");
+}
+
 // ---------------------------------------------------------------------------
 // Impersonación ("iniciar sesión como") — solo admin de usuarios.
 // Forja una sesión real del usuario objetivo para verificar lo que ese rol ve

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, X, LogIn } from "lucide-react";
+import { Pencil, X, LogIn, KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import {
   setActivo,
   actualizarPerfilUsuario,
   iniciarImpersonacion,
+  restablecerMfa,
 } from "@/app/(app)/gestion/actions";
 
 export type ProcesoOpcion = { id: string; ruta: string };
@@ -102,6 +103,20 @@ export function UsuariosGestion({
                         </SubmitButton>
                       </form>
                     )}
+                  <form action={restablecerMfa}>
+                    <input type="hidden" name="id" value={p.usuario_id} />
+                    <SubmitButton
+                      size="sm"
+                      variant="outline"
+                      textoPendiente="Restableciendo…"
+                      confirmar={`Se eliminará el segundo factor de ${p.nombre_completo ?? p.email} y se cerrarán sus sesiones. Deberá escanear un código QR nuevo al volver a entrar. ¿Continuar?`}
+                      exito="Verificación en dos pasos restablecida."
+                      title="Restablecer la verificación en dos pasos"
+                    >
+                      <KeyRound className="size-3.5" />
+                      Restablecer 2FA
+                    </SubmitButton>
+                  </form>
                   <form action={setActivo}>
                     <input type="hidden" name="id" value={p.usuario_id} />
                     <input
