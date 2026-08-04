@@ -1,6 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/proxy";
 import { isAllowedEmail } from "@/lib/auth/domain";
+import {
+  SESSION_EXPIRED_REASON,
+  isSessionExpired,
+} from "@/lib/auth/session-policy";
 
 /**
  * Proxy de Next.js 16 (antes llamado middleware). Se ejecuta antes de renderizar
@@ -10,6 +14,8 @@ import { isAllowedEmail } from "@/lib/auth/domain";
  *  1. Refrescar la sesión de Supabase en cada petición.
  *  2. Redirigir a /login a quien no tenga sesión en rutas privadas.
  *  3. Guard de respaldo: si el correo no es del dominio institucional, cerrar sesión.
+ *  4. Caducidad: cerrar la sesión que superó la ventana máxima (8 h), para que
+ *     nadie arrastre la sesión de un día al siguiente.
  *
  * La exigencia del segundo factor (MFA/aal2) se hace en el layout privado
  * (src/app/(app)/layout.tsx), donde tenemos acceso a los factores del usuario.
@@ -33,6 +39,16 @@ export async function proxy(request: NextRequest) {
     const signOutUrl = request.nextUrl.clone();
     signOutUrl.pathname = "/auth/signout";
     signOutUrl.search = "?reason=domain";
+    return NextResponse.redirect(signOutUrl);
+  }
+
+  // Sesión que superó la ventana máxima -> cerrar sesión y volver al login.
+  // El corte lo decide el servidor sobre `last_sign_in_at`, que viene del
+  // servidor de autenticación: no hay nada que el navegador pueda alterar.
+  if (user && isSessionExpired(user)) {
+    const signOutUrl = request.nextUrl.clone();
+    signOutUrl.pathname = "/auth/signout";
+    signOutUrl.search = `?reason=${SESSION_EXPIRED_REASON}`;
     return NextResponse.redirect(signOutUrl);
   }
 
