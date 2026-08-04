@@ -12,6 +12,7 @@ import {
 import { LogoFull } from "@/components/brand/logo";
 import { Topbar, type TopbarProps } from "@/components/topbar";
 import { ToastProvider } from "@/components/ui/toast";
+import { SessionExpiryWatcher } from "@/components/auth/session-expiry-watcher";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { detenerImpersonacion } from "@/app/(app)/gestion/actions";
 import { cn } from "@/lib/utils";
@@ -71,10 +72,13 @@ function NavLinks({
 export function AppShell({
   children,
   impersonando,
+  sesionExpiraEn,
   ...topbar
 }: TopbarProps & {
   children: React.ReactNode;
   impersonando?: { nombre: string } | null;
+  /** Momento (epoch ms) en que caduca la sesión; ver lib/auth/session-policy. */
+  sesionExpiraEn?: number | null;
 }) {
   const pathname = usePathname();
   const navItems = navItemsForRole(topbar.role);
@@ -87,6 +91,7 @@ export function AppShell({
 
   return (
     <ToastProvider>
+    <SessionExpiryWatcher expiraEn={sesionExpiraEn ?? null} />
     <div className="flex min-h-full flex-1">
       {/* Barra lateral (escritorio) */}
       <aside className="hidden w-64 flex-col border-r bg-card md:sticky md:top-0 md:flex md:h-dvh md:self-start md:overflow-y-auto">

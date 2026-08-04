@@ -3,6 +3,10 @@ import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { isAllowedEmail } from "@/lib/auth/domain";
 import { esSesionImpersonada } from "@/lib/auth/impersonacion";
+import {
+  SESSION_EXPIRED_SIGNOUT_URL,
+  isSessionExpired,
+} from "@/lib/auth/session-policy";
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>;
 
@@ -10,7 +14,8 @@ type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>;
  * Gate de autenticación reutilizable para rutas privadas. Aplica, en orden:
  *  1. Sesión válida (si no, a /login).
  *  2. Dominio institucional (si no, cerrar sesión).
- *  3. Segundo factor verificado — aal2 (si no, a /mfa/verify o /mfa/enroll).
+ *  3. Ventana máxima de sesión — 8 h (si se superó, cerrar sesión).
+ *  4. Segundo factor verificado — aal2 (si no, a /mfa/verify o /mfa/enroll).
  *
  * Si retorna, el usuario está autenticado, es del dominio y superó el 2FA.
  * Este guard es independiente del modelo de perfil: la comprobación de cuenta
@@ -28,6 +33,10 @@ export async function requireAuth(): Promise<{
 
   if (!user) redirect("/login");
   if (!isAllowedEmail(user.email)) redirect("/auth/signout?reason=domain");
+
+  // Caducidad diaria. El proxy ya corta las navegaciones, pero este guard
+  // también protege Server Actions y route handlers, que no pasan por él.
+  if (isSessionExpired(user)) redirect(SESSION_EXPIRED_SIGNOUT_URL);
 
   // Excepción de MFA para las sesiones impersonadas: el administrador ya superó
   // su propio segundo factor al iniciar la impersonación (el marcador va firmado

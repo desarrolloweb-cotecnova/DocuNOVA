@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth/guard";
+import { getSessionExpiry } from "@/lib/auth/session-policy";
 import { activationRedirect } from "@/lib/auth/activation";
 import { leerImpersonacion } from "@/lib/auth/impersonacion";
 import {
@@ -68,6 +69,7 @@ export default async function AppLayout({
   return (
     <AppShell
       impersonando={impersonando}
+      sesionExpiraEn={getSessionExpiry(user)}
       email={user.email ?? ""}
       fullName={profile?.nombre_completo ?? null}
       role={profile?.rol ?? null}
