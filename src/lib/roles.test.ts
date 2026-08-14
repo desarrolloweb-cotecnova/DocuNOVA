@@ -67,6 +67,11 @@ describe("helpers de roles", () => {
     // consulta: solo Consulta.
     expect(puedeVerModulo("consulta", "/consulta")).toBe(true);
     expect(puedeVerModulo("consulta", "/registros")).toBe(false);
+    // Configuración (monitoreo de Supabase): solo quien gestiona usuarios.
+    expect(puedeVerModulo("superadmin", "/configuracion")).toBe(true);
+    expect(puedeVerModulo("rector", "/configuracion")).toBe(true);
+    expect(puedeVerModulo("administrador", "/configuracion")).toBe(false);
+    expect(puedeVerModulo("gestor", "/configuracion")).toBe(false);
     // cubre subrutas y bloquea a pendiente/desconocidos.
     expect(puedeVerModulo("gestor", "/documentos/plantilla")).toBe(true);
     expect(puedeVerModulo("pendiente", "/consulta")).toBe(false);

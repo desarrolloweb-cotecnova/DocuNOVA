@@ -92,6 +92,8 @@ const MODULOS_POR_ROL: Record<Role, string[]> = {
     "/consulta",
     "/gestion",
     "/memoria",
+    // Monitoreo de Supabase (uso del Plan Free y keepalive).
+    "/configuracion",
   ],
   rector: [
     "/dashboard",
@@ -102,6 +104,7 @@ const MODULOS_POR_ROL: Record<Role, string[]> = {
     "/consulta",
     "/gestion",
     "/memoria",
+    "/configuracion",
   ],
   administrador: [
     "/dashboard",

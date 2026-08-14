@@ -1,0 +1,47 @@
+name: Keepalive Supabase
+
+# Supabase pausa los proyectos del Plan Free tras 7 días sin actividad. Este
+# cron llama cada 3 días a /api/keepalive de DocuNOVA, que registra un latido en
+# la base de datos (migración 0013). También se puede lanzar a mano desde la
+# pestaña Actions.
+#
+# Secretos necesarios en el repositorio (Settings → Secrets → Actions):
+#   KEEPALIVE_URL     https://<dominio-de-docunova>/api/keepalive
+#   KEEPALIVE_SECRET  (opcional) mismo valor que la variable de entorno del sitio
+
+on:
+  schedule:
+    - cron: "0 6 */3 * *" # cada 3 días a las 06:00 UTC (01:00 en Colombia)
+  workflow_dispatch:
+
+jobs:
+  latido:
+    name: Enviar latido
+    runs-on: ubuntu-latest
+    steps:
+      - name: Llamar a /api/keepalive
+        env:
+          KEEPALIVE_URL: ${{ secrets.KEEPALIVE_URL }}
+          KEEPALIVE_SECRET: ${{ secrets.KEEPALIVE_SECRET }}
+        run: |
+          if [ -z "$KEEPALIVE_URL" ]; then
+            echo "Falta el secreto KEEPALIVE_URL; no hay nada que llamar."
+            exit 1
+          fi
+
+          for intento in 1 2 3; do
+            codigo=$(curl -sS -o respuesta.json -w "%{http_code}" \
+              --max-time 30 \
+              ${KEEPALIVE_SECRET:+-H "Authorization: Bearer $KEEPALIVE_SECRET"} \
+              "$KEEPALIVE_URL") && true
+            echo "Intento $intento — HTTP $codigo"
+            cat respuesta.json || true
+            echo
+            if [ "$codigo" = "200" ]; then
+              exit 0
+            fi
+            sleep $((intento * 10))
+          done
+
+          echo "El latido no se pudo registrar tras 3 intentos."
+          exit 1

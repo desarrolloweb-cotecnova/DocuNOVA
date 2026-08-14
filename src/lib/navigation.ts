@@ -9,6 +9,7 @@ import {
   Library,
   Mail,
   CalendarClock,
+  Settings,
   type LucideIcon,
 } from "lucide-react";
 import { apruebaTRD, puedeVerModulo } from "./roles";
@@ -36,6 +37,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/consulta", label: "Consulta", icon: Search },
   { href: "/gestion", label: "Gestión", icon: Users },
   { href: "/memoria", label: "Memoria Corporativa", icon: Library },
+  { href: "/configuracion", label: "Configuración", icon: Settings },
   // Próximamente
   {
     href: "/correspondencia",
@@ -71,6 +73,7 @@ const PAGE_TITLES: Record<string, string> = {
   "/consulta": "Consulta",
   "/gestion": "Gestión",
   "/memoria": "Memoria Corporativa",
+  "/configuracion": "Configuración",
   "/perfil": "Mi perfil",
   "/notificaciones": "Notificaciones",
 };

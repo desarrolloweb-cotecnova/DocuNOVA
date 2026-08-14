@@ -21,8 +21,9 @@ import {
  * (src/app/(app)/layout.tsx), donde tenemos acceso a los factores del usuario.
  */
 
-// Rutas públicas (no requieren sesión).
-const PUBLIC_PREFIXES = ["/login", "/auth"];
+// Rutas públicas (no requieren sesión). /api/keepalive lo invoca un cron
+// externo sin sesión; se protege con KEEPALIVE_SECRET, no con cookies.
+const PUBLIC_PREFIXES = ["/login", "/auth", "/api/keepalive"];
 
 function isPublicPath(pathname: string): boolean {
   return PUBLIC_PREFIXES.some(

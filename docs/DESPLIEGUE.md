@@ -89,6 +89,37 @@ Para que el inicio de sesión con Google regrese correctamente a tu aplicación:
 
 ---
 
+## Paso 7 · Evita que Supabase pause la base de datos (Plan Free)
+
+Supabase **pausa** los proyectos del Plan Free tras **7 días sin actividad**.
+DocuNOVA trae un *keepalive* que lo evita y un módulo para vigilar el consumo.
+
+1. **Aplica la migración** `supabase/migrations/0013_monitoreo_supabase.sql`
+   (Supabase → SQL Editor → pega el archivo → Run). Crea las funciones de
+   monitoreo, la tabla del keepalive y, si `pg_cron` está disponible, un cron
+   interno de respaldo cada 3 días.
+2. **Agrega la clave de servicio en Vercel** (Settings → Environment Variables):
+   `SUPABASE_SERVICE_ROLE_KEY` con la *service_role* de Supabase → Settings →
+   API. Sin ella no hay monitoreo ni latido.
+3. **Opcional pero recomendado:** define también `KEEPALIVE_SECRET` con una
+   cadena larga y aleatoria, para que solo el cron pueda llamar al latido.
+4. **Configura el cron externo** en GitHub (Settings → Secrets and variables →
+   Actions → New repository secret):
+
+   | Name | Value |
+   |---|---|
+   | `KEEPALIVE_URL` | `https://TU-DOMINIO/api/keepalive` |
+   | `KEEPALIVE_SECRET` | el mismo valor que pusiste en Vercel (si lo usaste) |
+
+   El workflow **Keepalive Supabase** (`.github/workflows/keepalive.yml`) se
+   ejecuta cada 3 días; también puedes lanzarlo a mano desde la pestaña
+   **Actions → Keepalive Supabase → Run workflow** para probarlo.
+5. **Verifica** entrando como rector o superadmin a **Configuración →
+   Monitoreo Supabase**: allí se ve el uso frente a los límites del Plan Free y
+   la fecha del último latido, con un botón **Latir ahora**.
+
+---
+
 ## Preguntas frecuentes
 
 - **Cambié algo en el código, ¿cómo actualizo el sitio?** Se actualiza solo al
@@ -101,3 +132,9 @@ Para que el inicio de sesión con Google regrese correctamente a tu aplicación:
   deben incluir tu dominio de Vercel).
 - **Dominio propio (ej. docunova.cotecnova.edu.co).** Se agrega en Vercel →
   Settings → Domains, y luego se repite el Paso 5 con el nuevo dominio.
+- **La base de datos aparece "pausada" en Supabase.** Reactívala desde el panel
+  de Supabase y revisa el Paso 7: lo más probable es que falte el secreto
+  `KEEPALIVE_URL` en GitHub o la clave de servicio en Vercel.
+- **En Configuración → Monitoreo Supabase no salen datos.** El mensaje de error
+  indica la causa: falta `SUPABASE_SERVICE_ROLE_KEY` en Vercel o falta aplicar
+  la migración `0013_monitoreo_supabase.sql`.
