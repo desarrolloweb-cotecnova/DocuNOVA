@@ -139,3 +139,16 @@ DocuNOVA trae un *keepalive* que lo evita y un módulo para vigilar el consumo.
 - **En Configuración → Monitoreo Supabase no salen datos.** El mensaje de error
   indica la causa: falta `SUPABASE_SERVICE_ROLE_KEY` en Vercel o falta aplicar
   la migración `0013_monitoreo_supabase.sql`.
+- **Dice "Could not find the function public.monitor_get_db_size … in the schema
+  cache".** Las funciones no quedaron creadas. Comprueba en el SQL Editor con:
+
+  ```sql
+  select proname from pg_proc
+  where pronamespace = 'public'::regnamespace and proname like 'monitor%';
+  ```
+
+  Si la consulta no devuelve 8 filas, vuelve a ejecutar
+  `0013_monitoreo_supabase.sql` completo (el editor aplica todo el archivo en
+  una sola transacción: si algo falla, no queda nada) y revisa el mensaje de
+  error que muestre. Si las 8 funciones sí están, refresca el caché de la API
+  con `notify pgrst, 'reload schema';` y vuelve a pulsar **Actualizar**.
