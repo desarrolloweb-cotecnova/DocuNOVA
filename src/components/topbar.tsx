@@ -10,6 +10,7 @@ import { notificacionHref } from "@/lib/notificaciones";
 import type { Notificacion } from "@/lib/tipos";
 import { TIPO_NOTIFICACION_LABELS, labelDe } from "@/lib/tipos";
 import { cn } from "@/lib/utils";
+import { SessionExpiryNotice } from "@/components/auth/session-expiry-notice";
 
 export type TopbarProps = {
   email: string;
@@ -20,6 +21,8 @@ export type TopbarProps = {
   avatarUrl: string | null;
   notificaciones: Notificacion[];
   noLeidas: number;
+  /** Momento (epoch ms) en que caduca la sesión; ver lib/auth/session-policy. */
+  sesionExpiraEn?: number | null;
 };
 
 type Menu = "ayuda" | "notifs" | "perfil" | null;
@@ -161,6 +164,10 @@ export function Topbar(props: TopbarProps) {
                 <Chip tone="gray">{props.oficinaLabel}</Chip>
               )}
             </div>
+            <SessionExpiryNotice
+              expiraEn={props.sesionExpiraEn ?? null}
+              className="px-4 pb-3"
+            />
             <div className="border-t">
               <Link
                 href="/perfil"
