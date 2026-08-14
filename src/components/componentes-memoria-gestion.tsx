@@ -11,7 +11,7 @@ import {
   crearComponente,
   actualizarComponente,
   eliminarComponente,
-} from "@/app/(app)/gestion/actions";
+} from "@/app/(app)/configuracion/actions";
 
 /**
  * Gestión del catálogo de componentes de Memoria Corporativa: por cada memoria,

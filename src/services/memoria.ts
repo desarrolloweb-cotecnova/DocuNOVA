@@ -38,7 +38,7 @@ export async function listMemoria(): Promise<MemoriaDocumentoListado[]> {
   return (data as unknown as MemoriaRow[] | null)?.map(mapDocumento) ?? [];
 }
 
-/** Todos los componentes (para la gestión en el módulo Gestión). */
+/** Todos los componentes (para la gestión en el módulo Configuración). */
 export async function listComponentes(): Promise<MemoriaComponente[]> {
   const supabase = await createClient();
   const { data } = await supabase

@@ -48,7 +48,7 @@ export async function setActivo(formData: FormData) {
     .update({ activo: activar })
     .eq("usuario_id", id);
   if (error) throw new Error(error.message);
-  revalidatePath("/gestion");
+  revalidatePath("/configuracion");
 }
 
 /** Invita a un usuario (pre-registro): obtendrá su rol al iniciar sesión. */
@@ -72,7 +72,7 @@ export async function crearPreRegistro(formData: FormData) {
     { onConflict: "email" },
   );
   if (error) throw new Error(error.message);
-  revalidatePath("/gestion");
+  revalidatePath("/configuracion");
 }
 
 /**
@@ -109,7 +109,7 @@ export async function actualizarPerfilUsuario(formData: FormData) {
   );
   if (e2) throw new Error(e2.message);
 
-  revalidatePath("/gestion");
+  revalidatePath("/configuracion");
 }
 
 /**
@@ -221,7 +221,7 @@ export async function importarUsuarios(
     }
   }
 
-  revalidatePath("/gestion");
+  revalidatePath("/configuracion");
   return { ok: true, creados, actualizados, omitidos: 0, errores };
 }
 
@@ -234,7 +234,7 @@ export async function eliminarPreRegistro(formData: FormData) {
     .delete()
     .eq("email", email);
   if (error) throw new Error(error.message);
-  revalidatePath("/gestion");
+  revalidatePath("/configuracion");
 }
 
 /**
@@ -280,7 +280,7 @@ export async function restablecerMfa(formData: FormData) {
     console.warn("No se pudieron cerrar las sesiones:", revokeError.message);
   }
 
-  revalidatePath("/gestion");
+  revalidatePath("/configuracion");
 }
 
 // ---------------------------------------------------------------------------
@@ -388,7 +388,7 @@ export async function detenerImpersonacion() {
 // ---------------------------------------------------------------------------
 // Estructura organizacional (unidades: eje / macroproceso / proceso)
 // La RLS de `unidades` exige puede_aprobar_trd; en la interfaz solo se expone
-// dentro de Gestión (superadmin/rector).
+// dentro de Configuración (superadmin/rector).
 // ---------------------------------------------------------------------------
 
 /** Crea una unidad organizacional (eje, macroproceso o proceso). */
@@ -406,7 +406,7 @@ export async function crearUnidad(formData: FormData) {
     padre_id: tipo === "eje" ? null : padre_id,
   });
   if (error) throw new Error(error.message);
-  revalidatePath("/gestion");
+  revalidatePath("/configuracion");
   revalidatePath("/dependencias");
 }
 
@@ -421,7 +421,7 @@ export async function actualizarUnidad(formData: FormData) {
     })
     .eq("id", str(formData.get("id")));
   if (error) throw new Error(error.message);
-  revalidatePath("/gestion");
+  revalidatePath("/configuracion");
   revalidatePath("/dependencias");
 }
 
@@ -433,7 +433,7 @@ export async function eliminarUnidad(formData: FormData) {
     .delete()
     .eq("id", str(formData.get("id")));
   if (error) throw new Error(error.message);
-  revalidatePath("/gestion");
+  revalidatePath("/configuracion");
   revalidatePath("/dependencias");
 }
 
@@ -455,7 +455,7 @@ export async function crearComponente(formData: FormData) {
     .from("memoria_componentes")
     .insert({ categoria, nombre });
   if (error) throw new Error(error.message);
-  revalidatePath("/gestion");
+  revalidatePath("/configuracion");
   revalidatePath("/memoria");
 }
 
@@ -471,7 +471,7 @@ export async function actualizarComponente(formData: FormData) {
     .update({ nombre, activo: bool(formData.get("activo")) })
     .eq("id", id);
   if (error) throw new Error(error.message);
-  revalidatePath("/gestion");
+  revalidatePath("/configuracion");
   revalidatePath("/memoria");
 }
 
@@ -483,6 +483,6 @@ export async function eliminarComponente(formData: FormData) {
     .delete()
     .eq("id", str(formData.get("id")));
   if (error) throw new Error(error.message);
-  revalidatePath("/gestion");
+  revalidatePath("/configuracion");
   revalidatePath("/memoria");
 }

@@ -5,10 +5,10 @@ import {
   FileStack,
   ClipboardCheck,
   Search,
-  Users,
   Library,
   Mail,
   CalendarClock,
+  Settings,
   type LucideIcon,
 } from "lucide-react";
 import { apruebaTRD, puedeVerModulo } from "./roles";
@@ -34,8 +34,10 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/documentos", label: "Documentos", icon: FileStack },
   { href: "/registros", label: "Registros", icon: ClipboardCheck },
   { href: "/consulta", label: "Consulta", icon: Search },
-  { href: "/gestion", label: "Gestión", icon: Users },
   { href: "/memoria", label: "Memoria Corporativa", icon: Library },
+  // Configuración: usuarios, estructura organizacional, componentes de Memoria
+  // Corporativa y monitoreo de Supabase.
+  { href: "/configuracion", label: "Configuración", icon: Settings },
   // Próximamente
   {
     href: "/correspondencia",
@@ -69,8 +71,8 @@ const PAGE_TITLES: Record<string, string> = {
   "/documentos": "Documentos",
   "/registros": "Registros",
   "/consulta": "Consulta",
-  "/gestion": "Gestión",
   "/memoria": "Memoria Corporativa",
+  "/configuracion": "Configuración",
   "/perfil": "Mi perfil",
   "/notificaciones": "Notificaciones",
 };

@@ -15,7 +15,7 @@ import {
   crearUnidad,
   actualizarUnidad,
   eliminarUnidad,
-} from "@/app/(app)/gestion/actions";
+} from "@/app/(app)/configuracion/actions";
 
 /** Ícono plano por tipo de unidad organizacional. */
 const TIPO_UNIDAD_ICON: Record<TipoUnidad, LucideIcon> = {

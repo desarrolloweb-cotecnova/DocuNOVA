@@ -191,7 +191,7 @@ export function DependenciasCliente({
               {!procId && (
                 <p className="mt-1 text-xs text-muted-foreground">
                   Elige un proceso para poder crear su oficina. La estructura
-                  (ejes, macroprocesos y procesos) se administra en Gestión.
+                  (ejes, macroprocesos y procesos) se administra en Configuración.
                 </p>
               )}
             </div>

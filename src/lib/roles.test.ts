@@ -53,20 +53,23 @@ describe("helpers de roles", () => {
 
   it("puedeVerModulo aplica la visibilidad por rol", () => {
     // superadmin/rector: todos los módulos.
-    expect(puedeVerModulo("superadmin", "/gestion")).toBe(true);
+    expect(puedeVerModulo("superadmin", "/configuracion")).toBe(true);
     expect(puedeVerModulo("rector", "/dependencias")).toBe(true);
-    // administrador: incluye Gestión (solo la pestaña de Componentes).
+    // administrador: incluye Configuración (solo la pestaña de Componentes).
     expect(puedeVerModulo("administrador", "/dependencias")).toBe(true);
-    expect(puedeVerModulo("administrador", "/gestion")).toBe(true);
-    // gestor: TRD, Documentos, Registros, Consulta (no Dependencias ni Gestión).
+    expect(puedeVerModulo("administrador", "/configuracion")).toBe(true);
+    // gestor: TRD, Documentos, Registros, Consulta (no Dependencias ni
+    // Configuración).
     expect(puedeVerModulo("gestor", "/trd")).toBe(true);
     expect(puedeVerModulo("gestor", "/dependencias")).toBe(false);
+    expect(puedeVerModulo("gestor", "/configuracion")).toBe(false);
     // colaborador: Registros y Consulta.
     expect(puedeVerModulo("colaborador", "/registros")).toBe(true);
     expect(puedeVerModulo("colaborador", "/trd")).toBe(false);
     // consulta: solo Consulta.
     expect(puedeVerModulo("consulta", "/consulta")).toBe(true);
     expect(puedeVerModulo("consulta", "/registros")).toBe(false);
+    expect(puedeVerModulo("consulta", "/configuracion")).toBe(false);
     // cubre subrutas y bloquea a pendiente/desconocidos.
     expect(puedeVerModulo("gestor", "/documentos/plantilla")).toBe(true);
     expect(puedeVerModulo("pendiente", "/consulta")).toBe(false);

@@ -3,7 +3,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 
 /**
- * Impersonación ("iniciar sesión como") del módulo de Gestión. SOLO servidor.
+ * Impersonación ("iniciar sesión como") del módulo de Configuración. SOLO servidor.
  *
  * El intercambio de sesión (forjar la sesión del usuario objetivo) vive en las
  * server actions; aquí están las piezas transversales:

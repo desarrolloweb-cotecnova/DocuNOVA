@@ -13,7 +13,7 @@ import {
   actualizarPerfilUsuario,
   iniciarImpersonacion,
   restablecerMfa,
-} from "@/app/(app)/gestion/actions";
+} from "@/app/(app)/configuracion/actions";
 
 export type ProcesoOpcion = { id: string; ruta: string };
 

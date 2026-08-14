@@ -62,11 +62,11 @@ const AYUDA: { prefijo: string; contenido: AyudaContenido }[] = [
     },
   },
   {
-    prefijo: "/gestion",
+    prefijo: "/configuracion",
     contenido: {
-      titulo: "Gestión de usuarios",
+      titulo: "Configuración",
       texto:
-        "Panel de administración de usuarios: activa cuentas y asigna roles. Solo disponible para superadmin y rector.",
+        "Administración del sistema en pestañas: Usuarios (activa cuentas y asigna roles), Estructura organizacional, Componentes de Memoria Corporativa y Monitoreo Supabase (uso del plan y estado de la base de datos). Solo disponible para superadmin y rector; el administrador ve únicamente los componentes de Memoria Corporativa.",
     },
   },
   {
