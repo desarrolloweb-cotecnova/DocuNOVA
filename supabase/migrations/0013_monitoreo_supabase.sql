@@ -10,6 +10,11 @@
 --   2. El keepalive: una tabla con la marca del último "latido" y la función
 --      que lo registra, más un cron interno de respaldo (pg_cron).
 --
+-- Cómo aplicarla: pega el archivo completo en Supabase → SQL Editor y ejecútalo.
+-- El editor corre todo el script en una sola transacción, así que si una parte
+-- fallara se desharía el resto; por eso el bloque de pg_cron (el único que puede
+-- fallar según la configuración del proyecto) captura sus propios errores.
+--
 -- Seguridad: todas las funciones son SECURITY DEFINER porque leen catálogos del
 -- sistema y los esquemas auth/storage, así que el permiso de ejecución queda
 -- reservado a `service_role` (igual que en la migración 0012). Solo el servidor
@@ -186,8 +191,11 @@ $$;
 -- El latido principal es el externo (GitHub Actions -> /api/keepalive), porque
 -- Supabase mide la inactividad por peticiones al proyecto. Este cron interno es
 -- la red de seguridad: mantiene la BD trabajando cada 3 días a las 06:00 UTC.
--- Si la extensión pg_cron no está habilitada en el proyecto, la migración
--- continúa sin fallar (se puede activar en Database → Extensions).
+-- Este bloque nunca debe tumbar la migración: el SQL Editor de Supabase ejecuta
+-- todo el archivo en una sola transacción, así que un fallo aquí (pg_cron no
+-- habilitado, sin permisos para crear la extensión, etc.) desharía también las
+-- funciones de arriba. Por eso captura cualquier excepción y sigue: el keepalive
+-- externo (GitHub Actions) funciona igual sin este cron.
 
 DO $$
 BEGIN
@@ -205,5 +213,16 @@ BEGIN
   ELSE
     RAISE NOTICE 'pg_cron no está disponible: se omite el cron interno de keepalive.';
   END IF;
+EXCEPTION
+  WHEN OTHERS THEN
+    RAISE NOTICE 'No se pudo programar el cron interno de keepalive (%). El latido externo sigue funcionando.', SQLERRM;
 END;
 $$;
+
+-- ---------------------------------------------------------------------------
+-- 5. Refrescar el caché de esquema de la API
+-- ---------------------------------------------------------------------------
+-- Sin esto, PostgREST puede tardar en ver las funciones nuevas y las llamadas
+-- fallan con "Could not find the function ... in the schema cache".
+
+NOTIFY pgrst, 'reload schema';
