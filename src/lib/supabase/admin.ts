@@ -4,7 +4,7 @@ import { createClient as createSupabaseClient } from "@supabase/supabase-js";
  * Cliente de Supabase con la clave de servicio (service_role). SOLO servidor.
  *
  * Omite la RLS y puede usar el API de administración de Auth (p. ej. forjar la
- * sesión de un usuario para la impersonación del módulo de Gestión). La clave
+ * sesión de un usuario para la impersonación del módulo de Configuración). La clave
  * NUNCA debe llegar al navegador: por eso vive en SUPABASE_SERVICE_ROLE_KEY
  * (sin prefijo NEXT_PUBLIC_) y este módulo no se importa desde componentes de
  * cliente.

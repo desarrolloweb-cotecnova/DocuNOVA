@@ -114,9 +114,10 @@ DocuNOVA trae un *keepalive* que lo evita y un módulo para vigilar el consumo.
    El workflow **Keepalive Supabase** (`.github/workflows/keepalive.yml`) se
    ejecuta cada 3 días; también puedes lanzarlo a mano desde la pestaña
    **Actions → Keepalive Supabase → Run workflow** para probarlo.
-5. **Verifica** entrando como rector o superadmin a **Configuración →
-   Monitoreo Supabase**: allí se ve el uso frente a los límites del Plan Free y
-   la fecha del último latido, con un botón **Latir ahora**.
+5. **Verifica** entrando como rector o superadmin a **Configuración** (el módulo
+   que antes se llamaba Gestión) **→ pestaña Monitoreo Supabase**: allí se ve el
+   uso frente a los límites del Plan Free y la fecha del último latido, con un
+   botón **Latir ahora**.
 
 ---
 

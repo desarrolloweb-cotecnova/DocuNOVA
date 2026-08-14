@@ -6,7 +6,7 @@ import {
   Mail,
   Search,
   Building2,
-  Users,
+  Settings,
   ArrowRight,
   AlertTriangle,
 } from "lucide-react";
@@ -173,9 +173,9 @@ export default async function PanelPage() {
         />
         {gestionaUsuarios(rol) ? (
           <QuickLink
-            href="/gestion"
-            icon={<Users className="size-5" />}
-            label="Gestión"
+            href="/configuracion"
+            icon={<Settings className="size-5" />}
+            label="Configuración"
           />
         ) : (
           <QuickLink

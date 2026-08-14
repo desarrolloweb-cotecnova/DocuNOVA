@@ -90,9 +90,7 @@ const MODULOS_POR_ROL: Record<Role, string[]> = {
     "/documentos",
     "/registros",
     "/consulta",
-    "/gestion",
     "/memoria",
-    // Monitoreo de Supabase (uso del Plan Free y keepalive).
     "/configuracion",
   ],
   rector: [
@@ -102,7 +100,6 @@ const MODULOS_POR_ROL: Record<Role, string[]> = {
     "/documentos",
     "/registros",
     "/consulta",
-    "/gestion",
     "/memoria",
     "/configuracion",
   ],
@@ -114,9 +111,10 @@ const MODULOS_POR_ROL: Record<Role, string[]> = {
     "/registros",
     "/consulta",
     "/memoria",
-    // Solo la pestaña "Componentes Memoria Corporativa" dentro de Gestión; el
-    // resto del módulo (usuarios, estructura) se oculta en la propia página.
-    "/gestion",
+    // Solo la pestaña "Componentes Memoria Corporativa" dentro de Configuración;
+    // el resto del módulo (usuarios, estructura, monitoreo de Supabase) se
+    // oculta en la propia página.
+    "/configuracion",
   ],
   gestor: [
     "/dashboard",

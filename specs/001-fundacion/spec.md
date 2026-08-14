@@ -47,8 +47,9 @@ notificaciones.
 
 ### Gestión de usuarios
 
-- **CA-G1.** En el módulo de Gestión, un administrador de usuarios (superadmin/
-  rector) puede editar el perfil de un usuario registrado: nombre completo,
+- **CA-G1.** En la pestaña Usuarios del módulo de Configuración, un administrador
+  de usuarios (superadmin/rector) puede editar el perfil de un usuario
+  registrado: nombre completo,
   cédula, cargo, jefe inmediato, proceso y marca de responsable de proceso.
 - **CA-G2.** El jefe inmediato solo puede elegirse entre los usuarios marcados
   como responsables de proceso.
@@ -71,7 +72,8 @@ notificaciones.
 - **CA-G8.** El rol de un usuario se cambia desde el formulario "Editar perfil"
   (no con un control separado en la fila), junto con el resto de sus datos.
 - **CA-G9.** La navegación muestra los módulos según el rol: superadmin y rector
-  ven todos; administrador todos menos Gestión; gestor solo TRD, Documentos,
+  ven todos; administrador todos menos Configuración (donde solo ve la pestaña
+  de Componentes de Memoria Corporativa); gestor solo TRD, Documentos,
   Registros y Consulta; colaborador solo Registros y Consulta; consulta solo
   Consulta. El Panel de inicio queda disponible para todo rol activo.
 
@@ -105,7 +107,7 @@ notificaciones.
   confirmación (p. ej. "Documento activado", "Invitación creada").
 - **CA-F3.** Las acciones destructivas (eliminar/quitar/anular/rechazar) piden
   confirmación antes de ejecutarse.
-- **CA-F4.** El árbol de la estructura organizacional (Gestión) muestra la
+- **CA-F4.** El árbol de la estructura organizacional (Configuración) muestra la
   etiqueta del nivel de cada nodo (Eje / Macroproceso / Proceso), igual que el
   árbol de la TRD.
 

@@ -14,7 +14,7 @@ import { Topbar, type TopbarProps } from "@/components/topbar";
 import { ToastProvider } from "@/components/ui/toast";
 import { SessionExpiryWatcher } from "@/components/auth/session-expiry-watcher";
 import { SubmitButton } from "@/components/ui/submit-button";
-import { detenerImpersonacion } from "@/app/(app)/gestion/actions";
+import { detenerImpersonacion } from "@/app/(app)/configuracion/actions";
 import { cn } from "@/lib/utils";
 
 /** Lista de navegación reutilizada por la barra lateral y el cajón móvil. */

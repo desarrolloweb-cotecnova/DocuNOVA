@@ -43,7 +43,7 @@ import {
 import {
   consultarMetricas,
   latirAhora,
-} from "@/app/(app)/configuracion/actions";
+} from "@/app/(app)/configuracion/monitoreo-actions";
 
 /**
  * Monitoreo de Supabase: uso del proyecto frente a los límites del Plan Free y

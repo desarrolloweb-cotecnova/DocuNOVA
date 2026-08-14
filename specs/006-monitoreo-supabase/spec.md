@@ -23,10 +23,12 @@ arquitectura (Next.js con Server Actions en lugar de Edge Functions).
 
 Incluye:
 
-- **Módulo Configuración (`/configuracion`)** con la pestaña **Monitoreo
-  Supabase**: uso frente a los límites del Plan Free (base de datos, Storage,
-  usuarios de Auth, conexiones), las 10 tablas más pesadas, los buckets de
-  Storage y el estado del keepalive. Visible solo para **superadmin y rector**.
+- **Renombrar el módulo Gestión a Configuración** (`/gestion` → `/configuracion`)
+  y agregarle, **después** de Usuarios, Estructura organizacional y Componentes
+  Memoria Corporativa, la pestaña **Monitoreo Supabase**: uso frente a los
+  límites del Plan Free (base de datos, Storage, usuarios de Auth, conexiones),
+  las 10 tablas más pesadas, los buckets de Storage y el estado del keepalive.
+  La pestaña es visible solo para **superadmin y rector**.
 - **Funciones `monitor_*`** en la base de datos (migración `0013`), de solo
   lectura, ejecutables **únicamente por `service_role`**.
 - **Keepalive**: tabla `monitoreo_keepalive` con el último latido, función
@@ -38,10 +40,12 @@ de Edge Functions, minutos de cómputo), histórico de métricas, alertas por co
 
 ## 3. Comportamiento esperado (criterios de aceptación)
 
-- **CA-1.** Un superadmin o rector ve "Configuración" en la navegación; los demás
-  roles no, y una visita directa a `/configuracion` los redirige a `/dashboard`.
-- **CA-2.** Al abrir la pestaña se cargan las métricas; el botón "Actualizar"
-  vuelve a consultarlas bajo demanda.
+- **CA-1.** El módulo antes llamado "Gestión" se llama "Configuración" y vive en
+  `/configuracion`; conserva sus pestañas (Usuarios, Estructura organizacional,
+  Componentes Memoria Corporativa) y suma "Monitoreo Supabase" al final.
+- **CA-2.** La pestaña Monitoreo Supabase solo la ven superadmin y rector (el
+  administrador sigue viendo únicamente Componentes Memoria Corporativa). Al
+  abrirla se cargan las métricas; el botón "Actualizar" vuelve a consultarlas.
 - **CA-3.** Cada métrica se muestra con su porcentaje frente al límite del Plan
   Free, con nivel **Normal** (< 70 %), **Atención** (≥ 70 %) y **Crítico**
   (≥ 90 %), y un banner con el resumen global.

@@ -84,7 +84,7 @@ export async function listPerfilesMinimos(): Promise<
 /**
  * Números de documento (cédulas) por usuario. La RLS de `datos_personales`
  * solo devuelve las filas visibles para quien consulta (el admin de usuarios
- * las ve todas), así que es seguro llamarla desde Gestión.
+ * las ve todas), así que es seguro llamarla desde Configuración.
  */
 export async function listNumerosDocumento(): Promise<Record<string, string>> {
   const supabase = await createClient();

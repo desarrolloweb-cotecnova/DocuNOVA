@@ -97,7 +97,7 @@ export function MemoriaUploader({
             {componentes.length === 0 && (
               <p className="text-xs text-muted-foreground">
                 No hay componentes activos en esta memoria. Un administrador debe
-                crearlos en Gestión → Componentes Memoria Corporativa.
+                crearlos en Configuración → Componentes Memoria Corporativa.
               </p>
             )}
           </div>
