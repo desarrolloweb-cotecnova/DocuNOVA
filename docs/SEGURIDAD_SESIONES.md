@@ -32,6 +32,7 @@ segundo factor.
 | `src/lib/auth/guard.ts` | Mismo corte en `requireAuth()`, que también cubre Server Actions y route handlers (no pasan por el proxy). |
 | `src/components/auth/session-expiry-watcher.tsx` | Expulsa la pestaña abierta que no navega, y avisa 5 minutos antes. |
 | `src/app/login/page.tsx` | Mensaje al usuario expulsado por caducidad. |
+| `src/components/auth/session-expiry-notice.tsx` | Muestra en el menú de perfil a qué hora vence la sesión. |
 
 La decisión la toma **el servidor**. El vigilante del navegador solo adelanta la
 expulsión de una pestaña ociosa; si se desactivara, el corte seguiría ocurriendo
@@ -55,6 +56,13 @@ Un único valor, en `src/lib/auth/session-policy.ts`:
 ```ts
 export const SESSION_MAX_HOURS = 8;
 ```
+
+## Cómo comprobar que está activa
+
+Abre el menú de perfil (arriba a la derecha): debajo del rol aparece «Tu sesión
+vence a las HH:MM». Esa línea sale del mismo cálculo que ejecuta la expulsión,
+así que si se ve, la política está activa. En la última hora pasa a cuenta
+atrás y cambia de color.
 
 ## Refuerzo en el propio Supabase (recomendado)
 

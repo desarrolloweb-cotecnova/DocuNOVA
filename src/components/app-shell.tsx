@@ -77,8 +77,6 @@ export function AppShell({
 }: TopbarProps & {
   children: React.ReactNode;
   impersonando?: { nombre: string } | null;
-  /** Momento (epoch ms) en que caduca la sesión; ver lib/auth/session-policy. */
-  sesionExpiraEn?: number | null;
 }) {
   const pathname = usePathname();
   const navItems = navItemsForRole(topbar.role);
@@ -163,7 +161,7 @@ export function AppShell({
             </h1>
           )}
           <div className="ml-auto">
-            <Topbar {...topbar} />
+            <Topbar {...topbar} sesionExpiraEn={sesionExpiraEn ?? null} />
           </div>
         </header>
         <main className="flex-1 p-4 md:p-8">{children}</main>
