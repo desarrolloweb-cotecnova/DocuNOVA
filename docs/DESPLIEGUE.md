@@ -152,3 +152,15 @@ DocuNOVA trae un *keepalive* que lo evita y un módulo para vigilar el consumo.
   una sola transacción: si algo falla, no queda nada) y revisa el mensaje de
   error que muestre. Si las 8 funciones sí están, refresca el caché de la API
   con `notify pgrst, 'reload schema';` y vuelve a pulsar **Actualizar**.
+
+## Almacenamiento de Memoria Corporativa en Google Drive (opcional)
+
+Los archivos del módulo Memoria Corporativa se guardan por defecto en el bucket
+privado `memoria` de Supabase Storage. Para guardarlos en el Drive institucional
+de `docunova@cotecnova.edu.co`, define en Vercel `GOOGLE_DRIVE_CLIENT_EMAIL`,
+`GOOGLE_DRIVE_PRIVATE_KEY` y `GOOGLE_DRIVE_FOLDER_ID` (y, con delegación de
+dominio, `GOOGLE_DRIVE_SUBJECT`). El paso a paso completo — crear la cuenta de
+servicio, compartir la carpeta y comprobar la conexión — está en
+[docs/DRIVE.md](DRIVE.md).
+
+Recuerda aplicar antes la migración `supabase/migrations/0014_memoria_drive.sql`.

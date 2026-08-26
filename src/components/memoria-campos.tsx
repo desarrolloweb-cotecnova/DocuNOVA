@@ -1,0 +1,6 @@
+/**
+ * Estilo compartido de los `<select>` nativos del módulo de Memoria Corporativa
+ * (formulario de carga, filtros del listado y formulario de edición).
+ */
+export const SELECT_CLASS =
+  "h-9 rounded-md border border-input bg-background px-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50";

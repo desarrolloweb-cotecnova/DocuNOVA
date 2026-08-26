@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import {
   FileText,
-  Eye,
   Trash2,
   Lock,
   Globe,
@@ -19,6 +18,8 @@ import {
   rechazarDocumento,
   eliminarDocumento,
 } from "@/app/(app)/memoria/actions";
+import { MemoriaAcciones } from "@/components/memoria-acciones";
+import { SELECT_CLASS } from "@/components/memoria-campos";
 import {
   ESTADO_MEMORIA_LABELS,
   VISIBILIDADES_MEMORIA,
@@ -49,23 +50,27 @@ function formatoTamano(bytes: number | null): string {
   return `${(kb / 1024).toFixed(1)} MB`;
 }
 
-const SELECT_CLASS =
-  "h-9 rounded-md border border-input bg-background px-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50";
-
 /**
  * Listado de documentos de una memoria con filtros (componente, visibilidad),
- * ordenamiento por título y acciones (visualizar, publicar/rechazar y eliminar).
+ * ordenamiento por título y acciones (visualizar, detalle, editar,
+ * publicar/rechazar y eliminar).
  */
 export function MemoriaLista({
   documentos,
   componentes,
   unidades,
+  procesos,
+  usuarioId,
+  puedeElaborar,
   puedeAprobar,
   puedeEliminar,
 }: {
   documentos: MemoriaDocumentoListado[];
   componentes: MemoriaComponente[];
   unidades: Unidad[];
+  procesos: { id: string; ruta: string }[];
+  usuarioId: string | null;
+  puedeElaborar: boolean;
   puedeAprobar: boolean;
   puedeEliminar: boolean;
 }) {
@@ -88,7 +93,7 @@ export function MemoriaLista({
     () => unidades.filter((u) => u.tipo === "macroproceso"),
     [unidades],
   );
-  const procesos = useMemo(
+  const unidadesProceso = useMemo(
     () => unidades.filter((u) => u.tipo === "proceso"),
     [unidades],
   );
@@ -96,8 +101,8 @@ export function MemoriaLista({
     ? macros.filter((m) => m.padre_id === ejeId)
     : macros;
   const procesosDelMacro = macroId
-    ? procesos.filter((p) => p.padre_id === macroId)
-    : procesos;
+    ? unidadesProceso.filter((p) => p.padre_id === macroId)
+    : unidadesProceso;
 
   /** Ruta jerárquica (eje/macro/proceso ids + nombre del proceso) de un documento. */
   const rutaDe = (unidadId: string | null) => {
@@ -109,6 +114,9 @@ export function MemoriaLista({
       macroId: macro?.id ?? "",
       ejeId: eje?.id ?? "",
       nombre: proc?.nombre ?? null,
+      completa: proc
+        ? [eje?.nombre, macro?.nombre, proc.nombre].filter(Boolean).join(" ▸ ")
+        : null,
     };
   };
 
@@ -330,17 +338,19 @@ export function MemoriaLista({
                       </span>
                     </td>
                     <td className="py-3">
-                      <div className="flex items-center justify-end gap-2">
-                        <a
-                          href={`/memoria/descargar/${d.id}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors hover:bg-accent"
-                          title="Visualizar"
-                        >
-                          <Eye className="size-3.5" />
-                          Visualizar
-                        </a>
+                      <div className="flex flex-wrap items-center justify-end gap-2">
+                        <MemoriaAcciones
+                          doc={d}
+                          componentes={componentes}
+                          procesos={procesos}
+                          rutaProceso={rutaDe(d.unidad_id).completa}
+                          puedeEditar={
+                            puedeAprobar ||
+                            (puedeElaborar &&
+                              d.cargado_por === usuarioId &&
+                              d.estado !== "publicado")
+                          }
+                        />
 
                         {puedeAprobar && d.estado !== "publicado" && (
                           <form action={publicarDocumento}>

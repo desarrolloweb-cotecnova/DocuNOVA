@@ -18,6 +18,7 @@ import {
   type Role,
 } from "@/lib/roles";
 import { leerFilas, textoONull } from "@/lib/excel";
+import { verificarDrive } from "@/lib/drive";
 import { fallo, type ResultadoImport } from "@/lib/importacion";
 import {
   CATEGORIAS_MEMORIA,
@@ -485,4 +486,18 @@ export async function eliminarComponente(formData: FormData) {
   if (error) throw new Error(error.message);
   revalidatePath("/configuracion");
   revalidatePath("/memoria");
+}
+
+/**
+ * Diagnóstico del almacenamiento en Google Drive: comprueba que las
+ * credenciales de la cuenta de servicio funcionan y que la carpeta destino es
+ * accesible. Ver docs/DRIVE.md.
+ */
+export async function probarDrive(): Promise<{
+  ok: boolean;
+  mensaje: string;
+  carpeta?: string;
+}> {
+  await requireCapacidad(apruebaTRD);
+  return verificarDrive();
 }

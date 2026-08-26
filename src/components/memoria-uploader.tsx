@@ -1,19 +1,61 @@
 "use client";
 
-import { useActionState, useRef, useEffect } from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Upload, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { createClient } from "@/lib/supabase/client";
 import {
-  cargarDocumento,
+  prepararCarga,
+  registrarDocumento,
   type ResultadoCarga,
 } from "@/app/(app)/memoria/actions";
 import { VISIBILIDADES_MEMORIA, VISIBILIDAD_MEMORIA_LABELS } from "@/lib/tipos";
 import type { CategoriaMemoria, MemoriaComponente } from "@/lib/tipos";
+import { SELECT_CLASS } from "@/components/memoria-campos";
 
 const INICIAL: ResultadoCarga = { ok: false, mensaje: "" };
+
+/**
+ * Sube el archivo a una URL de carga (Google Drive o el bucket de Supabase) e
+ * informa el avance. Devuelve el ID del archivo en Drive cuando corresponde.
+ */
+function subirConProgreso(
+  url: string,
+  archivo: File,
+  onProgreso: (pct: number) => void,
+): Promise<{ driveFileId: string | null }> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", url, true);
+    xhr.setRequestHeader(
+      "content-type",
+      archivo.type || "application/octet-stream",
+    );
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) onProgreso(Math.round((e.loaded / e.total) * 100));
+    };
+    xhr.onload = () => {
+      if (xhr.status < 200 || xhr.status >= 300) {
+        reject(new Error(`El archivo no se pudo subir (HTTP ${xhr.status}).`));
+        return;
+      }
+      let driveFileId: string | null = null;
+      try {
+        driveFileId = (JSON.parse(xhr.responseText) as { id?: string }).id ?? null;
+      } catch {
+        // El bucket de Supabase responde otro formato; no hay ID de Drive.
+      }
+      resolve({ driveFileId });
+    };
+    xhr.onerror = () =>
+      reject(new Error("Se perdió la conexión mientras se subía el archivo."));
+    xhr.send(archivo);
+  });
+}
 
 /** Formulario de carga de un documento en una categoría de Memoria Corporativa. */
 export function MemoriaUploader({
@@ -25,15 +67,89 @@ export function MemoriaUploader({
   componentes: MemoriaComponente[];
   procesos: { id: string; ruta: string }[];
 }) {
-  const [estado, formAction, pending] = useActionState(
-    cargarDocumento,
-    INICIAL,
-  );
-  const formRef = useRef<HTMLFormElement>(null);
+  const router = useRouter();
+  const [estado, setEstado] = useState<ResultadoCarga>(INICIAL);
+  const [pending, setPending] = useState(false);
+  const [progreso, setProgreso] = useState<number | null>(null);
 
-  useEffect(() => {
-    if (estado.ok) formRef.current?.reset();
-  }, [estado.ok]);
+  async function enviar(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const datos = new FormData(form);
+    const archivo = datos.get("archivo");
+    if (!(archivo instanceof File) || archivo.size === 0) {
+      setEstado({ ok: false, mensaje: "Selecciona un archivo." });
+      return;
+    }
+
+    setPending(true);
+    setEstado(INICIAL);
+    setProgreso(0);
+    try {
+      // 1) El servidor autoriza y dice a dónde subir el archivo.
+      const destino = await prepararCarga({
+        categoria,
+        nombre: archivo.name,
+        tipo: archivo.type,
+        tamano: archivo.size,
+      });
+      if (!destino.ok) {
+        setEstado(destino);
+        return;
+      }
+
+      // 2) Los bytes viajan del navegador al destino, sin pasar por la app.
+      let driveFileId: string | null = null;
+      if (destino.destino === "drive") {
+        driveFileId = (await subirConProgreso(destino.uploadUrl, archivo, setProgreso))
+          .driveFileId;
+        if (!driveFileId) {
+          setEstado({
+            ok: false,
+            mensaje: "Drive no devolvió el identificador del archivo.",
+          });
+          return;
+        }
+      } else {
+        const supabase = createClient();
+        const { error } = await supabase.storage
+          .from("memoria")
+          .uploadToSignedUrl(destino.ruta, destino.token, archivo, {
+            contentType: archivo.type || undefined,
+          });
+        if (error) {
+          setEstado({
+            ok: false,
+            mensaje: `No se pudo subir el archivo: ${error.message}`,
+          });
+          return;
+        }
+        setProgreso(100);
+      }
+
+      // 3) Solo los metadatos van a la Server Action.
+      datos.delete("archivo");
+      datos.set("archivo_nombre", archivo.name);
+      if (driveFileId) datos.set("drive_file_id", driveFileId);
+      else if (destino.destino === "supabase")
+        datos.set("archivo_ruta", destino.ruta);
+
+      const resultado = await registrarDocumento(INICIAL, datos);
+      setEstado(resultado);
+      if (resultado.ok) {
+        form.reset();
+        router.refresh();
+      }
+    } catch (error) {
+      setEstado({
+        ok: false,
+        mensaje: error instanceof Error ? error.message : String(error),
+      });
+    } finally {
+      setPending(false);
+      setProgreso(null);
+    }
+  }
 
   return (
     <Card>
@@ -44,11 +160,7 @@ export function MemoriaUploader({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form
-          ref={formRef}
-          action={formAction}
-          className="flex flex-col gap-4"
-        >
+        <form onSubmit={enviar} className="flex flex-col gap-4">
           <input type="hidden" name="categoria" value={categoria} />
 
           <div className="flex flex-col gap-1.5">
@@ -83,7 +195,7 @@ export function MemoriaUploader({
               required
               defaultValue=""
               disabled={componentes.length === 0}
-              className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50"
+              className={`${SELECT_CLASS} w-full px-3 disabled:opacity-50`}
             >
               <option value="" disabled>
                 Selecciona un componente…
@@ -110,7 +222,7 @@ export function MemoriaUploader({
               required
               defaultValue=""
               disabled={procesos.length === 0}
-              className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50"
+              className={`${SELECT_CLASS} w-full px-3 disabled:opacity-50`}
             >
               <option value="" disabled>
                 Selecciona el proceso…
@@ -130,7 +242,7 @@ export function MemoriaUploader({
                 id={`visibilidad-${categoria}`}
                 name="visibilidad"
                 defaultValue="publico"
-                className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                className={`${SELECT_CLASS} w-full px-3`}
               >
                 {VISIBILIDADES_MEMORIA.map((v) => (
                   <option key={v} value={v}>
@@ -157,6 +269,18 @@ export function MemoriaUploader({
             PDF, Word, Excel, PowerPoint, imágenes… Máximo 25 MB. El documento
             quedará pendiente hasta que un administrador lo publique.
           </p>
+
+          {progreso !== null && (
+            <div className="flex items-center gap-2">
+              <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full bg-primary transition-all"
+                  style={{ width: `${progreso}%` }}
+                />
+              </div>
+              <span className="text-xs text-muted-foreground">{progreso}%</span>
+            </div>
+          )}
 
           <div>
             <Button

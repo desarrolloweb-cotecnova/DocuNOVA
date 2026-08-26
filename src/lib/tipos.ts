@@ -251,7 +251,12 @@ export type MemoriaDocumento = {
   unidad_id: string | null;
   titulo: string;
   descripcion: string | null;
-  archivo_ruta: string;
+  /** Objeto en el bucket 'memoria' (null si el archivo vive en Drive). */
+  archivo_ruta: string | null;
+  /** ID del archivo en Google Drive (null si vive en Supabase Storage). */
+  drive_file_id: string | null;
+  /** Enlace para abrirlo en la interfaz de Google Drive. */
+  drive_enlace: string | null;
   archivo_nombre: string;
   archivo_tipo: string | null;
   archivo_tamano: number | null;

@@ -4,19 +4,22 @@ import type { MemoriaDocumento, MemoriaComponente } from "@/lib/tipos";
 /** Documento de Memoria Corporativa con el nombre de quien lo cargó y su componente. */
 export type MemoriaDocumentoListado = MemoriaDocumento & {
   cargador_nombre: string | null;
+  aprobador_nombre: string | null;
   componente_nombre: string | null;
 };
 
 type MemoriaRow = MemoriaDocumento & {
   cargador: { nombre_completo: string | null } | null;
+  aprobador: { nombre_completo: string | null } | null;
   componente: { nombre: string } | null;
 };
 
 function mapDocumento(row: MemoriaRow): MemoriaDocumentoListado {
-  const { cargador, componente, ...rest } = row;
+  const { cargador, aprobador, componente, ...rest } = row;
   return {
     ...rest,
     cargador_nombre: cargador?.nombre_completo ?? null,
+    aprobador_nombre: aprobador?.nombre_completo ?? null,
     componente_nombre: componente?.nombre ?? null,
   };
 }
@@ -32,7 +35,9 @@ export async function listMemoria(): Promise<MemoriaDocumentoListado[]> {
   const { data } = await supabase
     .from("memoria_documentos")
     .select(
-      "*, cargador:perfiles!cargado_por(nombre_completo), componente:memoria_componentes(nombre)",
+      "*, cargador:perfiles!cargado_por(nombre_completo), " +
+        "aprobador:perfiles!aprobado_por(nombre_completo), " +
+        "componente:memoria_componentes(nombre)",
     )
     .order("creado_en", { ascending: false });
   return (data as unknown as MemoriaRow[] | null)?.map(mapDocumento) ?? [];
