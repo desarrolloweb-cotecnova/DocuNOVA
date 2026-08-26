@@ -91,16 +91,14 @@ export function construirFondo(
         hijos: [
           ...nodosSerie(deLaOficina, s.id),
           ...(docsPorSerie.get(s.id) ?? [])
-            .map(
-              (d): NodoFondo => ({
-                id: `doc:${d.id}`,
-                tipo: "documento",
-                codigo: d.codigo ?? "",
-                nombre: d.nombre,
-                estadoDoc: d.estado,
-                hijos: [],
-              }),
-            )
+            .map((d): NodoFondo => ({
+              id: `doc:${d.id}`,
+              tipo: "documento",
+              codigo: d.codigo ?? "",
+              nombre: d.nombre,
+              estadoDoc: d.estado,
+              hijos: [],
+            }))
             .sort(porCodigo),
         ],
       }));

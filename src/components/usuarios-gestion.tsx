@@ -127,7 +127,9 @@ export function UsuariosGestion({
                     <SubmitButton
                       size="sm"
                       variant={p.activo ? "outline" : "default"}
-                      exito={p.activo ? "Cuenta desactivada." : "Cuenta activada."}
+                      exito={
+                        p.activo ? "Cuenta desactivada." : "Cuenta activada."
+                      }
                     >
                       {p.activo ? "Desactivar" : "Activar"}
                     </SubmitButton>
@@ -292,7 +294,10 @@ function ModalEditar({
             <Button type="button" variant="outline" onClick={onCerrar}>
               Cancelar
             </Button>
-            <SubmitButton textoPendiente="Guardando…" exito="Perfil actualizado.">
+            <SubmitButton
+              textoPendiente="Guardando…"
+              exito="Perfil actualizado."
+            >
               Guardar cambios
             </SubmitButton>
           </div>

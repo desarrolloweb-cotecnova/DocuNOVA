@@ -202,7 +202,11 @@ function FormDocumento({
         </label>
       </div>
       <div className="sm:col-span-2">
-        <SubmitButton size="sm" textoPendiente="Creando…" exito="Documento creado.">
+        <SubmitButton
+          size="sm"
+          textoPendiente="Creando…"
+          exito="Documento creado."
+        >
           Crear documento
         </SubmitButton>
       </div>

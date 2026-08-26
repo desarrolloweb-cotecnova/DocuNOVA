@@ -28,7 +28,7 @@ const TIPO_UNIDAD_ICON: Record<TipoUnidad, LucideIcon> = {
 function EtiquetaUnidad({ tipo }: { tipo: TipoUnidad }) {
   const Icono = TIPO_UNIDAD_ICON[tipo];
   return (
-    <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-primary/30 bg-background px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+    <span className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-background px-2 py-0.5 text-[10px] font-medium tracking-wide whitespace-nowrap text-muted-foreground uppercase">
       <Icono className="size-3" />
       {TIPO_UNIDAD_LABELS[tipo]}
     </span>
@@ -198,7 +198,11 @@ function Nodo({
             <Input name="nombre" defaultValue={unidad.nombre} required />
           </div>
           <div className="sm:col-span-2">
-            <SubmitButton size="sm" textoPendiente="Guardando…" exito="Cambios guardados.">
+            <SubmitButton
+              size="sm"
+              textoPendiente="Guardando…"
+              exito="Cambios guardados."
+            >
               Guardar cambios
             </SubmitButton>
           </div>
@@ -231,7 +235,11 @@ function FormUnidad({
         <Input name="nombre" required />
       </div>
       <div className="sm:col-span-2">
-        <SubmitButton size="sm" textoPendiente="Agregando…" exito="Elemento agregado.">
+        <SubmitButton
+          size="sm"
+          textoPendiente="Agregando…"
+          exito="Elemento agregado."
+        >
           Agregar
         </SubmitButton>
       </div>

@@ -25,7 +25,11 @@ const INTERVALO_MS = 30_000;
  *
  * @param expiraEn Momento (epoch ms) de caducidad; `null` si no se conoce.
  */
-export function SessionExpiryWatcher({ expiraEn }: { expiraEn: number | null }) {
+export function SessionExpiryWatcher({
+  expiraEn,
+}: {
+  expiraEn: number | null;
+}) {
   const router = useRouter();
   const { mostrar } = useToast();
 

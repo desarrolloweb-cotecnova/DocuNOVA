@@ -27,8 +27,8 @@ export function ComponentesMemoriaGestion({
   return (
     <div className="flex flex-col gap-6">
       <p className="text-sm text-muted-foreground">
-        Los componentes clasifican los documentos dentro de cada memoria. Se usan
-        en la lista desplegable del formulario de carga y como filtro en el
+        Los componentes clasifican los documentos dentro de cada memoria. Se
+        usan en la lista desplegable del formulario de carga y como filtro en el
         listado. Desactiva un componente para ocultarlo del formulario sin
         perder los documentos ya clasificados.
       </p>

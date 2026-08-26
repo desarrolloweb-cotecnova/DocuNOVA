@@ -217,6 +217,15 @@ export const CATEGORIA_MEMORIA_DESC: Record<CategoriaMemoria, string> = {
     "Proyectos institucionales en formulación, ejecución y cierre, iniciativas con aval y lecciones aprendidas.",
 };
 
+/** Tamaño máximo de un archivo de Memoria Corporativa: 25 MB. Se rechaza. */
+export const MAX_BYTES_MEMORIA = 25 * 1024 * 1024;
+
+/**
+ * A partir de este tamaño (5 MB) el formulario de carga recomienda comprimir el
+ * archivo. Es solo una sugerencia: el documento se puede subir igual.
+ */
+export const AVISO_BYTES_MEMORIA = 5 * 1024 * 1024;
+
 export const VISIBILIDADES_MEMORIA = ["publico", "privado"] as const;
 export type VisibilidadMemoria = (typeof VISIBILIDADES_MEMORIA)[number];
 
@@ -251,7 +260,12 @@ export type MemoriaDocumento = {
   unidad_id: string | null;
   titulo: string;
   descripcion: string | null;
-  archivo_ruta: string;
+  /** Objeto en el bucket 'memoria' (null si el archivo vive en Drive). */
+  archivo_ruta: string | null;
+  /** ID del archivo en Google Drive (null si vive en Supabase Storage). */
+  drive_file_id: string | null;
+  /** Enlace para abrirlo en la interfaz de Google Drive. */
+  drive_enlace: string | null;
   archivo_nombre: string;
   archivo_tipo: string | null;
   archivo_tamano: number | null;

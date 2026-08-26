@@ -26,6 +26,7 @@ import { SubmitButton, SubmitIcon } from "@/components/ui/submit-button";
 import { EstructuraGestion } from "@/components/estructura-gestion";
 import { UsuariosGestion } from "@/components/usuarios-gestion";
 import { ComponentesMemoriaGestion } from "@/components/componentes-memoria-gestion";
+import { DriveEstado } from "@/components/drive-estado";
 import { ImportadorExcel } from "@/components/importador-excel";
 import { Tabs, type Tab } from "@/components/tabs";
 import {
@@ -247,7 +248,12 @@ export default async function ConfiguracionPage() {
   tabs.push({
     id: "componentes",
     label: "Componentes Memoria Corporativa",
-    content: <ComponentesMemoriaGestion componentes={componentes} />,
+    content: (
+      <div className="flex flex-col gap-6">
+        <ComponentesMemoriaGestion componentes={componentes} />
+        <DriveEstado />
+      </div>
+    ),
   });
 
   // Monitoreo del proyecto de Supabase (uso del Plan Free y keepalive): va al

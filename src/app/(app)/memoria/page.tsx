@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { APP_NAME } from "@/lib/config";
 import { apruebaTRD, elabora } from "@/lib/roles";
 import { rolDelUsuario } from "@/lib/auth/roles-server";
+import { createClient } from "@/lib/supabase/server";
 import { listMemoria, listComponentesActivos } from "@/services/memoria";
 import { listUnidades } from "@/services/unidades";
 import {
@@ -20,12 +21,15 @@ export const metadata: Metadata = {
 };
 
 export default async function MemoriaPage() {
-  const [rol, documentos, componentes, unidades] = await Promise.all([
+  const supabase = await createClient();
+  const [rol, documentos, componentes, unidades, sesion] = await Promise.all([
     rolDelUsuario(),
     listMemoria(),
     listComponentesActivos(),
     listUnidades(),
+    supabase.auth.getUser(),
   ]);
+  const usuarioId = sesion.data.user?.id ?? null;
   const puedeCargar = elabora(rol);
   const puedeAprobar = apruebaTRD(rol);
   const puedeEliminar = apruebaTRD(rol);
@@ -74,6 +78,9 @@ export default async function MemoriaPage() {
                     documentos={docsDe(categoria)}
                     componentes={compsDe(categoria)}
                     unidades={unidades}
+                    procesos={procesos}
+                    usuarioId={usuarioId}
+                    puedeElaborar={puedeCargar}
                     puedeAprobar={puedeAprobar}
                     puedeEliminar={puedeEliminar}
                   />

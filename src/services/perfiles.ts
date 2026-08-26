@@ -93,8 +93,7 @@ export async function listNumerosDocumento(): Promise<Record<string, string>> {
     .select("usuario_id, numero_documento");
   const mapa: Record<string, string> = {};
   for (const row of (data as
-    | { usuario_id: string; numero_documento: string | null }[]
-    | null) ?? []) {
+    { usuario_id: string; numero_documento: string | null }[] | null) ?? []) {
     if (row.numero_documento) mapa[row.usuario_id] = row.numero_documento;
   }
   return mapa;
