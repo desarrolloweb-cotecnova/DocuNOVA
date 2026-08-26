@@ -45,7 +45,8 @@ function subirConProgreso(
       archivo.type || "application/octet-stream",
     );
     xhr.upload.onprogress = (e) => {
-      if (e.lengthComputable) onProgreso(Math.round((e.loaded / e.total) * 100));
+      if (e.lengthComputable)
+        onProgreso(Math.round((e.loaded / e.total) * 100));
     };
     xhr.onload = () => {
       if (xhr.status < 200 || xhr.status >= 300) {
@@ -54,7 +55,8 @@ function subirConProgreso(
       }
       let driveFileId: string | null = null;
       try {
-        driveFileId = (JSON.parse(xhr.responseText) as { id?: string }).id ?? null;
+        driveFileId =
+          (JSON.parse(xhr.responseText) as { id?: string }).id ?? null;
       } catch {
         // El bucket de Supabase responde otro formato; no hay ID de Drive.
       }
@@ -111,8 +113,9 @@ export function MemoriaUploader({
       // 2) Los bytes viajan del navegador al destino, sin pasar por la app.
       let driveFileId: string | null = null;
       if (destino.destino === "drive") {
-        driveFileId = (await subirConProgreso(destino.uploadUrl, archivo, setProgreso))
-          .driveFileId;
+        driveFileId = (
+          await subirConProgreso(destino.uploadUrl, archivo, setProgreso)
+        ).driveFileId;
         if (!driveFileId) {
           setEstado({
             ok: false,
@@ -219,8 +222,9 @@ export function MemoriaUploader({
             </select>
             {componentes.length === 0 && (
               <p className="text-xs text-muted-foreground">
-                No hay componentes activos en esta memoria. Un administrador debe
-                crearlos en Configuración → Componentes Memoria Corporativa.
+                No hay componentes activos en esta memoria. Un administrador
+                debe crearlos en Configuración → Componentes Memoria
+                Corporativa.
               </p>
             )}
           </div>

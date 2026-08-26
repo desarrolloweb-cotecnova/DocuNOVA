@@ -94,13 +94,17 @@ export async function respaldarYlimpiarSesion(): Promise<void> {
     .filter((c) => esCookieSesion(c.name))
     .map((c) => ({ name: c.name, value: c.value }));
 
-  store.set(BACKUP_COOKIE, Buffer.from(JSON.stringify(sesion)).toString("base64"), {
-    httpOnly: true,
-    path: "/",
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    maxAge: MAX_EDAD,
-  });
+  store.set(
+    BACKUP_COOKIE,
+    Buffer.from(JSON.stringify(sesion)).toString("base64"),
+    {
+      httpOnly: true,
+      path: "/",
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: MAX_EDAD,
+    },
+  );
 
   for (const c of sesion) store.delete(c.name);
 }

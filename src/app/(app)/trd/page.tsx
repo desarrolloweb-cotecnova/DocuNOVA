@@ -94,8 +94,7 @@ export default async function TrdPage({
 
   const oficinaId =
     oficina && oficinasVisibles.some((o) => o.id === oficina) ? oficina : null;
-  const oficinaCodigo =
-    oficinas.find((o) => o.id === oficinaId)?.codigo ?? "";
+  const oficinaCodigo = oficinas.find((o) => o.id === oficinaId)?.codigo ?? "";
 
   const [series, aprobaciones] = oficinaId
     ? await Promise.all([

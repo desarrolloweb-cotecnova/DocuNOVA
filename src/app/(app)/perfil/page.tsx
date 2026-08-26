@@ -151,7 +151,10 @@ export default async function PerfilPage() {
             </div>
 
             <div className="sm:col-span-2">
-              <SubmitButton textoPendiente="Guardando…" exito="Perfil actualizado.">
+              <SubmitButton
+                textoPendiente="Guardando…"
+                exito="Perfil actualizado."
+              >
                 Guardar cambios
               </SubmitButton>
             </div>

@@ -265,7 +265,11 @@ export async function verificarDrive(): Promise<{
           "GOOGLE_DRIVE_FOLDER_ID. Compártela con ella como Editor.",
       };
     }
-    return { ok: true, mensaje: "Conexión con Drive correcta.", carpeta: carpeta.name };
+    return {
+      ok: true,
+      mensaje: "Conexión con Drive correcta.",
+      carpeta: carpeta.name,
+    };
   } catch (e) {
     return { ok: false, mensaje: e instanceof Error ? e.message : String(e) };
   }

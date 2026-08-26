@@ -81,7 +81,11 @@ export default async function NotificacionesPage() {
                       </Link>
                       <form action={marcarLeida}>
                         <input type="hidden" name="id" value={n.id} />
-                        <SubmitButton size="sm" variant="ghost" exito="Marcada como leída.">
+                        <SubmitButton
+                          size="sm"
+                          variant="ghost"
+                          exito="Marcada como leída."
+                        >
                           Marcar leída
                         </SubmitButton>
                       </form>

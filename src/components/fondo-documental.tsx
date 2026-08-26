@@ -123,7 +123,7 @@ export function FondoDocumental({
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative min-w-[220px] flex-1">
-          <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -226,10 +226,7 @@ function Fila({
           )}
         />
         <span
-          className={cn(
-            "text-sm",
-            nodo.tipo === "raiz" && "font-semibold",
-          )}
+          className={cn("text-sm", nodo.tipo === "raiz" && "font-semibold")}
         >
           {nodo.codigo && (
             <>

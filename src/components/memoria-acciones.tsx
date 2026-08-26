@@ -194,7 +194,11 @@ export function MemoriaAcciones({
               <Eye className="size-3.5" />
               Visualizar
             </a>
-            <Button variant="outline" size="sm" onClick={() => setAbierto(null)}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setAbierto(null)}
+            >
               Cerrar
             </Button>
           </div>

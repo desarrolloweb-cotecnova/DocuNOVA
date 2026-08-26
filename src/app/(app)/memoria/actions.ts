@@ -188,7 +188,8 @@ export async function prepararCarga(entrada: {
     } catch (e) {
       return {
         ok: false,
-        mensaje: e instanceof Error ? e.message : "Error al conectar con Drive.",
+        mensaje:
+          e instanceof Error ? e.message : "Error al conectar con Drive.",
       };
     }
   }
@@ -277,8 +278,7 @@ export async function registrarDocumento(
     if (!objeto) {
       return { ok: false, mensaje: "El archivo no terminó de subirse." };
     }
-    const tamano =
-      (objeto.metadata as { size?: number } | null)?.size ?? null;
+    const tamano = (objeto.metadata as { size?: number } | null)?.size ?? null;
     if (tamano && tamano > MAX_BYTES_MEMORIA) {
       await supabase.storage.from(BUCKET).remove([ruta]);
       return { ok: false, mensaje: "El archivo supera el límite de 25 MB." };

@@ -12,8 +12,10 @@ function limpiar() {
 }
 
 function configurar() {
-  process.env.GOOGLE_DRIVE_CLIENT_EMAIL = "bot@proyecto.iam.gserviceaccount.com";
-  process.env.GOOGLE_DRIVE_PRIVATE_KEY = "-----BEGIN PRIVATE KEY-----\\nx\\n-----END PRIVATE KEY-----";
+  process.env.GOOGLE_DRIVE_CLIENT_EMAIL =
+    "bot@proyecto.iam.gserviceaccount.com";
+  process.env.GOOGLE_DRIVE_PRIVATE_KEY =
+    "-----BEGIN PRIVATE KEY-----\\nx\\n-----END PRIVATE KEY-----";
   process.env.GOOGLE_DRIVE_FOLDER_ID = "carpeta-123";
 }
 
