@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Upload, CheckCircle2, AlertCircle } from "lucide-react";
+import { Upload, CheckCircle2, AlertCircle, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,9 +13,18 @@ import {
   registrarDocumento,
   type ResultadoCarga,
 } from "@/app/(app)/memoria/actions";
-import { VISIBILIDADES_MEMORIA, VISIBILIDAD_MEMORIA_LABELS } from "@/lib/tipos";
+import {
+  MAX_BYTES_MEMORIA,
+  VISIBILIDADES_MEMORIA,
+  VISIBILIDAD_MEMORIA_LABELS,
+} from "@/lib/tipos";
 import type { CategoriaMemoria, MemoriaComponente } from "@/lib/tipos";
-import { SELECT_CLASS } from "@/components/memoria-campos";
+import {
+  SELECT_CLASS,
+  avisoDePeso,
+  formatoTamano,
+  type AvisoPeso,
+} from "@/components/memoria-campos";
 
 const INICIAL: ResultadoCarga = { ok: false, mensaje: "" };
 
@@ -71,6 +80,7 @@ export function MemoriaUploader({
   const [estado, setEstado] = useState<ResultadoCarga>(INICIAL);
   const [pending, setPending] = useState(false);
   const [progreso, setProgreso] = useState<number | null>(null);
+  const [aviso, setAviso] = useState<AvisoPeso | null>(null);
 
   async function enviar(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -138,6 +148,7 @@ export function MemoriaUploader({
       setEstado(resultado);
       if (resultado.ok) {
         form.reset();
+        setAviso(null);
         router.refresh();
       }
     } catch (error) {
@@ -260,15 +271,33 @@ export function MemoriaUploader({
                 name="archivo"
                 required
                 accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt,.odt,.ods,.odp,.jpg,.jpeg,.png"
+                onChange={(e) =>
+                  setAviso(avisoDePeso(e.target.files?.[0]?.size ?? 0))
+                }
                 className="text-sm file:mr-3 file:h-9 file:rounded-md file:border file:bg-background file:px-3 file:text-sm file:font-medium"
               />
             </div>
           </div>
 
           <p className="text-xs text-muted-foreground">
-            PDF, Word, Excel, PowerPoint, imágenes… Máximo 25 MB. El documento
-            quedará pendiente hasta que un administrador lo publique.
+            PDF, Word, Excel, PowerPoint, imágenes… Máximo{" "}
+            {formatoTamano(MAX_BYTES_MEMORIA)}. El documento quedará pendiente
+            hasta que un administrador lo publique.
           </p>
+
+          {aviso && (
+            <p
+              role="status"
+              className={`flex items-start gap-2 rounded-md border p-2 text-sm ${
+                aviso.tipo === "excede"
+                  ? "border-destructive/30 bg-destructive/10 text-destructive"
+                  : "border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400"
+              }`}
+            >
+              <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+              {aviso.mensaje}
+            </p>
+          )}
 
           {progreso !== null && (
             <div className="flex items-center gap-2">

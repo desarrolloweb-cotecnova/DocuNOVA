@@ -7,7 +7,7 @@ import { Modal } from "@/components/modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SELECT_CLASS } from "@/components/memoria-campos";
+import { SELECT_CLASS, formatoTamano } from "@/components/memoria-campos";
 import {
   actualizarDocumento,
   type ResultadoCarga,
@@ -24,13 +24,6 @@ import type { MemoriaDocumentoListado } from "@/services/memoria";
 
 const BOTON =
   "inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors hover:bg-accent";
-
-function formatoTamano(bytes: number | null): string {
-  if (!bytes) return "—";
-  const kb = bytes / 1024;
-  if (kb < 1024) return `${Math.round(kb)} KB`;
-  return `${(kb / 1024).toFixed(1)} MB`;
-}
 
 function fechaLarga(iso: string): string {
   return new Date(iso).toLocaleString("es-CO", {
@@ -159,7 +152,7 @@ export function MemoriaAcciones({
             <Dato etiqueta="Formato">
               <span className="uppercase">{doc.archivo_tipo ?? "—"}</span>
               {" · "}
-              {formatoTamano(doc.archivo_tamano)}
+              {formatoTamano(doc.archivo_tamano) || "—"}
             </Dato>
             <Dato etiqueta="Almacenamiento">
               {doc.drive_file_id ? (

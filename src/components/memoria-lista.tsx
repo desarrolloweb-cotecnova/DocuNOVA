@@ -19,7 +19,7 @@ import {
   eliminarDocumento,
 } from "@/app/(app)/memoria/actions";
 import { MemoriaAcciones } from "@/components/memoria-acciones";
-import { SELECT_CLASS } from "@/components/memoria-campos";
+import { SELECT_CLASS, formatoTamano } from "@/components/memoria-campos";
 import {
   ESTADO_MEMORIA_LABELS,
   VISIBILIDADES_MEMORIA,
@@ -42,13 +42,6 @@ const ESTADO_ICON: Record<EstadoMemoria, typeof Clock> = {
   publicado: CheckCircle2,
   rechazado: XCircle,
 };
-
-function formatoTamano(bytes: number | null): string {
-  if (!bytes) return "";
-  const kb = bytes / 1024;
-  if (kb < 1024) return `${Math.round(kb)} KB`;
-  return `${(kb / 1024).toFixed(1)} MB`;
-}
 
 /**
  * Listado de documentos de una memoria con filtros (componente, visibilidad),

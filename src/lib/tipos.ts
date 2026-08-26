@@ -217,6 +217,15 @@ export const CATEGORIA_MEMORIA_DESC: Record<CategoriaMemoria, string> = {
     "Proyectos institucionales en formulación, ejecución y cierre, iniciativas con aval y lecciones aprendidas.",
 };
 
+/** Tamaño máximo de un archivo de Memoria Corporativa: 25 MB. Se rechaza. */
+export const MAX_BYTES_MEMORIA = 25 * 1024 * 1024;
+
+/**
+ * A partir de este tamaño (5 MB) el formulario de carga recomienda comprimir el
+ * archivo. Es solo una sugerencia: el documento se puede subir igual.
+ */
+export const AVISO_BYTES_MEMORIA = 5 * 1024 * 1024;
+
 export const VISIBILIDADES_MEMORIA = ["publico", "privado"] as const;
 export type VisibilidadMemoria = (typeof VISIBILIDADES_MEMORIA)[number];
 

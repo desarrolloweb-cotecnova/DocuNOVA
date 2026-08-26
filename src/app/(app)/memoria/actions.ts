@@ -13,13 +13,13 @@ import {
 } from "@/lib/drive";
 import {
   CATEGORIAS_MEMORIA,
+  MAX_BYTES_MEMORIA,
   VISIBILIDADES_MEMORIA,
   type CategoriaMemoria,
   type VisibilidadMemoria,
 } from "@/lib/tipos";
 
 const BUCKET = "memoria";
-const MAX_BYTES = 25 * 1024 * 1024; // 25 MB
 /** Extensiones permitidas (documentos ofimáticos e imágenes de soporte). */
 const EXT_PERMITIDAS = [
   "pdf",
@@ -162,7 +162,7 @@ export async function prepararCarga(entrada: {
   if (!entrada.tamano || entrada.tamano <= 0) {
     return { ok: false, mensaje: "Selecciona un archivo." };
   }
-  if (entrada.tamano > MAX_BYTES) {
+  if (entrada.tamano > MAX_BYTES_MEMORIA) {
     return { ok: false, mensaje: "El archivo supera el límite de 25 MB." };
   }
   const ext = extensionDe(entrada.nombre);
@@ -256,7 +256,7 @@ export async function registrarDocumento(
         mensaje: "El archivo no llegó a la carpeta de Drive de DocuNOVA.",
       };
     }
-    if (archivo.size && archivo.size > MAX_BYTES) {
+    if (archivo.size && archivo.size > MAX_BYTES_MEMORIA) {
       await eliminarArchivo(driveFileId);
       return { ok: false, mensaje: "El archivo supera el límite de 25 MB." };
     }
@@ -279,7 +279,7 @@ export async function registrarDocumento(
     }
     const tamano =
       (objeto.metadata as { size?: number } | null)?.size ?? null;
-    if (tamano && tamano > MAX_BYTES) {
+    if (tamano && tamano > MAX_BYTES_MEMORIA) {
       await supabase.storage.from(BUCKET).remove([ruta]);
       return { ok: false, mensaje: "El archivo supera el límite de 25 MB." };
     }
