@@ -134,6 +134,22 @@ async function validarMetadatos(
 // el archivo dentro de la Server Action fallaba con una página de error porque
 // Next.js limita el cuerpo de una acción a 1 MB (y Vercel a 4.5 MB).
 
+/** Tamaño en bytes de un objeto del bucket, o null si no está. */
+async function tamanoDelObjeto(
+  supabase: Awaited<ReturnType<typeof requireCapacidad>>,
+  ruta: string,
+): Promise<number | null> {
+  const barra = ruta.lastIndexOf("/");
+  const carpeta = barra >= 0 ? ruta.slice(0, barra) : "";
+  const nombre = ruta.slice(barra + 1);
+  const { data } = await supabase.storage
+    .from(BUCKET)
+    .list(carpeta, { search: nombre });
+  const objeto = data?.find((o) => o.name === nombre);
+  if (!objeto) return null;
+  return (objeto.metadata as { size?: number } | null)?.size ?? 0;
+}
+
 export type Preparacion =
   | { ok: true; destino: "drive"; uploadUrl: string }
   | { ok: true; destino: "supabase"; ruta: string; token: string }
@@ -240,11 +256,21 @@ export async function registrarDocumento(
   const driveFileId = nullable(formData.get("drive_file_id"));
   const ruta = nullable(formData.get("archivo_ruta"));
 
-  let almacenamiento: {
-    archivo_ruta: string | null;
-    drive_file_id: string | null;
-    drive_enlace: string | null;
-    archivo_tamano: number | null;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const comun = {
+    categoria: datos.categoria,
+    componente_id: datos.componenteId,
+    unidad_id: datos.unidadId,
+    titulo: datos.titulo,
+    descripcion: datos.descripcion,
+    archivo_nombre: nombreArchivo,
+    archivo_tipo: ext,
+    visibilidad: datos.visibilidad,
+    estado: "pendiente" as const,
+    cargado_por: user?.id ?? null,
   };
 
   if (driveFileId) {
@@ -261,63 +287,57 @@ export async function registrarDocumento(
       await eliminarArchivo(driveFileId);
       return { ok: false, mensaje: "El archivo supera el límite de 25 MB." };
     }
-    almacenamiento = {
+    const { error } = await supabase.from("memoria_documentos").insert({
+      ...comun,
       archivo_ruta: null,
       drive_file_id: archivo.id,
       drive_enlace: archivo.webViewLink,
       archivo_tamano: archivo.size,
-    };
+    });
+    if (error) {
+      await eliminarArchivo(archivo.id); // no deja el archivo huérfano
+      return { ok: false, mensaje: error.message };
+    }
   } else if (ruta) {
-    const barra = ruta.lastIndexOf("/");
-    const carpeta = barra >= 0 ? ruta.slice(0, barra) : "";
-    const nombre = ruta.slice(barra + 1);
-    const { data: objetos } = await supabase.storage
-      .from(BUCKET)
-      .list(carpeta, { search: nombre });
-    const objeto = objetos?.find((o) => o.name === nombre);
-    if (!objeto) {
-      return { ok: false, mensaje: "El archivo no terminó de subirse." };
-    }
-    const tamano = (objeto.metadata as { size?: number } | null)?.size ?? null;
-    if (tamano && tamano > MAX_BYTES_MEMORIA) {
+    // Con Supabase Storage hay que registrar ANTES de comprobar el archivo: la
+    // política `memoria_objetos_select` del bucket solo permite leer un objeto
+    // si ya existe la fila que lo referencia. Comprobarlo antes daría siempre
+    // "no existe", aunque el archivo esté subido.
+    const { data: fila, error } = await supabase
+      .from("memoria_documentos")
+      .insert({
+        ...comun,
+        archivo_ruta: ruta,
+        drive_file_id: null,
+        drive_enlace: null,
+        archivo_tamano: null,
+      })
+      .select("id")
+      .single();
+    if (error || !fila) {
       await supabase.storage.from(BUCKET).remove([ruta]);
-      return { ok: false, mensaje: "El archivo supera el límite de 25 MB." };
+      return { ok: false, mensaje: error?.message ?? "No se pudo registrar." };
     }
-    almacenamiento = {
-      archivo_ruta: ruta,
-      drive_file_id: null,
-      drive_enlace: null,
-      archivo_tamano: tamano,
+
+    // Ya con la fila creada, el tamaño real lo da el bucket (no el navegador).
+    const tamano = await tamanoDelObjeto(supabase, ruta);
+    const deshacer = async (mensaje: string): Promise<ResultadoCarga> => {
+      await supabase.from("memoria_documentos").delete().eq("id", fila.id);
+      return { ok: false, mensaje };
     };
+    if (tamano === null) {
+      return deshacer("El archivo no terminó de subirse.");
+    }
+    if (tamano > MAX_BYTES_MEMORIA) {
+      await supabase.storage.from(BUCKET).remove([ruta]);
+      return deshacer("El archivo supera el límite de 25 MB.");
+    }
+    await supabase
+      .from("memoria_documentos")
+      .update({ archivo_tamano: tamano })
+      .eq("id", fila.id);
   } else {
     return { ok: false, mensaje: "Selecciona un archivo." };
-  }
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const { error } = await supabase.from("memoria_documentos").insert({
-    categoria: datos.categoria,
-    componente_id: datos.componenteId,
-    unidad_id: datos.unidadId,
-    titulo: datos.titulo,
-    descripcion: datos.descripcion,
-    archivo_nombre: nombreArchivo,
-    archivo_tipo: ext,
-    visibilidad: datos.visibilidad,
-    estado: "pendiente",
-    cargado_por: user?.id ?? null,
-    ...almacenamiento,
-  });
-  if (error) {
-    // Limpia el archivo huérfano si falla el registro.
-    if (almacenamiento.drive_file_id) {
-      await eliminarArchivo(almacenamiento.drive_file_id);
-    } else if (almacenamiento.archivo_ruta) {
-      await supabase.storage.from(BUCKET).remove([almacenamiento.archivo_ruta]);
-    }
-    return { ok: false, mensaje: error.message };
   }
 
   revalidatePath("/memoria");
