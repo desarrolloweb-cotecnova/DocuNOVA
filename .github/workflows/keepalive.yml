@@ -1,18 +1,32 @@
 name: Keepalive Supabase
 
 # Supabase pausa los proyectos del Plan Free tras 7 días sin actividad. Este
-# cron llama cada 3 días a /api/keepalive de DocuNOVA, que registra un latido en
-# la base de datos (migración 0013). También se puede lanzar a mano desde la
+# cron llama cada día a /api/keepalive de DocuNOVA, que registra un latido en la
+# base de datos (migración 0013). También se puede lanzar a mano desde la
 # pestaña Actions.
 #
-# Secretos necesarios en el repositorio (Settings → Secrets → Actions):
+# Se ejecuta a diario a propósito, aunque bastaría cada 3 días: GitHub puede
+# retrasar o saltarse ejecuciones programadas, así que un latido diario deja
+# margen de sobra antes de los 7 días de la pausa.
+#
+# Configuración en el repositorio (Settings → Secrets and variables → Actions):
 #   KEEPALIVE_URL     https://<dominio-de-docunova>/api/keepalive
-#   KEEPALIVE_SECRET  (opcional) mismo valor que la variable de entorno del sitio
+#                     Vale como *variable* (pestaña Variables) o como *secreto*;
+#                     es una URL pública, no hace falta ocultarla.
+#   KEEPALIVE_SECRET  (opcional, secreto) mismo valor que la variable de entorno
+#                     del sitio en Vercel.
+#
+# Si falta la URL o el latido no responde 200, el workflow abre una incidencia
+# en el repositorio: un fallo silencioso acaba con la base de datos pausada.
 
 on:
   schedule:
-    - cron: "0 6 */3 * *" # cada 3 días a las 06:00 UTC (01:00 en Colombia)
+    - cron: "0 6 * * *" # cada día a las 06:00 UTC (01:00 en Colombia)
   workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
 
 jobs:
   latido:
@@ -21,11 +35,12 @@ jobs:
     steps:
       - name: Llamar a /api/keepalive
         env:
-          KEEPALIVE_URL: ${{ secrets.KEEPALIVE_URL }}
+          KEEPALIVE_URL: ${{ secrets.KEEPALIVE_URL || vars.KEEPALIVE_URL }}
           KEEPALIVE_SECRET: ${{ secrets.KEEPALIVE_SECRET }}
         run: |
           if [ -z "$KEEPALIVE_URL" ]; then
-            echo "Falta el secreto KEEPALIVE_URL; no hay nada que llamar."
+            echo "Falta KEEPALIVE_URL (secreto o variable del repositorio);" \
+                 "no hay nada que llamar. Ver docs/DESPLIEGUE.md, paso 7."
             exit 1
           fi
 
@@ -45,3 +60,31 @@ jobs:
 
           echo "El latido no se pudo registrar tras 3 intentos."
           exit 1
+
+      # Solo si el latido falló: se avisa con una incidencia para que el fallo no
+      # pase inadvertido (la BD se pausa a los 7 días sin actividad).
+      - name: Descargar el repositorio
+        if: failure()
+        uses: actions/checkout@v4
+      - name: Abrir o actualizar la incidencia del fallo
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          TITULO="Keepalive de Supabase caído"
+
+          # Una sola incidencia abierta a la vez: si ya existe, se comenta ahí.
+          numero=$(gh issue list --repo "$REPO" --state open \
+            --search "$TITULO in:title" --json number --jq '.[0].number // empty')
+
+          if [ -n "$numero" ]; then
+            gh issue comment "$numero" --repo "$REPO" \
+              --body "El latido volvió a fallar: $RUN_URL"
+            exit 0
+          fi
+
+          cp .github/keepalive-fallo.md cuerpo.md
+          printf '\nEjecución que falló: %s\n' "$RUN_URL" >> cuerpo.md
+          gh issue create --repo "$REPO" --title "$TITULO" --body-file cuerpo.md

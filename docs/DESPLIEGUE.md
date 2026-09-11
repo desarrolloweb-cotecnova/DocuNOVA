@@ -104,16 +104,22 @@ DocuNOVA trae un *keepalive* que lo evita y un módulo para vigilar el consumo.
 3. **Opcional pero recomendado:** define también `KEEPALIVE_SECRET` con una
    cadena larga y aleatoria, para que solo el cron pueda llamar al latido.
 4. **Configura el cron externo** en GitHub (Settings → Secrets and variables →
-   Actions → New repository secret):
+   Actions):
 
-   | Name | Value |
-   |---|---|
-   | `KEEPALIVE_URL` | `https://TU-DOMINIO/api/keepalive` |
-   | `KEEPALIVE_SECRET` | el mismo valor que pusiste en Vercel (si lo usaste) |
+   | Name | Dónde | Value |
+   |---|---|---|
+   | `KEEPALIVE_URL` | pestaña **Variables** (o Secrets) | `https://TU-DOMINIO/api/keepalive` |
+   | `KEEPALIVE_SECRET` | pestaña **Secrets** | el mismo valor que pusiste en Vercel (si lo usaste) |
+
+   **Este paso no es opcional:** sin `KEEPALIVE_URL` el workflow falla en la
+   primera línea y no se envía ningún latido, así que la base de datos acaba
+   pausada.
 
    El workflow **Keepalive Supabase** (`.github/workflows/keepalive.yml`) se
-   ejecuta cada 3 días; también puedes lanzarlo a mano desde la pestaña
-   **Actions → Keepalive Supabase → Run workflow** para probarlo.
+   ejecuta cada día a las 06:00 UTC; lánzalo a mano una vez para comprobarlo:
+   **Actions → Keepalive Supabase → Run workflow**. Debe quedar en verde. Si
+   falla, abre (o comenta) una incidencia titulada «Keepalive de Supabase
+   caído», para que el fallo no pase inadvertido.
 5. **Verifica** entrando como rector o superadmin a **Configuración** (el módulo
    que antes se llamaba Gestión) **→ pestaña Monitoreo Supabase**: allí se ve el
    uso frente a los límites del Plan Free y la fecha del último latido, con un
@@ -134,8 +140,10 @@ DocuNOVA trae un *keepalive* que lo evita y un módulo para vigilar el consumo.
 - **Dominio propio (ej. docunova.cotecnova.edu.co).** Se agrega en Vercel →
   Settings → Domains, y luego se repite el Paso 5 con el nuevo dominio.
 - **La base de datos aparece "pausada" en Supabase.** Reactívala desde el panel
-  de Supabase y revisa el Paso 7: lo más probable es que falte el secreto
-  `KEEPALIVE_URL` en GitHub o la clave de servicio en Vercel.
+  de Supabase y revisa el Paso 7: lo más probable es que falte `KEEPALIVE_URL`
+  en GitHub o la clave de servicio en Vercel. Comprueba en **Actions → Keepalive
+  Supabase** que las últimas ejecuciones estén en verde: si están en rojo, el
+  log de la ejecución dice exactamente qué falta.
 - **En Configuración → Monitoreo Supabase no salen datos.** El mensaje de error
   indica la causa: falta `SUPABASE_SERVICE_ROLE_KEY` en Vercel o falta aplicar
   la migración `0013_monitoreo_supabase.sql`.
