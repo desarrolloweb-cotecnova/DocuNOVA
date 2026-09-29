@@ -104,16 +104,22 @@ DocuNOVA trae un *keepalive* que lo evita y un módulo para vigilar el consumo.
 3. **Opcional pero recomendado:** define también `KEEPALIVE_SECRET` con una
    cadena larga y aleatoria, para que solo el cron pueda llamar al latido.
 4. **Configura el cron externo** en GitHub (Settings → Secrets and variables →
-   Actions → New repository secret):
+   Actions → New repository secret). El latido va **directo a Supabase**, así
+   que no depende del dominio de Vercel:
 
    | Name | Value |
    |---|---|
-   | `KEEPALIVE_URL` | `https://TU-DOMINIO/api/keepalive` |
-   | `KEEPALIVE_SECRET` | el mismo valor que pusiste en Vercel (si lo usaste) |
+   | `SUPABASE_URL` | `https://TU-REF.supabase.co` (Supabase → Settings → API) |
+   | `SUPABASE_SERVICE_ROLE_KEY` | la clave *service_role* (Supabase → Settings → API) |
+   | `KEEPALIVE_URL` | *(opcional)* `https://TU-DOMINIO/api/keepalive` |
+   | `KEEPALIVE_SECRET` | *(opcional)* el mismo valor que pusiste en Vercel |
 
    El workflow **Keepalive Supabase** (`.github/workflows/keepalive.yml`) se
-   ejecuta cada 3 días; también puedes lanzarlo a mano desde la pestaña
-   **Actions → Keepalive Supabase → Run workflow** para probarlo.
+   ejecuta **todos los días**; lánzalo a mano desde **Actions → Keepalive
+   Supabase → Run workflow** y confirma que termine en verde (✓). Si sale en
+   rojo, el log dice qué secreto falta o qué respondió Supabase.
+   Ojo: GitHub desactiva los workflows programados si el repositorio pasa
+   60 días sin commits; si ves el aviso en Actions, pulsa **Enable workflow**.
 5. **Verifica** entrando como rector o superadmin a **Configuración** (el módulo
    que antes se llamaba Gestión) **→ pestaña Monitoreo Supabase**: allí se ve el
    uso frente a los límites del Plan Free y la fecha del último latido, con un
@@ -134,8 +140,9 @@ DocuNOVA trae un *keepalive* que lo evita y un módulo para vigilar el consumo.
 - **Dominio propio (ej. docunova.cotecnova.edu.co).** Se agrega en Vercel →
   Settings → Domains, y luego se repite el Paso 5 con el nuevo dominio.
 - **La base de datos aparece "pausada" en Supabase.** Reactívala desde el panel
-  de Supabase y revisa el Paso 7: lo más probable es que falte el secreto
-  `KEEPALIVE_URL` en GitHub o la clave de servicio en Vercel.
+  de Supabase y revisa el Paso 7: revisa en GitHub → Actions que el
+  workflow **Keepalive Supabase** esté en verde; si no, faltan los secretos
+  `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` en GitHub.
 - **En Configuración → Monitoreo Supabase no salen datos.** El mensaje de error
   indica la causa: falta `SUPABASE_SERVICE_ROLE_KEY` en Vercel o falta aplicar
   la migración `0013_monitoreo_supabase.sql`.

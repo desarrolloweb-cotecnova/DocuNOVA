@@ -6,7 +6,7 @@ import { registrarLatido, monitoreoDisponible } from "@/services/monitoreo";
  *
  * Supabase pausa los proyectos gratuitos tras una semana sin actividad, y la
  * actividad se mide por peticiones al proyecto: por eso el latido se dispara
- * desde fuera (GitHub Actions, cada 3 días — ver .github/workflows/keepalive.yml)
+ * desde fuera (GitHub Actions a diario — ver .github/workflows/keepalive.yml)
  * y esta ruta lo traduce en una llamada real a la base de datos.
  *
  * Es pública a propósito (el cron externo no tiene sesión). Si se define

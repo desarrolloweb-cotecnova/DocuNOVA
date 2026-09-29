@@ -1,17 +1,21 @@
 name: Keepalive Supabase
 
 # Supabase pausa los proyectos del Plan Free tras 7 días sin actividad. Este
-# cron llama cada 3 días a /api/keepalive de DocuNOVA, que registra un latido en
-# la base de datos (migración 0013). También se puede lanzar a mano desde la
-# pestaña Actions.
+# cron registra cada día un latido llamando DIRECTAMENTE a la API de Supabase
+# (función monitor_keepalive de la migración 0013), sin depender de que el
+# dominio de Vercel exista o esté bien escrito. También se puede lanzar a mano
+# desde la pestaña Actions.
 #
 # Secretos necesarios en el repositorio (Settings → Secrets → Actions):
-#   KEEPALIVE_URL     https://<dominio-de-docunova>/api/keepalive
-#   KEEPALIVE_SECRET  (opcional) mismo valor que la variable de entorno del sitio
+#   SUPABASE_URL               https://<ref>.supabase.co  (Supabase → Settings → API)
+#   SUPABASE_SERVICE_ROLE_KEY  la clave service_role (Supabase → Settings → API)
+# Opcionales (además, prueba la ruta /api/keepalive de DocuNOVA; si falla solo avisa):
+#   KEEPALIVE_URL              https://<dominio-de-docunova>/api/keepalive
+#   KEEPALIVE_SECRET           mismo valor que la variable de entorno del sitio
 
 on:
   schedule:
-    - cron: "0 6 */3 * *" # cada 3 días a las 06:00 UTC (01:00 en Colombia)
+    - cron: "17 11 * * *" # todos los días a las 11:17 UTC (06:17 en Colombia)
   workflow_dispatch:
 
 jobs:
@@ -19,29 +23,54 @@ jobs:
     name: Enviar latido
     runs-on: ubuntu-latest
     steps:
-      - name: Llamar a /api/keepalive
+      - name: Latido directo a Supabase
         env:
-          KEEPALIVE_URL: ${{ secrets.KEEPALIVE_URL }}
-          KEEPALIVE_SECRET: ${{ secrets.KEEPALIVE_SECRET }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          if [ -z "$KEEPALIVE_URL" ]; then
-            echo "Falta el secreto KEEPALIVE_URL; no hay nada que llamar."
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "::error::Faltan los secretos SUPABASE_URL y/o SUPABASE_SERVICE_ROLE_KEY en GitHub."
             exit 1
           fi
+          url="${SUPABASE_URL%/}/rest/v1/rpc/monitor_keepalive"
 
           for intento in 1 2 3; do
             codigo=$(curl -sS -o respuesta.json -w "%{http_code}" \
-              --max-time 30 \
-              ${KEEPALIVE_SECRET:+-H "Authorization: Bearer $KEEPALIVE_SECRET"} \
-              "$KEEPALIVE_URL") && true
+              --max-time 30 -X POST \
+              -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
+              -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+              -H "Content-Type: application/json" \
+              -d '{"p_origen":"cron-github"}' \
+              "$url") || true
             echo "Intento $intento — HTTP $codigo"
             cat respuesta.json || true
             echo
             if [ "$codigo" = "200" ]; then
               exit 0
             fi
-            sleep $((intento * 10))
+            sleep $((intento * 20))
           done
 
-          echo "El latido no se pudo registrar tras 3 intentos."
+          echo "::error::El latido no se pudo registrar tras 3 intentos. Si Supabase responde 540/503 el proyecto ya está pausado: reactívalo desde el panel de Supabase."
           exit 1
+
+      - name: Latido vía DocuNOVA (opcional)
+        if: always()
+        continue-on-error: true
+        env:
+          KEEPALIVE_URL: ${{ secrets.KEEPALIVE_URL }}
+          KEEPALIVE_SECRET: ${{ secrets.KEEPALIVE_SECRET }}
+        run: |
+          if [ -z "$KEEPALIVE_URL" ]; then
+            echo "KEEPALIVE_URL no está definido; se omite."
+            exit 0
+          fi
+          codigo=$(curl -sS -o respuesta.json -w "%{http_code}" --max-time 30 \
+            ${KEEPALIVE_SECRET:+-H "Authorization: Bearer $KEEPALIVE_SECRET"} \
+            "$KEEPALIVE_URL") || true
+          echo "HTTP $codigo"
+          cat respuesta.json || true
+          echo
+          if [ "$codigo" != "200" ]; then
+            echo "::warning::/api/keepalive respondió HTTP $codigo. Revisa que KEEPALIVE_URL apunte al dominio real de DocuNOVA en Vercel."
+          fi
