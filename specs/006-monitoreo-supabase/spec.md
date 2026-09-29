@@ -33,7 +33,7 @@ Incluye:
   lectura, ejecutables **únicamente por `service_role`**.
 - **Keepalive**: tabla `monitoreo_keepalive` con el último latido, función
   `monitor_keepalive(origen)`, ruta pública `/api/keepalive`, cron externo en
-  GitHub Actions cada 3 días y cron interno de respaldo con `pg_cron`.
+  GitHub Actions diario (directo a Supabase) y cron interno de respaldo con `pg_cron`.
 
 No incluye: métricas que Supabase no expone por SQL (ancho de banda, invocaciones
 de Edge Functions, minutos de cómputo), histórico de métricas, alertas por correo.
@@ -54,8 +54,10 @@ de Edge Functions, minutos de cómputo), histórico de métricas, alertas por co
 - **CA-5.** `GET /api/keepalive` registra un latido y responde 200 con la marca
   de tiempo. Si `KEEPALIVE_SECRET` está definida, exige ese token y responde 401
   sin él.
-- **CA-6.** El workflow `keepalive.yml` llama a esa ruta cada 3 días, con
-  reintentos, de modo que el proyecto nunca acumula 7 días sin actividad.
+- **CA-6.** El workflow `keepalive.yml` registra cada día un latido llamando
+  directamente a `monitor_keepalive` en la API de Supabase (con reintentos), sin
+  depender del dominio de Vercel; `/api/keepalive` se prueba como paso opcional.
+  Así el proyecto nunca acumula 7 días sin actividad.
 - **CA-7.** Si falta `SUPABASE_SERVICE_ROLE_KEY` o la migración 0013, la pantalla
   explica qué falta en vez de mostrar datos en cero.
 
