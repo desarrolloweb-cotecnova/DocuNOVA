@@ -69,6 +69,9 @@ notificaciones.
   volver a la cuenta del administrador con un clic (restaura su sesión).
 - **CA-G7.** Cada inicio y fin de impersonación queda registrado en
   `impersonacion_log` (auditoría visible solo para administradores de usuarios).
+- **CA-G1b.** "Mi perfil" es de solo lectura: el usuario ve sus datos pero no
+  puede editarlos; solo el administrador de usuarios los modifica (la RLS de
+  `perfiles` y `datos_personales` solo permite escribir a ese rol).
 - **CA-G8.** El rol de un usuario se cambia desde el formulario "Editar perfil"
   (no con un control separado en la fila), junto con el resto de sus datos.
 - **CA-G9.** La navegación muestra los módulos según el rol: superadmin y rector
